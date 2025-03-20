@@ -2,9 +2,9 @@
 
 
 
-Internet Research Task Force (IRTF)                            R. Barnes
+HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
-Intended status: Informational                              K. Bhargavan
+Intended status: Standards Track                            K. Bhargavan
 Expires: 21 September 2025                                       B. Lipp
                                                                    Inria
                                                                  C. Wood
@@ -33,6 +33,13 @@ Abstract
 
    This document is a product of the Crypto Forum Research Group (CFRG)
    in the IRTF.
+
+Discussion Venues
+
+   This note is to be removed before publishing as an RFC.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/hpkewg/hpke.
 
 Status of This Memo
 
