@@ -4,7 +4,7 @@ abbrev: HPKE
 docname: draft-barnes-hpke-hpke-latest
 date:
 category: info
-workgroup: Internet Research Task Force (IRTF)
+# workgroup: Internet Research Task Force (IRTF)
 
 ipr: trust200902
 keyword: Internet-Draft
