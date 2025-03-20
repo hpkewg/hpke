@@ -3,8 +3,8 @@ title: Hybrid Public Key Encryption
 abbrev: HPKE
 docname: draft-barnes-hpke-hpke-latest
 date:
-category: info
-# workgroup: Internet Research Task Force (IRTF)
+category: std
+workgroup: HPKE
 
 ipr: trust200902
 keyword: Internet-Draft
