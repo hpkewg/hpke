@@ -596,12 +596,15 @@ context. The key schedule inputs are as follows:
 Senders and recipients MUST validate KEM inputs and outputs as described
 in {{kem-ids}}.
 
-The `psk` and `psk_id` fields MUST appear together or not at all.
+The `info` parameter used by HPKE is not related to the optional string `info`
+used by the `LabeledExpand()` or `Expand()` functions detailed in {base-crypto}.
+
+The `psk` and `psk_id` parameters MUST appear together or not at all.
 That is, if a non-default value is provided for one of them, then
 the other MUST be set to a non-default value. This requirement is
 encoded in `VerifyPSKInputs()` below.
 
-The `psk`, `psk_id`, and `info` fields have maximum lengths that depend
+The `psk`, `psk_id`, and `info` parameters have maximum lengths that depend
 on the KDF itself, on the definition of `LabeledExtract()`, and on the
 constant labels used together with them. See {{kdf-input-length}} for
 precise limits on these lengths.
@@ -873,7 +876,7 @@ for more details.
 
 It is up to the application to ensure that encryptions and decryptions are
 done in the proper sequence, so that encryption and decryption nonces align.
-If `ContextS.Seal()` or `ContextR.Open()` would cause the `seq` field to
+If `ContextS.Seal()` or `ContextR.Open()` would cause the `seq` parameter to
 overflow, then the implementation MUST fail with an error. (In the pseudocode
 below, `Context<ROLE>.IncrementSeq()` fails with an error when `seq` overflows,
 which causes `ContextS.Seal()` and `ContextR.Open()` to fail accordingly.)
@@ -891,7 +894,7 @@ KDF Expand function. For the KDFs defined in this specification, `L` has
 a maximum value of `255*Nh`. Future specifications that define new KDFs
 MUST specify a bound for `L`.
 
-The `exporter_context` field has a maximum length that depends on the KDF
+The `exporter_context` parameter has a maximum length that depends on the KDF
 itself, on the definition of `LabeledExpand()`, and on the constant labels
 used together with them. See {{kdf-input-length}} for precise limits on this
 length.
@@ -1138,7 +1141,7 @@ inputs `ikm` and `info` before calling the KDF's `Extract()` and `Expand()`
 functions. This leads to a reduction of the maximum input length that
 is available for the inputs `psk`, `psk_id`, `info`, `exporter_context`,
 `ikm`, i.e., the variable-length parameters provided by HPKE applications.
-The following table lists the maximum allowed lengths of these fields
+The following table lists the maximum allowed lengths of these parameters
 for the KDFs defined in this document, as inclusive bounds in bytes:
 
 | Input               | HKDF-SHA256  | HKDF-SHA384   | HKDF-SHA512   |
