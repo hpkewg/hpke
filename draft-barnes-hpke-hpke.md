@@ -667,9 +667,12 @@ def KeySchedule<ROLE>(mode, shared_secret, info, psk, psk_id):
   return Context<ROLE>(key, base_nonce, 0, exporter_secret)
 ~~~~~
 
-The `ROLE` template parameter is either S or R, depending on the role of
-sender or recipient, respectively. See {{hpke-dem}} for a discussion of the
-key schedule output, including the role-specific `Context` structure and its API.
+The `ROLE` template parameter is either S or R, depending on the role
+of sender or recipient, respectively. The third field in the
+`Context<ROLE>` refers to the sequence number, that is initialised with
+a 0 value. See {{hpke-dem}} for a discussion of the key schedule output,
+including the role-specific Context structure and its API, and the
+usage of the sequence number.
 
 Note that the `key_schedule_context` construction in `KeySchedule()` is
 equivalent to serializing a structure of the following form in the TLS presentation
