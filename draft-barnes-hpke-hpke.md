@@ -911,9 +911,10 @@ key schedule, as they are not used by the Export interface described above.
 
 ## Encryption and Decryption {#single-shot-encryption}
 
-In many cases, applications encrypt only a single message to a recipient's public key.
-This section provides templates for HPKE APIs that implement stateless "single-shot"
-encryption and decryption using APIs specified in {{hpke-kem}} and {{hpke-dem}}:
+In many cases, applications encrypt only a single message to a recipient's
+public key.  This section provides templates for HPKE APIs that implement
+stateless "single-shot" encryption and decryption using APIs specified in
+{{encryption-context}} and {{hpke-dem}}:
 
 ~~~~~
 def Seal<MODE>(pkR, info, aad, pt, ...):
