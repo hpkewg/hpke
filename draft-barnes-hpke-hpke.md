@@ -984,7 +984,7 @@ respectively.
 
 The `Auth` column indicates if the KEM algorithm provides the `AuthEncap()`/`AuthDecap()`
 interface and is therefore suitable for the Auth and AuthPSK modes. The meaning of all
-other columns is explained in {{kem-template}}. All algorithms are suitable for the
+other columns is explained in {{Section 11.1 of ?RFC9180}}. All algorithms are suitable for the
 PSK mode.
 
 ### SerializePublicKey and DeserializePublicKey
