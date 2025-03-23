@@ -1744,66 +1744,17 @@ the last Nt bytes of the ciphertext output.
 
 # IANA Considerations {#iana}
 
-IANA has created three new registries:
+HPKE parameters are registered in three IANA registries that were created by RFC
+9180:
 
 * HPKE KEM Identifiers
 * HPKE KDF Identifiers
 * HPKE AEAD Identifiers
 
-All these registries are under "Hybrid Public Key
-Encryption", and administered under a Specification Required policy {{!RFC8126}}
+All these registries are under "Hybrid Public Key Encryption", and administered
+under a Specification Required policy {{!RFC8126}}.
 
-## KEM Identifiers {#kem-template}
-
-The "HPKE KEM Identifiers" registry lists identifiers for key encapsulation
-algorithms defined for use with HPKE.  These identifiers are two-byte values,
-so the maximum possible value is 0xFFFF = 65535.
-
-Template:
-
-* Value: The two-byte identifier for the algorithm
-* KEM: The name of the algorithm
-* Nsecret: The length in bytes of a KEM shared secret produced by the algorithm
-* Nenc: The length in bytes of an encoded encapsulated key produced by the algorithm
-* Npk: The length in bytes of an encoded public key for the algorithm
-* Nsk: The length in bytes of an encoded private key for the algorithm
-* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface
-* Reference: Where this algorithm is defined
-
-Initial contents: Provided in {{kemid-values}}
-
-## KDF Identifiers
-
-The "HPKE KDF Identifiers" registry lists identifiers for key derivation
-functions defined for use with HPKE.  These identifiers are two-byte values,
-so the maximum possible value is 0xFFFF = 65535.
-
-Template:
-
-* Value: The two-byte identifier for the algorithm
-* KDF: The name of the algorithm
-* Nh: The output size of the Extract function in bytes
-* Reference: Where this algorithm is defined
-
-Initial contents: Provided in {{kdfid-values}}
-
-## AEAD Identifiers
-
-The "HPKE AEAD Identifiers" registry lists identifiers for authenticated
-encryption with associated data (AEAD) algorithms defined for use with HPKE.
-These identifiers are two-byte values, so the maximum possible value is
-0xFFFF = 65535.
-
-Template:
-
-* Value: The two-byte identifier for the algorithm
-* AEAD: The name of the algorithm
-* Nk: The length in bytes of a key for this algorithm
-* Nn: The length in bytes of a nonce for this algorithm
-* Nt: The length in bytes of an authentication tag for this algorithm
-* Reference: Where this algorithm is defined
-
-Initial contents: Provided in {{aeadid-values}}
+This document makes no further request of IANA.
 
 --- back
 
