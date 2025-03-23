@@ -1156,7 +1156,7 @@ unlikely to be reached in practical applications. Future specifications
 that define new KDFs MUST specify bounds for these variable-length
 parameters.
 
-The RECOMMENDED limit for these values is 64 bytes. This would enable
+The RECOMMENDED limit for these values is 66 bytes. This would enable
 interoperability with implementations that statically allocate memory
 for these inputs to avoid memory allocations.
 
