@@ -5,6 +5,7 @@ docname: draft-barnes-hpke-hpke-latest
 date:
 category: std
 workgroup: HPKE
+obsoletes: 9180
 
 ipr: trust200902
 keyword: Internet-Draft
