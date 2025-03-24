@@ -1062,7 +1062,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 24 September 2025</td>
+<td class="center">Expires 25 September 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1075,12 +1075,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-barnes-hpke-hpke-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-03-23" class="published">23 March 2025</time>
+<time datetime="2025-03-24" class="published">24 March 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-09-24">24 September 2025</time></dd>
+<dd class="expires"><time datetime="2025-09-25">25 September 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1145,7 +1145,7 @@ agreement, HMAC-based key derivation function (HKDF), and SHA2.<a href="#section
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 24 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 25 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1356,6 +1356,17 @@ agreement, HMAC-based key derivation function (HKDF), and SHA2.<a href="#section
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
             <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-kem-identifiers" class="internal xref">KEM Identifiers</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-kdf-identifiers" class="internal xref">KDF Identifiers</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
+                <p id="section-toc.1-1.11.2.3.1"><a href="#section-11.3" class="auto internal xref">11.3</a>.  <a href="#name-aead-identifiers" class="internal xref">AEAD Identifiers</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
             <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-references" class="internal xref">References</a></p>
@@ -2494,7 +2505,7 @@ respectively.<a href="#section-7-1" class="pilcrow">¶</a></p>
 </div>
 <p id="section-7.1-2">The <code>Auth</code> column indicates if the KEM algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code>
 interface and is therefore suitable for the Auth and AuthPSK modes. The meaning of all
-other columns is explained in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-11.1" class="relref">Section 11.1</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>. All algorithms are suitable for the
+other columns is explained in <a href="#kem-template" class="auto internal xref">Section 11.1</a>. All algorithms are suitable for the
 PSK mode.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
 <div id="serializepublickey-and-deserializepublickey">
 <section id="section-7.1.1">
@@ -3536,8 +3547,7 @@ the last Nt bytes of the ciphertext output.<a href="#section-10-2" class="pilcro
       <h2 id="name-iana-considerations">
 <a href="#section-11" class="section-number selfRef">11. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-11-1">HPKE parameters are registered in three IANA registries that were created by RFC
-9180:<a href="#section-11-1" class="pilcrow">¶</a></p>
+<p id="section-11-1">IANA created three new registries as requested in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-11" class="relref">Section 11</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>:<a href="#section-11-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-11-2.1">
           <p id="section-11-2.1.1">HPKE KEM Identifiers<a href="#section-11-2.1.1" class="pilcrow">¶</a></p>
@@ -3549,9 +3559,108 @@ the last Nt bytes of the ciphertext output.<a href="#section-10-2" class="pilcro
           <p id="section-11-2.3.1">HPKE AEAD Identifiers<a href="#section-11-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-11-3">All these registries are under "Hybrid Public Key Encryption", and administered
-under a Specification Required policy <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-11-3" class="pilcrow">¶</a></p>
-<p id="section-11-4">This document makes no further request of IANA.<a href="#section-11-4" class="pilcrow">¶</a></p>
+<p id="section-11-3">All these registries are under "Hybrid Public Key
+Encryption", and administered under a Specification Required policy
+<span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-11-3" class="pilcrow">¶</a></p>
+<p id="section-11-4">This document requests that entries in these registries referring to RFC 9180 be
+updated to refer to this document.<a href="#section-11-4" class="pilcrow">¶</a></p>
+<div id="kem-template">
+<section id="section-11.1">
+        <h3 id="name-kem-identifiers">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-kem-identifiers" class="section-name selfRef">KEM Identifiers</a>
+        </h3>
+<p id="section-11.1-1">The "HPKE KEM Identifiers" registry lists identifiers for key encapsulation
+algorithms defined for use with HPKE.  These identifiers are two-byte values,
+so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.1-1" class="pilcrow">¶</a></p>
+<p id="section-11.1-2">Template:<a href="#section-11.1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11.1-3.1">
+            <p id="section-11.1-3.1.1">Value: The two-byte identifier for the algorithm<a href="#section-11.1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-3.2">
+            <p id="section-11.1-3.2.1">KEM: The name of the algorithm<a href="#section-11.1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-3.3">
+            <p id="section-11.1-3.3.1">Nsecret: The length in bytes of a KEM shared secret produced by the algorithm<a href="#section-11.1-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-3.4">
+            <p id="section-11.1-3.4.1">Nenc: The length in bytes of an encoded encapsulated key produced by the algorithm<a href="#section-11.1-3.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-3.5">
+            <p id="section-11.1-3.5.1">Npk: The length in bytes of an encoded public key for the algorithm<a href="#section-11.1-3.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-3.6">
+            <p id="section-11.1-3.6.1">Nsk: The length in bytes of an encoded private key for the algorithm<a href="#section-11.1-3.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-3.7">
+            <p id="section-11.1-3.7.1">Auth: A boolean indicating if this algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code> interface<a href="#section-11.1-3.7.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-3.8">
+            <p id="section-11.1-3.8.1">Reference: Where this algorithm is defined<a href="#section-11.1-3.8.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-11.1-4">Initial contents: Provided in <a href="#kemid-values" class="auto internal xref">Table 2</a><a href="#section-11.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="kdf-identifiers">
+<section id="section-11.2">
+        <h3 id="name-kdf-identifiers">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-kdf-identifiers" class="section-name selfRef">KDF Identifiers</a>
+        </h3>
+<p id="section-11.2-1">The "HPKE KDF Identifiers" registry lists identifiers for key derivation
+functions defined for use with HPKE.  These identifiers are two-byte values,
+so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.2-1" class="pilcrow">¶</a></p>
+<p id="section-11.2-2">Template:<a href="#section-11.2-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11.2-3.1">
+            <p id="section-11.2-3.1.1">Value: The two-byte identifier for the algorithm<a href="#section-11.2-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.2-3.2">
+            <p id="section-11.2-3.2.1">KDF: The name of the algorithm<a href="#section-11.2-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.2-3.3">
+            <p id="section-11.2-3.3.1">Nh: The output size of the Extract function in bytes<a href="#section-11.2-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.2-3.4">
+            <p id="section-11.2-3.4.1">Reference: Where this algorithm is defined<a href="#section-11.2-3.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-11.2-4">Initial contents: Provided in <a href="#kdfid-values" class="auto internal xref">Table 3</a><a href="#section-11.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="aead-identifiers">
+<section id="section-11.3">
+        <h3 id="name-aead-identifiers">
+<a href="#section-11.3" class="section-number selfRef">11.3. </a><a href="#name-aead-identifiers" class="section-name selfRef">AEAD Identifiers</a>
+        </h3>
+<p id="section-11.3-1">The "HPKE AEAD Identifiers" registry lists identifiers for authenticated
+encryption with associated data (AEAD) algorithms defined for use with HPKE.
+These identifiers are two-byte values, so the maximum possible value is
+0xFFFF = 65535.<a href="#section-11.3-1" class="pilcrow">¶</a></p>
+<p id="section-11.3-2">Template:<a href="#section-11.3-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11.3-3.1">
+            <p id="section-11.3-3.1.1">Value: The two-byte identifier for the algorithm<a href="#section-11.3-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.3-3.2">
+            <p id="section-11.3-3.2.1">AEAD: The name of the algorithm<a href="#section-11.3-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.3-3.3">
+            <p id="section-11.3-3.3.1">Nk: The length in bytes of a key for this algorithm<a href="#section-11.3-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.3-3.4">
+            <p id="section-11.3-3.4.1">Nn: The length in bytes of a nonce for this algorithm<a href="#section-11.3-3.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.3-3.5">
+            <p id="section-11.3-3.5.1">Nt: The length in bytes of an authentication tag for this algorithm<a href="#section-11.3-3.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.3-3.6">
+            <p id="section-11.3-3.6.1">Reference: Where this algorithm is defined<a href="#section-11.3-3.6.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-11.3-4">Initial contents: Provided in <a href="#aeadid-values" class="auto internal xref">Table 5</a><a href="#section-11.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="sec-combined-references">
