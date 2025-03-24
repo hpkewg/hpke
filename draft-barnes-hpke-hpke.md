@@ -668,7 +668,7 @@ def KeySchedule<ROLE>(mode, shared_secret, info, psk, psk_id):
 ~~~~~
 
 The `ROLE` template parameter is either S or R, depending on the role
-of sender or recipient, respectively. The third field in the
+of sender or recipient, respectively. The third parameter in the
 `Context<ROLE>` refers to the sequence number, that is initialised with
 a 0 value. See {{hpke-dem}} for a discussion of the key schedule output,
 including the role-specific Context structure and its API, and the
