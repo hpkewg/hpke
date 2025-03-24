@@ -597,7 +597,7 @@ Senders and recipients MUST validate KEM inputs and outputs as described
 in {{kem-ids}}.
 
 The `info` parameter used by HPKE is not related to the optional string `info`
-used by the `LabeledExpand()` or `Expand()` functions detailed in {base-crypto}.
+used by the `LabeledExpand()` or `Expand()` functions detailed in {{base-crypto}}.
 
 The `psk` and `psk_id` parameters MUST appear together or not at all.
 That is, if a non-default value is provided for one of them, then
