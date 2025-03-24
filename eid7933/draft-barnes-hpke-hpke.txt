@@ -5,11 +5,11 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 24 September 2025                                       B. Lipp
+Expires: 25 September 2025                                       B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                           23 March 2025
+                                                           24 March 2025
 
 
                       Hybrid Public Key Encryption
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 September 2025.
+   This Internet-Draft will expire on 25 September 2025.
 
 Copyright Notice
 
@@ -648,7 +648,7 @@ Table of Contents
      return Context<ROLE>(key, base_nonce, 0, exporter_secret)
 
    The ROLE template parameter is either S or R, depending on the role
-   of sender or recipient, respectively.  The third field in the
+   of sender or recipient, respectively.  The third parameter in the
    Context<ROLE> refers to the sequence number, that is initialised with
    a 0 value.  See Section 5.2 for a discussion of the key schedule
    output, including the role-specific Context structure and its API,
