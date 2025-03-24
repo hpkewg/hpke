@@ -5,11 +5,11 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 24 September 2025                                       B. Lipp
+Expires: 25 September 2025                                       B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                           23 March 2025
+                                                           24 March 2025
 
 
                       Hybrid Public Key Encryption
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 September 2025.
+   This Internet-Draft will expire on 25 September 2025.
 
 Copyright Notice
 
@@ -581,7 +581,7 @@ Table of Contents
 
    The info parameter used by HPKE is not related to the optional string
    info used by the LabeledExpand() or Expand() functions detailed in
-   {base-crypto}.
+   Section 4.
 
    The psk and psk_id parameters MUST appear together or not at all.
    That is, if a non-default value is provided for one of them, then the
