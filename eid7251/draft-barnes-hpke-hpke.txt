@@ -5,11 +5,11 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 24 September 2025                                       B. Lipp
+Expires: 27 September 2025                                       B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                           23 March 2025
+                                                           26 March 2025
 
 
                       Hybrid Public Key Encryption
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 September 2025.
+   This Internet-Draft will expire on 27 September 2025.
 
 Copyright Notice
 
@@ -1162,9 +1162,14 @@ Table of Contents
    Future specifications that define new KDFs MUST specify bounds for
    these variable-length parameters.
 
-   The RECOMMENDED limit for these values is 66 bytes.  This would
-   enable interoperability with implementations that statically allocate
-   memory for these inputs to avoid memory allocations.
+   Since the above bounds are larger than any values used in practice,
+   it may be useful for implementations to impose a lower limit on the
+   values they will accept (for example, to avoid dynamic allocations).
+   Implementations SHOULD set such a limit to be no less than maximum
+   Nsk size for a KEM supported by the implementation.  For an
+   implementation that supports all of the KEMs in this document, the
+   limit would be 66 bytes, which is hte Nsk value for DHKEM(P-521,
+   HKDF-SHA512).
 
    The values for psk, psk_id, info, and ikm, which are inputs to
    LabeledExtract(), were computed with the following expression:
