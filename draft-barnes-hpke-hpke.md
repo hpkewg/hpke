@@ -1161,7 +1161,7 @@ useful for implementations to impose a lower limit on the values they will
 accept (for example, to avoid dynamic allocations).  Implementations SHOULD set
 such a limit to be no less than maximum `Nsk` size for a KEM supported by the
 implementation.  For an implementation that supports all of the KEMs in this
-document, the limit would be 66 bytes, which is hte `Nsk` value for DHKEM(P-521,
+document, the limit would be 66 bytes, which is the `Nsk` value for DHKEM(P-521,
 HKDF-SHA512).
 
 The values for `psk`, `psk_id`, `info`, and `ikm`, which are inputs to
