@@ -5,11 +5,11 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 27 September 2025                                       B. Lipp
+Expires: 28 September 2025                                       B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                           26 March 2025
+                                                           27 March 2025
 
 
                       Hybrid Public Key Encryption
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 September 2025.
+   This Internet-Draft will expire on 28 September 2025.
 
 Copyright Notice
 
@@ -1168,7 +1168,7 @@ Table of Contents
    Implementations SHOULD set such a limit to be no less than maximum
    Nsk size for a KEM supported by the implementation.  For an
    implementation that supports all of the KEMs in this document, the
-   limit would be 66 bytes, which is hte Nsk value for DHKEM(P-521,
+   limit would be 66 bytes, which is the Nsk value for DHKEM(P-521,
    HKDF-SHA512).
 
    The values for psk, psk_id, info, and ikm, which are inputs to
