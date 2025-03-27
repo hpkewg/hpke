@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-25T01:15:08.649254+00:00",
+  "timestamp": "2025-03-27T01:14:21.483033+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -74,11 +74,13 @@
       "state": "OPEN",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "bifurcation"
+      ],
       "labels": [],
       "body": "RFC 9180 has had several errata filed on it:\n\n* Verified\n    * [X] https://www.rfc-editor.org/errata/eid6941\n    * [X] https://www.rfc-editor.org/errata/eid7790\n    * [x] https://www.rfc-editor.org/errata/eid7934\n    * [X] https://www.rfc-editor.org/errata/eid7937\n    * [X] https://www.rfc-editor.org/errata/eid7932\n* HFDU\n    * [X] https://www.rfc-editor.org/errata/eid7251\n    * [X] https://www.rfc-editor.org/errata/eid7933\n\nThey should be addressed in this new document.",
       "createdAt": "2025-03-20T10:07:00Z",
-      "updatedAt": "2025-03-23T21:06:39Z",
+      "updatedAt": "2025-03-25T17:23:32Z",
       "closedAt": null,
       "comments": []
     },
@@ -110,7 +112,7 @@
       "labels": [],
       "body": "HPKE needs to have ciphersuites that are resistant to attack by a quantum computer.  We should define a set of PQ ciphersuites that address common use cases:\n\n* [ ] Hybrid: DHKEM(X25519) + ML-KEM-768\n* [ ] Hybrid: DHKEM(P-256) + ML-KEM-768\n* [ ] Hybrid: DHKEM(P-384) + ML-KEM-1024\n* [ ] Pre PQ: ML-KEM-768\n* [ ] Pre PQ: ML-KEM-1024",
       "createdAt": "2025-03-20T10:11:02Z",
-      "updatedAt": "2025-03-24T17:38:57Z",
+      "updatedAt": "2025-03-25T01:33:16Z",
       "closedAt": "2025-03-23T21:07:04Z",
       "comments": [
         {
@@ -133,6 +135,13 @@
           "body": "Repos are cheap, and the tooling seems oriented toward one draft per repo.",
           "createdAt": "2025-03-24T17:38:56Z",
           "updatedAt": "2025-03-24T17:38:56Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "body": "Agree with the former, but I'll object to the latter.  The tooling works perfectly well with multiple drafts in a repo.",
+          "createdAt": "2025-03-25T01:33:14Z",
+          "updatedAt": "2025-03-25T01:33:14Z"
         }
       ]
     },
@@ -235,13 +244,13 @@
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid7251",
       "createdAt": "2025-03-23T04:54:44Z",
-      "updatedAt": "2025-03-24T06:22:32Z",
+      "updatedAt": "2025-03-27T00:19:36Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid7251",
-      "headRefOid": "3bd77475580ba40742e8eb942759ae465c70ea4a",
+      "headRefOid": "f31aad0c4cf851f641b0413e749da1aa2f682b8a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -265,6 +274,46 @@
               "body": "This one took me an age to understand.  The section is talking about input length, with a table of input lengths that contains very large numbers, but what this refers to is the length of the prefix label.\r\n\r\n```suggestion\r\nThe RECOMMENDED limit for these prefixes is 66 bytes. This would enable\r\n```\r\n\r\nDo the numbers in the table need to be tweaked to match?",
               "createdAt": "2025-03-24T06:22:30Z",
               "updatedAt": "2025-03-24T06:22:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86iDHwY",
+          "commit": {
+            "abbreviatedOid": "3bd7747"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-26T22:13:27Z",
+          "updatedAt": "2025-03-26T22:13:32Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "No, I think this is about the values, not the prefixes.  In the sense that, while the bounds above are huge, in practice, you basically never need something more than 64 bytes.  (64 bytes should be enough for anyone!)  I'll try rewording to clarify this.",
+              "createdAt": "2025-03-26T22:13:27Z",
+              "updatedAt": "2025-03-26T22:13:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86iDwBQ",
+          "commit": {
+            "abbreviatedOid": "f31aad0"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "Much better, thanks.",
+          "createdAt": "2025-03-27T00:19:29Z",
+          "updatedAt": "2025-03-27T00:19:36Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "```suggestion\r\ndocument, the limit would be 66 bytes, which is the `Nsk` value for DHKEM(P-521,\r\n```",
+              "createdAt": "2025-03-27T00:19:29Z",
+              "updatedAt": "2025-03-27T00:19:36Z"
             }
           ]
         }
@@ -564,7 +613,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-03-24T17:44:23Z",
-      "updatedAt": "2025-03-24T17:44:23Z",
+      "updatedAt": "2025-03-25T01:33:29Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
@@ -576,7 +625,21 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOOLtax86hpp9y",
+          "commit": {
+            "abbreviatedOid": "aeb50a7"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-25T01:33:29Z",
+          "updatedAt": "2025-03-25T01:33:29Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
