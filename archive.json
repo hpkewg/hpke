@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-27T01:14:21.483033+00:00",
+  "timestamp": "2025-03-30T01:20:17.289968+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -244,13 +244,13 @@
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid7251",
       "createdAt": "2025-03-23T04:54:44Z",
-      "updatedAt": "2025-03-27T00:19:36Z",
+      "updatedAt": "2025-03-27T13:31:14Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid7251",
-      "headRefOid": "f31aad0c4cf851f641b0413e749da1aa2f682b8a",
+      "headRefOid": "0dd09d8a4d2885bc8029c7a6f1f33e0968a523e5",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
