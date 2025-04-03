@@ -283,7 +283,7 @@ chosen ciphertext attacks (IND-CCA2-secure) under classical assumptions about
 the underlying primitives {{HPKEAnalysis}} {{ABHKLR20}}. A summary of
 these analyses is in {{sec-properties}}.
 
-This document represents the consensus of the Crypto Forum Research Group (CFRG).
+This document represents the consensus of the Crypto Forum Research Group (CFRG).  
 
 # Requirements Notation
 
@@ -291,7 +291,10 @@ This document represents the consensus of the Crypto Forum Research Group (CFRG)
 
 # Notation
 
-The following terms are used throughout this document to describe the
+
+
+
+The following terms are used throughout this document to describe the 
 operations, roles, and behaviors of HPKE:
 
 - `(skX, pkX)`: A key encapsulation mechanism (KEM) key pair used in role X,
