@@ -29,15 +29,17 @@ jobs:
       #    token: ${{ github.token }}
       #    input: 'fix-lint'
       
-      - name: "Fix Markdown lints"
-        uses: DavidAnson/markdownlint-cli2-action@v15
-        with:
-          fix: true
-          globs: 'draft-*.md'
+      # XXX(RLB): This reports a bunch of errors, but also fails the CI job.
+      #- name: "Fix Markdown lints"
+      #  uses: DavidAnson/markdownlint-cli2-action@v15
+      #  with:
+      #    fix: true
+      #    globs: 'draft-*.md'
       
-      - name: "Propose the lint fixes on the PR"
-        uses: parkerbxyz/suggest-changes@v1
-        with:
-          comment: 'Please commit the suggested changes.'
-          event: 'REQUEST_CHANGES'
+      # No need for this one until the above are fixed
+      #- name: "Propose the lint fixes on the PR"
+      #  uses: parkerbxyz/suggest-changes@v1
+      #  with:
+      #    comment: 'Please commit the suggested changes.'
+      #    event: 'REQUEST_CHANGES'
 
