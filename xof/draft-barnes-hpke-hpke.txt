@@ -5,11 +5,11 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 25 September 2025                                       B. Lipp
+Expires: 30 October 2025                                         B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                           24 March 2025
+                                                           28 April 2025
 
 
                       Hybrid Public Key Encryption
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 September 2025.
+   This Internet-Draft will expire on 30 October 2025.
 
 Copyright Notice
 
@@ -248,6 +248,11 @@ Table of Contents
    *  concat(x0, ..., xN): Concatenation of byte strings. concat(0x01,
       0x0203, 0x040506) = 0x010203040506.
 
+   *  lengthPrefixed(x): The two-byte length of the byte string x,
+      concatenated with x itself.  (lengthPrefixed(x) =
+      concat(I2OSP(len(x), 2), x)) It is an error to call this function
+      with an x value that is more than 65535 bytes long.
+
    *  random(n): A pseudorandom byte string of length n bytes
 
    *  xor(a,b): XOR of byte strings; xor(0xF0F0, 0x1234) = 0xE2C4.  It
@@ -305,16 +310,25 @@ Table of Contents
       -  Nsk: The length in bytes of an encoded private key for this
          KEM.
 
-   *  A key derivation function (KDF):
+   *  A key derivation function (KDF) of one of the two following forms:
 
-      -  Extract(salt, ikm): Extract a pseudorandom key of fixed length
-         Nh bytes from input keying material ikm and an optional byte
-         string salt.
+      -  A single-stage KDF:
 
-      -  Expand(prk, info, L): Expand a pseudorandom key prk using
-         optional string info into L bytes of output keying material.
+         o  Derive(ikm, L): Derive an L-byte value from the input keying
+            material ikm.
 
-      -  Nh: The output size of the Extract() function in bytes.
+         o  Nh The security strength of the KDF, in bytes.
+
+      -  A two-stage KDF:
+
+         o  Extract(salt, ikm): Extract a pseudorandom key of fixed
+            length Nh bytes from input keying material ikm and an
+            optional byte string salt.
+
+         o  Expand(prk, info, L): Expand a pseudorandom key prk using
+            optional string info into L bytes of output keying material.
+
+         o  Nh: The output size of the Extract() function in bytes.
 
    *  An AEAD encryption algorithm [RFC5116]:
 
@@ -360,8 +374,8 @@ Table of Contents
    private key, or just syntax expressing the retrieval of the public
    key, assuming it is stored along with the private key object.
 
-   The following two functions are defined to facilitate domain
-   separation of KDF calls as well as context binding:
+   The following functions are defined to facilitate domain separation
+   of KDF calls as well as context binding:
 
    def LabeledExtract(salt, label, ikm):
      labeled_ikm = concat("HPKE-v1", suite_id, label, ikm)
@@ -371,6 +385,10 @@ Table of Contents
      labeled_info = concat(I2OSP(L, 2), "HPKE-v1", suite_id,
                            label, info)
      return Expand(prk, labeled_info, L)
+
+   def LabeledDerive(ikm, label, L):
+     labeled_ikm = concat("HPKE_v1", suite_id, label, ikm)
+     return Derive(labeled_ikm, L)
 
    The value of suite_id depends on where the KDF is used; it is assumed
    implicit from the implementation and not passed as a parameter.  If
@@ -406,6 +424,15 @@ Table of Contents
    the DeriveKeyPair() function specification for DHKEMs defined in this
    document.
 
+   # For use with single-stage KDFs
+   def ExtractAndExpand(dh, kem_context):
+     derive_input = concat(
+       lengthPrefixed(dh),
+       lengthPrefixed(shared_secret)
+     )
+     return LabeledDerive(derive_input, "shared_secret", Nsecret)
+
+   # For use with two-stage KDFs
    def ExtractAndExpand(dh, kem_context):
      eae_prk = LabeledExtract("", "eae_prk", dh)
      shared_secret = LabeledExpand(eae_prk, "shared_secret",
@@ -456,19 +483,19 @@ Table of Contents
      shared_secret = ExtractAndExpand(dh, kem_context)
      return shared_secret
 
-   The implicit suite_id value used within LabeledExtract and
-   LabeledExpand is defined as follows, where kem_id is defined in
-   Section 7.1:
+   The implicit suite_id value used within LabeledExtract,
+   LabeledExpand, and LabeledDerive is defined as follows, where kem_id
+   is defined in Section 7.1:
 
    suite_id = concat("KEM", I2OSP(kem_id, 2))
 
    The KDF used in DHKEM can be equal to or different from the KDF used
    in the remainder of HPKE, depending on the chosen variant.
    Implementations MUST make sure to use the constants (Nh) and function
-   calls (LabeledExtract and LabeledExpand) of the appropriate KDF when
-   implementing DHKEM.  See Section 9.3 for a comment on the choice of a
-   KDF for the remainder of HPKE, and Section 9.6 for the rationale of
-   the labels.
+   calls (LabeledExtract, LabeledExpand, and LabeledDerive) of the
+   appropriate KDF when implementing DHKEM.  See Section 9.3 for a
+   comment on the choice of a KDF for the remainder of HPKE, and
+   Section 9.6 for the rationale of the labels.
 
    For the variants of DHKEM defined in this document, the size Nsecret
    of the KEM shared secret is equal to the output length of the hash
@@ -579,17 +606,13 @@ Table of Contents
    Senders and recipients MUST validate KEM inputs and outputs as
    described in Section 7.1.
 
-   The info parameter used by HPKE is not related to the optional string
-   info used by the LabeledExpand() or Expand() functions detailed in
-   Section 4.
-
-   The psk and psk_id parameters MUST appear together or not at all.
-   That is, if a non-default value is provided for one of them, then the
+   The psk and psk_id fields MUST appear together or not at all.  That
+   is, if a non-default value is provided for one of them, then the
    other MUST be set to a non-default value.  This requirement is
    encoded in VerifyPSKInputs() below.
 
-   The psk, psk_id, and info parameters have maximum lengths that depend
-   on the KDF itself, on the definition of LabeledExtract(), and on the
+   The psk, psk_id, and info fields have maximum lengths that depend on
+   the KDF itself, on the definition of LabeledExtract(), and on the
    constant labels used together with them.  See Section 7.2.1 for
    precise limits on these lengths.
 
@@ -610,8 +633,8 @@ Table of Contents
    AEAD aead_id 2-byte code points, as defined in Table 2, Table 3, and
    Table 5, respectively, are assumed implicit from the implementation
    and not passed as parameters.  The implicit suite_id value used
-   within LabeledExtract and LabeledExpand is defined based on them as
-   follows:
+   within LabeledExtract, LabeledExpand, and LabeledDerive is defined
+   based on them as follows:
 
    suite_id = concat(
      "HPKE",
@@ -634,9 +657,26 @@ Table of Contents
      if (not got_psk) and (mode in [mode_psk, mode_auth_psk]):
        raise Exception("Missing required PSK input")
 
-   def KeySchedule<ROLE>(mode, shared_secret, info, psk, psk_id):
-     VerifyPSKInputs(mode, psk, psk_id)
+   # For use with a single-stage KDF
+   def CombineSecrets(mode, shared_secret, info, psk, psk_id):
+     derive_input = concat(
+       lengthPrefixed(psk),
+       lengthPrefixed(shared_secret),
+       mode,
+       lengthPrefixed(psk_id),
+       lengthPrefixed(info),
+     )
 
+     secret = LabeledDerive(derive_input, "secret", Nk + Nn + Nh)
+
+     key = secret[:Nk]
+     base_nonce = secret[Nk:(Nk + Nn)]
+     exporter_secret = secret[(Nk + Nn):]
+
+     return (key, base_nonce, exporter_secret)
+
+   # For use with a two-stage KDF
+   def CombineSecrets(mode, shared_secret, info, psk, psk_id):
      psk_id_hash = LabeledExtract("", "psk_id_hash", psk_id)
      info_hash = LabeledExtract("", "info_hash", info)
      key_schedule_context = concat(mode, psk_id_hash, info_hash)
@@ -648,6 +688,14 @@ Table of Contents
                                 key_schedule_context, Nn)
      exporter_secret = LabeledExpand(secret, "exp",
                                      key_schedule_context, Nh)
+
+     return (key, base_nonce, exporter_secret)
+
+   def KeySchedule<ROLE>(mode, shared_secret, info, psk, psk_id):
+     VerifyPSKInputs(mode, psk, psk_id)
+
+     key, base_nonce, exporter_secret =
+       CombineSecrets(mode, shared_secret, info, psk, psk_id)
 
      return Context<ROLE>(key, base_nonce, 0, exporter_secret)
 
@@ -854,8 +902,8 @@ Table of Contents
    It is up to the application to ensure that encryptions and
    decryptions are done in the proper sequence, so that encryption and
    decryption nonces align.  If ContextS.Seal() or ContextR.Open() would
-   cause the seq parameter to overflow, then the implementation MUST
-   fail with an error.  (In the pseudocode below,
+   cause the seq field to overflow, then the implementation MUST fail
+   with an error.  (In the pseudocode below,
    Context<ROLE>.IncrementSeq() fails with an error when seq overflows,
    which causes ContextS.Seal() and ContextR.Open() to fail
    accordingly.)  Note that the internal Seal() and Open() calls inside
@@ -873,11 +921,17 @@ Table of Contents
    255*Nh.  Future specifications that define new KDFs MUST specify a
    bound for L.
 
-   The exporter_context parameter has a maximum length that depends on
-   the KDF itself, on the definition of LabeledExpand(), and on the
-   constant labels used together with them.  See Section 7.2.1 for
-   precise limits on this length.
+   The exporter_context field has a maximum length that depends on the
+   KDF itself, on the definition of LabeledExpand(), and on the constant
+   labels used together with them.  See Section 7.2.1 for precise limits
+   on this length.
 
+   # For use with a single-stage KDF
+   def Context.Export(exporter_context, L):
+     derive_input = concat(self.exporter_secret, exporter_context)
+     return LabeledDerive(derive_input, "sec", L)
+
+   # For use with a two-stage KDF
    def Context.Export(exporter_context, L):
      return LabeledExpand(self.exporter_secret, "sec",
                           exporter_context, L)
@@ -1038,15 +1092,25 @@ Table of Contents
    For P-256, P-384, and P-521, the DeriveKeyPair() function of the KEM
    performs rejection sampling over field elements:
 
-   def DeriveKeyPair(ikm):
+   # For use with a single-stage KDF
+   def DeriveCandidate(ikm, counter):
+     derive_input = concat(I2OSP(counter, 1), ikm)
+     return LabeledDerive(derive_input, "candidate", Nsk)
+
+   # For use with a two-stage KDF
+   def DeriveCandidate(ikm, counter):
+     # Note: dkp_prk may be derived once and cached
      dkp_prk = LabeledExtract("", "dkp_prk", ikm)
+     return LabeledExpand(dkp_prk, "candidate",
+                             I2OSP(counter, 1), Nsk)
+
+   def DeriveKeyPair(ikm):
      sk = 0
      counter = 0
      while sk == 0 or sk >= order:
        if counter > 255:
          raise DeriveKeyPairError
-       bytes = LabeledExpand(dkp_prk, "candidate",
-                             I2OSP(counter, 1), Nsk)
+       bytes = DeriveCandidate(ikm, counter)
        bytes[0] = bytes[0] & bitmask
        sk = OS2IP(bytes)
        counter = counter + 1
@@ -1075,6 +1139,12 @@ Table of Contents
    For X25519 and X448, the DeriveKeyPair() function applies a KDF to
    the input:
 
+   # For use with a single-stage KDF
+   def DeriveKeyPair(ikm):
+     sk = LabeledDerive(ikm, "sk", Nsk)
+     return (sk, pk(sk))
+
+   # For use with a two-stage KDF
    def DeriveKeyPair(ikm):
      dkp_prk = LabeledExtract("", "dkp_prk", ikm)
      sk = LabeledExpand(dkp_prk, "sk", "", Nsk)
@@ -1117,21 +1187,24 @@ Table of Contents
 
 7.2.  Key Derivation Functions (KDFs)
 
-                +========+=============+=====+===========+
-                | Value  | KDF         | Nh  | Reference |
-                +========+=============+=====+===========+
-                | 0x0000 | Reserved    | N/A | RFC 9180  |
-                +--------+-------------+-----+-----------+
-                | 0x0001 | HKDF-SHA256 | 32  | [RFC5869] |
-                +--------+-------------+-----+-----------+
-                | 0x0002 | HKDF-SHA384 | 48  | [RFC5869] |
-                +--------+-------------+-----+-----------+
-                | 0x0003 | HKDF-SHA512 | 64  | [RFC5869] |
-                +--------+-------------+-----+-----------+
+          +========+=============+=====+===========+===========+
+          | Value  | KDF         | Nh  | Two-Stage | Reference |
+          +========+=============+=====+===========+===========+
+          | 0x0000 | Reserved    | N/A | N/A       | RFC 9180  |
+          +--------+-------------+-----+-----------+-----------+
+          | 0x0001 | HKDF-SHA256 | 32  | Y         | [RFC5869] |
+          +--------+-------------+-----+-----------+-----------+
+          | 0x0002 | HKDF-SHA384 | 48  | Y         | [RFC5869] |
+          +--------+-------------+-----+-----------+-----------+
+          | 0x0003 | HKDF-SHA512 | 64  | Y         | [RFC5869] |
+          +--------+-------------+-----+-----------+-----------+
 
                              Table 3: KDF IDs
 
 7.2.1.  Input Length Restrictions
+
+   [[ TODO(RLB): Determine what this section should say about single-
+   stage KDFs. ]]
 
    This document defines LabeledExtract() and LabeledExpand() based on
    the KDFs listed above.  These functions add prefixes to their
@@ -1140,7 +1213,7 @@ Table of Contents
    length that is available for the inputs psk, psk_id, info,
    exporter_context, ikm, i.e., the variable-length parameters provided
    by HPKE applications.  The following table lists the maximum allowed
-   lengths of these parameters for the KDFs defined in this document, as
+   lengths of these fields for the KDFs defined in this document, as
    inclusive bounds in bytes:
 
     +==================+==============+===============+===============+
@@ -1625,30 +1698,35 @@ Table of Contents
    HPKE use separate input domains.  This justifies modeling them as
    independent functions even if instantiated by the same KDF.  This
    domain separation between DHKEM and the remainder of HPKE is achieved
-   by using prefix-free sets of suite_id values in LabeledExtract() and
-   LabeledExpand() (KEM... in DHKEM and HPKE... in the remainder of
-   HPKE).  Recall that a set is prefix-free if no element is a prefix of
-   another within the set.
+   by using prefix-free sets of suite_id values in LabeledExtract(),
+   LabeledExpand(), and LabeledDerive (KEM... in DHKEM and HPKE... in
+   the remainder of HPKE).  Recall that a set is prefix-free if no
+   element is a prefix of another within the set.
 
-   Future KEM instantiations MUST ensure, should Extract() and Expand()
-   be used internally, that they can be modeled as functions independent
-   from the invocations of Extract() and Expand() in the remainder of
-   HPKE.  One way to ensure this is by using LabeledExtract() and
-   LabeledExpand() with a suite_id as defined in Section 4, which will
-   ensure input domain separation, as outlined above.  Particular
-   attention needs to be paid if the KEM directly invokes functions that
-   are used internally in HPKE's Extract() or Expand(), such as Hash()
-   and HMAC() in the case of HKDF.  It MUST be ensured that inputs to
-   these invocations cannot collide with inputs to the internal
-   invocations of these functions inside Extract() or Expand().  In
-   HPKE's KeySchedule() this is avoided by using Extract() instead of
-   Hash() on the arbitrary-length inputs info and psk_id.
+   Separation between uses of the single-stage and two-stage KDFs is
+   ensured by the inclusion of the suite_id in LabeledExtract,
+   LabeledExpand, and LabeledDerive.
 
-   The string literal "HPKE-v1" used in LabeledExtract() and
-   LabeledExpand() ensures that any secrets derived in HPKE are bound to
-   the scheme's name and version, even when possibly derived from the
-   same Diffie-Hellman or KEM shared secret as in another scheme or
-   version.
+   Future KEM instantiations MUST ensure, should Extract(), Expand(),
+   and/or Derive() be used internally, that they can be modeled as
+   functions independent from the invocations of these functions in the
+   remainder of HPKE.  One way to ensure this is by using
+   LabeledExtract() / LabeledExpand() / LabeledDerive() functions with a
+   suite_id as defined in Section 4, which will ensure input domain
+   separation, as outlined above.  Particular attention needs to be paid
+   if the KEM directly invokes functions that are used internally in
+   HPKE's Extract() or Expand(), such as Hash() and HMAC() in the case
+   of HKDF.  It MUST be ensured that inputs to these invocations cannot
+   collide with inputs to the internal invocations of these functions
+   inside Extract() or Expand().  In HPKE's KeySchedule() this is
+   avoided by using Extract() instead of Hash() on the arbitrary-length
+   inputs info and psk_id.
+
+   The string literal "HPKE-v1" used in LabeledExtract() /
+   LabeledExpand() / LabeledDerive() ensures that any secrets derived in
+   HPKE are bound to the scheme's name and version, even when possibly
+   derived from the same Diffie-Hellman or KEM shared secret as in
+   another scheme or version.
 
 9.7.  Application Embedding and Non-Goals
 
@@ -1866,9 +1944,19 @@ Table of Contents
 
    *  Nh: The output size of the Extract function in bytes
 
+   *  Two-Stage: Whether this is a two-stage KDF.  Allowed values are:
+
+      -  "Y" - This is a two-stage KDF
+
+      -  "N" - This is a single-stage KDF
+
    *  Reference: Where this algorithm is defined
 
    Initial contents: Provided in Table 3
+
+   This document updates the existing registry by adding the "Two-Stage"
+   column.  Existing registry values should be updated with a value of
+   "Y" in this column, as reflected in Table 3.
 
 11.3.  AEAD Identifiers
 
@@ -1952,6 +2040,11 @@ Table of Contents
               Public-Key Encryption Schemes Secure against Adaptive
               Chosen Ciphertext Attack", 2001,
               <https://eprint.iacr.org/2001/108>.
+
+   [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
+              output functions", National Institute of Standards and
+              Technology (U.S.), DOI 10.6028/nist.fips.202, 2015,
+              <https://doi.org/10.6028/nist.fips.202>.
 
    [GAP]      Okamoto, T. and D. Pointcheval, "The Gap-Problems - a New
               Class of Problems for the Security of Cryptographic
