@@ -418,7 +418,7 @@ def LabeledExpand(prk, label, info, L):
   return Expand(prk, labeled_info, L)
 
 def LabeledDerive(ikm, label, L):
-  labeled_ikm = concat("HPKE_v1", suite_id, label, ikm)
+  labeled_ikm = concat("HPKE_v1", suite_id, label, I2OSP(L, 2), ikm)
   return Derive(labeled_ikm, L)
 ~~~
 
