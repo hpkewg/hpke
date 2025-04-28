@@ -226,7 +226,7 @@ informative:
   keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
 
   NISTCurves: DOI.10.6028/NIST.FIPS.186-4
-  
+
   FIPS202: DOI.10.6028/NIST.FIPS.202
 
   GCM: DOI.10.6028/NIST.SP.800-38D
@@ -358,7 +358,7 @@ HPKE variants rely on the following primitives:
     - `Derive(ikm, L)`: Derive an `L`-byte value from the input keying material
       `ikm`.
     - `Nh` The security strength of the KDF, in bytes.
-  
+
   * A two-stage KDF:
     - `Extract(salt, ikm)`: Extract a pseudorandom key of fixed length `Nh` bytes
       from input keying material `ikm` and an optional byte string
@@ -456,7 +456,7 @@ for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
 # For use with single-stage KDFs
 def ExtractAndExpand(dh, kem_context):
   derive_input = concat(
-    lengthPrefixed(dh), 
+    lengthPrefixed(dh),
     lengthPrefixed(shared_secret)
   )
   return LabeledDerive(derive_input, "shared_secret", Nsecret)
@@ -713,7 +713,7 @@ def KeySchedule<ROLE>(mode, shared_secret, info, psk, psk_id):
 
   key, base_nonce, exporter_secret =
     CombineSecrets(mode, shared_secret, info, psk, psk_id)
-  
+
   return Context<ROLE>(key, base_nonce, 0, exporter_secret)
 ~~~~~
 
