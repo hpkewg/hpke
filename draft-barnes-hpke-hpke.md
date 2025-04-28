@@ -1194,12 +1194,12 @@ algorithm whose output length is `Npk`.
 
 ## Key Derivation Functions (KDFs) {#kdf-ids}
 
-| Value  | KDF         | Nh  | Reference    |
-|:-------|:------------|-----|:-------------|
-| 0x0000 | Reserved    | N/A | RFC 9180     |
-| 0x0001 | HKDF-SHA256 | 32  | {{?RFC5869}} |
-| 0x0002 | HKDF-SHA384 | 48  | {{?RFC5869}} |
-| 0x0003 | HKDF-SHA512 | 64  | {{?RFC5869}} |
+| Value  | KDF         | Nh  | Two-Stage | Reference    |
+|:-------|:------------|-----|-----------|:-------------|
+| 0x0000 | Reserved    | N/A | N/A       | RFC 9180     |
+| 0x0001 | HKDF-SHA256 | 32  | Y         | {{?RFC5869}} |
+| 0x0002 | HKDF-SHA384 | 48  | Y         | {{?RFC5869}} |
+| 0x0003 | HKDF-SHA512 | 64  | Y         | {{?RFC5869}} |
 {: #kdfid-values title="KDF IDs"}
 
 ### Input Length Restrictions {#kdf-input-length}
@@ -1861,9 +1861,16 @@ Template:
 * Value: The two-byte identifier for the algorithm
 * KDF: The name of the algorithm
 * Nh: The output size of the Extract function in bytes
+* Two-Stage: Whether this is a two-stage KDF.  Allowed values are:
+    * "Y" - This is a two-stage KDF
+    * "N" - This is a single-stage KDF
 * Reference: Where this algorithm is defined
 
 Initial contents: Provided in {{kdfid-values}}
+
+This document updates the existing registry by adding the "Two-Stage" column.
+Existing registry values should be updated with a value of "Y" in this column,
+as reflected in {{kdfid-values}}.
 
 ## AEAD Identifiers
 
