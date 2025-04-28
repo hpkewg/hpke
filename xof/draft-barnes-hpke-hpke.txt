@@ -387,7 +387,7 @@ Table of Contents
      return Expand(prk, labeled_info, L)
 
    def LabeledDerive(ikm, label, L):
-     labeled_ikm = concat("HPKE_v1", suite_id, label, ikm)
+     labeled_ikm = concat("HPKE_v1", suite_id, label, I2OSP(L, 2), ikm)
      return Derive(labeled_ikm, L)
 
    The value of suite_id depends on where the KDF is used; it is assumed
