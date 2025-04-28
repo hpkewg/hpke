@@ -457,7 +457,7 @@ for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
 def ExtractAndExpand(dh, kem_context):
   derive_input = concat(
     lengthPrefixed(dh),
-    lengthPrefixed(shared_secret)
+    lengthPrefixed(kem_context)
   )
   return LabeledDerive(derive_input, "shared_secret", Nsecret)
 
