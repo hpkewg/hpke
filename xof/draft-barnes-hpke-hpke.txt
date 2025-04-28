@@ -428,7 +428,7 @@ Table of Contents
    def ExtractAndExpand(dh, kem_context):
      derive_input = concat(
        lengthPrefixed(dh),
-       lengthPrefixed(shared_secret)
+       lengthPrefixed(kem_context)
      )
      return LabeledDerive(derive_input, "shared_secret", Nsecret)
 

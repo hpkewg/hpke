@@ -1822,7 +1822,7 @@ for the Diffie-Hellman group in use. <a href="#derive-key-pair" class="auto inte
 def ExtractAndExpand(dh, kem_context):
   derive_input = concat(
     lengthPrefixed(dh),
-    lengthPrefixed(shared_secret)
+    lengthPrefixed(kem_context)
   )
   return LabeledDerive(derive_input, "shared_secret", Nsecret)
 
