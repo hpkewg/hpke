@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-20T01:21:38.276229+00:00",
+  "timestamp": "2025-04-29T01:17:45.438312+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -674,6 +674,148 @@
       "mergeCommit": null,
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 16,
+      "id": "PR_kwDOOLtax86ULitL",
+      "title": "Allow for single-stage KDFs",
+      "url": "https://github.com/hpkewg/hpke/pull/16",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR adds support for single-stage KDFs, for example, SHAKE or TurboSHAKE.  As [discussed on the CFRG list](https://mailarchive.ietf.org/arch/msg/cfrg/L8sWP0VdrKLKp_MUbgjSqx5ArMw/), these KDFs can make HPKE up to 20% faster.\r\n\r\nI have implemented this change by generally making single-stage and two-stage KDFs parallel.  It would have disturbed less text to treat single-stage KDFs as an add-on / alternative to the base RFC 9180 two-stage KDF definition.  But I think this ends up being a little cleaner.\r\n\r\nThe part I am least confident about is the security considerations.  I added some text to the Domain Separation section that I think is true.  I had no idea what to put in the Input Length Restrictions section, so I just added a TODO.\r\n\r\nFixes #3 ",
+      "createdAt": "2025-04-28T14:42:40Z",
+      "updatedAt": "2025-04-28T20:55:03Z",
+      "baseRepository": "hpkewg/hpke",
+      "baseRefName": "main",
+      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "headRepository": "hpkewg/hpke",
+      "headRefName": "xof",
+      "headRefOid": "aabd7240aaf570145ce046b8288f2f86f46098bf",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "body": "Potential issue: The exporter `derive_input` does not include the output length. This causes shorter exporter outputs to be prefixes of longer exporter outputs, which is never the case in RFC9180, if the KDF Derive acts as XOF (e.g., (Turbo)SHAKE).\r\n\r\nI checked all the uses of Derive(), this is the only use that is potentially affected by Derive() being a XOF.",
+          "createdAt": "2025-04-28T17:04:42Z",
+          "updatedAt": "2025-04-28T17:04:42Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Good point @ilaril.  The most recent PR includes the length in `LabeledDerive()`.  Seems like that addresses the issue?",
+          "createdAt": "2025-04-28T17:10:32Z",
+          "updatedAt": "2025-04-28T17:10:32Z"
+        },
+        {
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "body": "Yes, it does address the issue (even if exporter is the only thing that needs it). ",
+          "createdAt": "2025-04-28T17:15:55Z",
+          "updatedAt": "2025-04-28T17:15:55Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yeah, I just put it there because it seemed cheap and conservative.",
+          "createdAt": "2025-04-28T17:24:16Z",
+          "updatedAt": "2025-04-28T17:24:16Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOOLtax86m3u4X",
+          "commit": {
+            "abbreviatedOid": "64d308c"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-28T14:59:16Z",
+          "updatedAt": "2025-04-28T14:59:16Z",
+          "comments": [
+            {
+              "originalPosition": 206,
+              "body": "No equivalent of `dkp_prk`",
+              "createdAt": "2025-04-28T14:59:16Z",
+              "updatedAt": "2025-04-28T14:59:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86m3vVI",
+          "commit": {
+            "abbreviatedOid": "64d308c"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-28T14:59:49Z",
+          "updatedAt": "2025-04-28T14:59:49Z",
+          "comments": [
+            {
+              "originalPosition": 206,
+              "body": "Is that an isuse?",
+              "createdAt": "2025-04-28T14:59:49Z",
+              "updatedAt": "2025-04-28T14:59:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86m56sn",
+          "commit": {
+            "abbreviatedOid": "2f7b5a2"
+          },
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-28T18:01:39Z",
+          "updatedAt": "2025-04-28T18:01:40Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "What is `shared_secret`? It does not seem to be (implicit) parameter to `ExtractAndExpand()`, and looking at the code, using the function, looks like shared_secret is the output of it.",
+              "createdAt": "2025-04-28T18:01:40Z",
+              "updatedAt": "2025-04-28T18:01:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86m4HSH",
+          "commit": {
+            "abbreviatedOid": "aabd724"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-28T15:24:21Z",
+          "updatedAt": "2025-04-28T20:55:03Z",
+          "comments": [
+            {
+              "originalPosition": 206,
+              "body": "Why would it be?  (Honest question.)  It seems like `dkp_prk` is just there because you can't count on `ikm` being suitable as a PRK for `Expand()`.",
+              "createdAt": "2025-04-28T15:24:21Z",
+              "updatedAt": "2025-04-28T20:55:03Z"
+            },
+            {
+              "originalPosition": 76,
+              "body": "I think it's a typo for `kem_context`.",
+              "createdAt": "2025-04-28T20:53:48Z",
+              "updatedAt": "2025-04-28T20:55:03Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
