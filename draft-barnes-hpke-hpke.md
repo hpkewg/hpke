@@ -408,6 +408,14 @@ The following functions are defined to facilitate domain separation of
 KDF calls as well as context binding:
 
 ~~~
+# For use with single-stage KDFs
+def LabeledDerive(ikm, label, L):
+  labeled_ikm = concat("HPKE_v1", suite_id, label, I2OSP(L, 2), ikm)
+  return Derive(labeled_ikm, L)
+~~~
+
+~~~
+# For use with two-stage KDFs
 def LabeledExtract(salt, label, ikm):
   labeled_ikm = concat("HPKE-v1", suite_id, label, ikm)
   return Extract(salt, labeled_ikm)
@@ -416,10 +424,6 @@ def LabeledExpand(prk, label, info, L):
   labeled_info = concat(I2OSP(L, 2), "HPKE-v1", suite_id,
                         label, info)
   return Expand(prk, labeled_info, L)
-
-def LabeledDerive(ikm, label, L):
-  labeled_ikm = concat("HPKE_v1", suite_id, label, I2OSP(L, 2), ikm)
-  return Derive(labeled_ikm, L)
 ~~~
 
 The value of `suite_id` depends on where the KDF is used; it is assumed
@@ -1861,16 +1865,9 @@ Template:
 * Value: The two-byte identifier for the algorithm
 * KDF: The name of the algorithm
 * Nh: The output size of the Extract function in bytes
-* Two-Stage: Whether this is a two-stage KDF.  Allowed values are:
-    * "Y" - This is a two-stage KDF
-    * "N" - This is a single-stage KDF
 * Reference: Where this algorithm is defined
 
 Initial contents: Provided in {{kdfid-values}}
-
-This document updates the existing registry by adding the "Two-Stage" column.
-Existing registry values should be updated with a value of "Y" in this column,
-as reflected in {{kdfid-values}}.
 
 ## AEAD Identifiers
 
