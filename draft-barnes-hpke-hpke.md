@@ -409,8 +409,15 @@ KDF calls as well as context binding:
 
 ~~~
 # For use with single-stage KDFs
-def LabeledDerive(ikm, label, L):
-  labeled_ikm = concat("HPKE_v1", suite_id, label, I2OSP(L, 2), ikm)
+def LabeledDerive(ikm, label, context, L):
+  labeled_ikm = concat(
+    ikm, 
+    "HPKE_v1", 
+    suite_id, 
+    lengthPrefixed(label),
+    lengthPrefixed(context),
+    I2OSP(L, 4)
+  )
   return Derive(labeled_ikm, L)
 ~~~
 
@@ -459,11 +466,11 @@ for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
 ~~~
 # For use with single-stage KDFs
 def ExtractAndExpand(dh, kem_context):
-  derive_input = concat(
+  secrets = concat(
     lengthPrefixed(dh),
     lengthPrefixed(kem_context)
   )
-  return LabeledDerive(derive_input, "shared_secret", Nsecret)
+  return LabeledDerive(secrets, "shared_secret", "", Nsecret)
 
 # For use with two-stage KDFs
 def ExtractAndExpand(dh, kem_context):
@@ -680,15 +687,17 @@ def VerifyPSKInputs(mode, psk, psk_id):
 
 # For use with a single-stage KDF
 def CombineSecrets(mode, shared_secret, info, psk, psk_id):
-  derive_input = concat(
+  secrets = concat(
     lengthPrefixed(psk),
     lengthPrefixed(shared_secret),
+  )
+  context = concat(
     mode,
     lengthPrefixed(psk_id),
     lengthPrefixed(info),
   )
 
-  secret = LabeledDerive(derive_input, "secret", Nk + Nn + Nh)
+  secret = LabeledDerive(secrets, "secret", context, Nk + Nn + Nh)
 
   key = secret[:Nk]
   base_nonce = secret[Nk:(Nk + Nn)]
@@ -953,8 +962,8 @@ length.
 ~~~~~
 # For use with a single-stage KDF
 def Context.Export(exporter_context, L):
-  derive_input = concat(self.exporter_secret, exporter_context)
-  return LabeledDerive(derive_input, "sec", L)
+  return LabeledDerive(self.exporter_secret, "sec",
+                       exporter_context, L)
 
 # For use with a two-stage KDF
 def Context.Export(exporter_context, L):
@@ -1105,8 +1114,7 @@ rejection sampling over field elements:
 ~~~
 # For use with a single-stage KDF
 def DeriveCandidate(ikm, counter):
-  derive_input = concat(I2OSP(counter, 1), ikm)
-  return LabeledDerive(derive_input, "candidate", Nsk)
+  return LabeledDerive(ikm, "candidate", I2OSP(counter, 1), Nsk)
 
 # For use with a two-stage KDF
 def DeriveCandidate(ikm, counter):
@@ -1154,7 +1162,7 @@ For X25519 and X448, the `DeriveKeyPair()` function applies a KDF to the input:
 ~~~
 # For use with a single-stage KDF
 def DeriveKeyPair(ikm):
-  sk = LabeledDerive(ikm, "sk", Nsk)
+  sk = LabeledDerive(ikm, "sk", "", Nsk)
   return (sk, pk(sk))
 
 # For use with a two-stage KDF
