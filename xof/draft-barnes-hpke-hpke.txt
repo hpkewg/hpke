@@ -5,11 +5,11 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 30 October 2025                                         B. Lipp
+Expires: 31 October 2025                                         B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                           28 April 2025
+                                                           29 April 2025
 
 
                       Hybrid Public Key Encryption
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 October 2025.
+   This Internet-Draft will expire on 31 October 2025.
 
 Copyright Notice
 
@@ -377,6 +377,19 @@ Table of Contents
    The following functions are defined to facilitate domain separation
    of KDF calls as well as context binding:
 
+   # For use with single-stage KDFs
+   def LabeledDerive(ikm, label, context, L):
+     labeled_ikm = concat(
+       ikm,
+       "HPKE_v1",
+       suite_id,
+       lengthPrefixed(label),
+       lengthPrefixed(context),
+       I2OSP(L, 4)
+     )
+     return Derive(labeled_ikm, L)
+
+   # For use with two-stage KDFs
    def LabeledExtract(salt, label, ikm):
      labeled_ikm = concat("HPKE-v1", suite_id, label, ikm)
      return Extract(salt, labeled_ikm)
@@ -385,10 +398,6 @@ Table of Contents
      labeled_info = concat(I2OSP(L, 2), "HPKE-v1", suite_id,
                            label, info)
      return Expand(prk, labeled_info, L)
-
-   def LabeledDerive(ikm, label, L):
-     labeled_ikm = concat("HPKE_v1", suite_id, label, I2OSP(L, 2), ikm)
-     return Derive(labeled_ikm, L)
 
    The value of suite_id depends on where the KDF is used; it is assumed
    implicit from the implementation and not passed as a parameter.  If
@@ -426,11 +435,11 @@ Table of Contents
 
    # For use with single-stage KDFs
    def ExtractAndExpand(dh, kem_context):
-     derive_input = concat(
+     secrets = concat(
        lengthPrefixed(dh),
        lengthPrefixed(kem_context)
      )
-     return LabeledDerive(derive_input, "shared_secret", Nsecret)
+     return LabeledDerive(secrets, "shared_secret", "", Nsecret)
 
    # For use with two-stage KDFs
    def ExtractAndExpand(dh, kem_context):
@@ -659,15 +668,17 @@ Table of Contents
 
    # For use with a single-stage KDF
    def CombineSecrets(mode, shared_secret, info, psk, psk_id):
-     derive_input = concat(
+     secrets = concat(
        lengthPrefixed(psk),
        lengthPrefixed(shared_secret),
+     )
+     context = concat(
        mode,
        lengthPrefixed(psk_id),
        lengthPrefixed(info),
      )
 
-     secret = LabeledDerive(derive_input, "secret", Nk + Nn + Nh)
+     secret = LabeledDerive(secrets, "secret", context, Nk + Nn + Nh)
 
      key = secret[:Nk]
      base_nonce = secret[Nk:(Nk + Nn)]
@@ -928,8 +939,8 @@ Table of Contents
 
    # For use with a single-stage KDF
    def Context.Export(exporter_context, L):
-     derive_input = concat(self.exporter_secret, exporter_context)
-     return LabeledDerive(derive_input, "sec", L)
+     return LabeledDerive(self.exporter_secret, "sec",
+                          exporter_context, L)
 
    # For use with a two-stage KDF
    def Context.Export(exporter_context, L):
@@ -1094,8 +1105,7 @@ Table of Contents
 
    # For use with a single-stage KDF
    def DeriveCandidate(ikm, counter):
-     derive_input = concat(I2OSP(counter, 1), ikm)
-     return LabeledDerive(derive_input, "candidate", Nsk)
+     return LabeledDerive(ikm, "candidate", I2OSP(counter, 1), Nsk)
 
    # For use with a two-stage KDF
    def DeriveCandidate(ikm, counter):
@@ -1141,7 +1151,7 @@ Table of Contents
 
    # For use with a single-stage KDF
    def DeriveKeyPair(ikm):
-     sk = LabeledDerive(ikm, "sk", Nsk)
+     sk = LabeledDerive(ikm, "sk", "", Nsk)
      return (sk, pk(sk))
 
    # For use with a two-stage KDF
@@ -1944,19 +1954,9 @@ Table of Contents
 
    *  Nh: The output size of the Extract function in bytes
 
-   *  Two-Stage: Whether this is a two-stage KDF.  Allowed values are:
-
-      -  "Y" - This is a two-stage KDF
-
-      -  "N" - This is a single-stage KDF
-
    *  Reference: Where this algorithm is defined
 
    Initial contents: Provided in Table 3
-
-   This document updates the existing registry by adding the "Two-Stage"
-   column.  Existing registry values should be updated with a value of
-   "Y" in this column, as reflected in Table 3.
 
 11.3.  AEAD Identifiers
 
