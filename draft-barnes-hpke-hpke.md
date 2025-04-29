@@ -411,9 +411,9 @@ KDF calls as well as context binding:
 # For use with single-stage KDFs
 def LabeledDerive(ikm, label, context, L):
   labeled_ikm = concat(
-    ikm, 
-    "HPKE_v1", 
-    suite_id, 
+    ikm,
+    "HPKE_v1",
+    suite_id,
     lengthPrefixed(label),
     lengthPrefixed(context),
     I2OSP(L, 4)
