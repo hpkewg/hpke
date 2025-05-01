@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-29T01:17:45.438312+00:00",
+  "timestamp": "2025-05-01T01:24:44.341556+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -687,13 +687,13 @@
       "labels": [],
       "body": "This PR adds support for single-stage KDFs, for example, SHAKE or TurboSHAKE.  As [discussed on the CFRG list](https://mailarchive.ietf.org/arch/msg/cfrg/L8sWP0VdrKLKp_MUbgjSqx5ArMw/), these KDFs can make HPKE up to 20% faster.\r\n\r\nI have implemented this change by generally making single-stage and two-stage KDFs parallel.  It would have disturbed less text to treat single-stage KDFs as an add-on / alternative to the base RFC 9180 two-stage KDF definition.  But I think this ends up being a little cleaner.\r\n\r\nThe part I am least confident about is the security considerations.  I added some text to the Domain Separation section that I think is true.  I had no idea what to put in the Input Length Restrictions section, so I just added a TODO.\r\n\r\nFixes #3 ",
       "createdAt": "2025-04-28T14:42:40Z",
-      "updatedAt": "2025-04-28T20:55:03Z",
+      "updatedAt": "2025-04-30T23:58:40Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
       "headRepository": "hpkewg/hpke",
       "headRefName": "xof",
-      "headRefOid": "aabd7240aaf570145ce046b8288f2f86f46098bf",
+      "headRefOid": "27872f8dddcb421feedb8749fc3ed718e43881d8",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -726,6 +726,34 @@
           "body": "Yeah, I just put it there because it seemed cheap and conservative.",
           "createdAt": "2025-04-28T17:24:16Z",
           "updatedAt": "2025-04-28T17:24:16Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@ilaril - Since it seemed more compatible with SP800-56C, I re-arranged `LabeledDerive()` so that the secret and non-secret inputs are separate, and so that the secrets come first in the derivation.  WDYT?",
+          "createdAt": "2025-04-29T22:44:42Z",
+          "updatedAt": "2025-04-29T22:44:42Z"
+        },
+        {
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "body": "In theory, is that strictly injective without the ikm component count?\r\n\r\nIn practice, it is injective, since otherwise would require 18,512 byte KEM output, which is crazy large.\r\n\r\n",
+          "createdAt": "2025-04-30T08:08:13Z",
+          "updatedAt": "2025-04-30T08:08:13Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It seems injective to me, since you could parse it unambiguously.",
+          "createdAt": "2025-04-30T13:24:01Z",
+          "updatedAt": "2025-04-30T13:24:01Z"
+        },
+        {
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "body": "I was thinking of trying to parse \"sec\" (exporter) labeled_ikm as \"secret\" (main KDF) labeled_ikm.\r\n\r\nThe exporter secret gets parsed as psk. Then it goes to parse the magic as 18,512 byte shared secret, which causes the parsing to desync. And it looks like it is theoretically possible for things to resync in the end.\r\n\r\nOf course, this will never happen in practice, because no KEM has output of that size, and it is extremely unlikely for KEM output to have valid magic (there are at least 17 fixed bytes in play).",
+          "createdAt": "2025-04-30T16:14:53Z",
+          "updatedAt": "2025-04-30T16:14:53Z"
         }
       ],
       "reviews": [
@@ -812,6 +840,186 @@
               "body": "I think it's a typo for `kem_context`.",
               "createdAt": "2025-04-28T20:53:48Z",
               "updatedAt": "2025-04-28T20:55:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nAlW2",
+          "commit": {
+            "abbreviatedOid": "aabd724"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-29T04:33:49Z",
+          "updatedAt": "2025-04-29T04:33:49Z",
+          "comments": [
+            {
+              "originalPosition": 281,
+              "body": "Does this need to be in the registry, or is it an implementation detail?",
+              "createdAt": "2025-04-29T04:33:49Z",
+              "updatedAt": "2025-04-29T04:33:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nAmAm",
+          "commit": {
+            "abbreviatedOid": "aabd724"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-29T04:36:46Z",
+          "updatedAt": "2025-04-29T04:36:46Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "I would split this up with separate code blocks for two-stage and one-stage KDFs.",
+              "createdAt": "2025-04-29T04:36:46Z",
+              "updatedAt": "2025-04-29T04:36:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nAmfi",
+          "commit": {
+            "abbreviatedOid": "aabd724"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-29T04:38:59Z",
+          "updatedAt": "2025-04-29T04:38:59Z",
+          "comments": [
+            {
+              "originalPosition": 130,
+              "body": "You are doing the single invocation and slicing of output to avoid overheads, is that right?\r\n\r\nDid you look into doing:\r\n\r\n```\r\nkey = LabeledDerive(derive_input, \"key\", Nk)\r\nbase_nonce = LabeledDerive(derive_input, \"base_nonce\", Nn)\r\nexporter_secret = LabeledDerive(derive_input, \"exp\", Nh)\r\n```\r\n?\r\n\r\nThe reason I say that is that you are pulling in a lot of additional context into your two- vs. one-stage branch.  The structure above (with appropriate caching) allows you to make the split much closer to the KDF functions (mostly, the whole extraction business in two-stage seems needlessly complex).",
+              "createdAt": "2025-04-29T04:38:59Z",
+              "updatedAt": "2025-04-29T04:42:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nBkaD",
+          "commit": {
+            "abbreviatedOid": "aabd724"
+          },
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-29T06:38:00Z",
+          "updatedAt": "2025-04-29T06:38:00Z",
+          "comments": [
+            {
+              "originalPosition": 130,
+              "body": "Yes, the hpke-bench did look at structure like that. It is ~30% overhead for the main KDF, even with optimal caching.\r\n\r\nSingle-invocation (flat) TurboSHAKE was the only option related to SHA-3 that beat hardware-accelerated HKDF-SHA256 in speed (1.7448 versus 2.0896 on Zen4).",
+              "createdAt": "2025-04-29T06:38:00Z",
+              "updatedAt": "2025-04-29T07:01:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nNEIY",
+          "commit": {
+            "abbreviatedOid": "aabd724"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-29T22:34:52Z",
+          "updatedAt": "2025-04-29T22:34:53Z",
+          "comments": [
+            {
+              "originalPosition": 281,
+              "body": "Fair point, I think we can get away without it.",
+              "createdAt": "2025-04-29T22:34:52Z",
+              "updatedAt": "2025-04-29T22:34:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nVzcO",
+          "commit": {
+            "abbreviatedOid": "27872f8"
+          },
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T15:33:15Z",
+          "updatedAt": "2025-04-30T15:33:15Z",
+          "comments": [
+            {
+              "originalPosition": 83,
+              "body": "kem_context does not seem like a secret value (seems to contain the public keys)?\r\n\r\nSo presumably it should be applied as context to LabeledDerive()?",
+              "createdAt": "2025-04-30T15:33:15Z",
+              "updatedAt": "2025-04-30T15:33:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nV7s0",
+          "commit": {
+            "abbreviatedOid": "27872f8"
+          },
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T15:42:57Z",
+          "updatedAt": "2025-04-30T15:42:57Z",
+          "comments": [
+            {
+              "originalPosition": 241,
+              "body": "Seems like psk, psk_id, info and ikm are limited to 65535 bytes (since length is 2 bytes) for single-stage KDFs. ~~Exporter_context has no explicit limit, but may be limited by total Derive() input length. For underlying constructs related to SHA-3, there are no limits on exporter_context.~~ Missed that LabeledDerive() actually length-prefixes the context (I do not think this is a good idea), which also limits the exporter_context to 65535 bytes. And seemingly also imposes joint limit of 65530 bytes for psk_id and info.\r\n\r\nThen section \"Secret Export\" (I do not think I can directly comment on it) contains this text: \"For the KDFs defined in this specification, L has a maximum value of 255*Nh. Future specifications that define new KDFs MUST specify a bound for L.\"... Single-stage KDFs have limit of 4294967295 for L (since length field is 4 bytes).",
+              "createdAt": "2025-04-30T15:42:57Z",
+              "updatedAt": "2025-04-30T16:29:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nWZVV",
+          "commit": {
+            "abbreviatedOid": "27872f8"
+          },
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T16:21:01Z",
+          "updatedAt": "2025-04-30T16:21:01Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "I think length-prefixing context is not a good idea. No current use needs the length, and it could get annoying with things like \"secret\" (the main KDF) that have length-prefixed subfields.",
+              "createdAt": "2025-04-30T16:21:01Z",
+              "updatedAt": "2025-04-30T16:21:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86na5td",
+          "commit": {
+            "abbreviatedOid": "27872f8"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T23:58:40Z",
+          "updatedAt": "2025-04-30T23:58:40Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "What if you have (label = \"foo\", context = \"bar\") for one usage and (label = \"foobar\", context = \"\") in another.  Those a distinct, but without a length prefix, they would collide.  Don't we have to have something to prevent them spilling over?",
+              "createdAt": "2025-04-30T23:58:40Z",
+              "updatedAt": "2025-04-30T23:58:40Z"
             }
           ]
         }
