@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-01T01:24:44.341556+00:00",
+  "timestamp": "2025-05-04T01:25:25.835925+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -687,7 +687,7 @@
       "labels": [],
       "body": "This PR adds support for single-stage KDFs, for example, SHAKE or TurboSHAKE.  As [discussed on the CFRG list](https://mailarchive.ietf.org/arch/msg/cfrg/L8sWP0VdrKLKp_MUbgjSqx5ArMw/), these KDFs can make HPKE up to 20% faster.\r\n\r\nI have implemented this change by generally making single-stage and two-stage KDFs parallel.  It would have disturbed less text to treat single-stage KDFs as an add-on / alternative to the base RFC 9180 two-stage KDF definition.  But I think this ends up being a little cleaner.\r\n\r\nThe part I am least confident about is the security considerations.  I added some text to the Domain Separation section that I think is true.  I had no idea what to put in the Input Length Restrictions section, so I just added a TODO.\r\n\r\nFixes #3 ",
       "createdAt": "2025-04-28T14:42:40Z",
-      "updatedAt": "2025-04-30T23:58:40Z",
+      "updatedAt": "2025-05-01T15:19:14Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
@@ -1020,6 +1020,66 @@
               "body": "What if you have (label = \"foo\", context = \"bar\") for one usage and (label = \"foobar\", context = \"\") in another.  Those a distinct, but without a length prefix, they would collide.  Don't we have to have something to prevent them spilling over?",
               "createdAt": "2025-04-30T23:58:40Z",
               "updatedAt": "2025-04-30T23:58:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86ncTzP",
+          "commit": {
+            "abbreviatedOid": "27872f8"
+          },
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-01T06:07:43Z",
+          "updatedAt": "2025-05-01T06:07:43Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "The label is length prefixed, so label=\"foo\", context=\"bar\" would encode to \"\\x00\\x03foobar\", and label=\"foobar\", context=\"\" would encode to \"\\x00\\x06foobar\". Which do not collide.\r\n\r\nSimilarly, if one used FF-terminated UTF-8 for labels, label=\"foo\", context=\"bar\" gives \"foo\\xffbar\", and label=\"foobar\", context=\"\" gives \"foobar\\xff\", which are again different.",
+              "createdAt": "2025-05-01T06:07:43Z",
+              "updatedAt": "2025-05-01T06:11:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86ncYuq",
+          "commit": {
+            "abbreviatedOid": "27872f8"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-01T06:34:33Z",
+          "updatedAt": "2025-05-01T06:34:33Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "I see, you were only talking about `context` being prefixed.  That conflicts with the value of `L` that follows, doesn't it?  Or are you suggesting that the length of the KDF input being different is sufficient?  That seems like too negligible of an optimization to be worth it to me.",
+              "createdAt": "2025-05-01T06:34:33Z",
+              "updatedAt": "2025-05-01T06:34:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86nfXMI",
+          "commit": {
+            "abbreviatedOid": "27872f8"
+          },
+          "author": "ilaril",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-01T15:19:14Z",
+          "updatedAt": "2025-05-01T15:19:14Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "Removing that length would not just be an optimization, because it causes joint limit for psk_id and info. Which is something no existing KDF has, and looking at RFC 9180 Section 7.2.1, no HPKE KDF is envisioned to have.\r\n\r\nAnd copying the context into buffer is not good, as it either requires dynamic allocation or having small limits like the recommended 64 byte limit for info and exporter_context from RFC 9180, which have proven to be too small for actual applications. Scatter-gather (avoiding both dynamic allocation and small limits) should be easy to implement.\r\n\r\nAnd on optimizations, I think moving the output length field before the label and making it 2 bytes would be a small optimization. No existing KDF allows exporting more than 16,320 bytes in one shot, and the minmax size is 8,160 bytes. Both fit into 2 byte length field.\r\n\r\n\r\n",
+              "createdAt": "2025-05-01T15:19:14Z",
+              "updatedAt": "2025-05-01T15:19:15Z"
             }
           ]
         }
