@@ -5,11 +5,11 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 31 October 2025                                         B. Lipp
+Expires: 8 November 2025                                         B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                           29 April 2025
+                                                              7 May 2025
 
 
                       Hybrid Public Key Encryption
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 October 2025.
+   This Internet-Draft will expire on 8 November 2025.
 
 Copyright Notice
 
@@ -384,8 +384,8 @@ Table of Contents
        "HPKE_v1",
        suite_id,
        lengthPrefixed(label),
-       lengthPrefixed(context),
-       I2OSP(L, 4)
+       I2OSP(L, 2)
+       context,
      )
      return Derive(labeled_ikm, L)
 
@@ -435,11 +435,7 @@ Table of Contents
 
    # For use with single-stage KDFs
    def ExtractAndExpand(dh, kem_context):
-     secrets = concat(
-       lengthPrefixed(dh),
-       lengthPrefixed(kem_context)
-     )
-     return LabeledDerive(secrets, "shared_secret", "", Nsecret)
+     return LabeledDerive(dh, "shared_secret", kem_context, Nsecret)
 
    # For use with two-stage KDFs
    def ExtractAndExpand(dh, kem_context):
@@ -1213,18 +1209,24 @@ Table of Contents
 
 7.2.1.  Input Length Restrictions
 
-   [[ TODO(RLB): Determine what this section should say about single-
-   stage KDFs. ]]
+   For single-stage KDFs, there is length limit of 65,535 bytes for the
+   psk, psk_id, info fields.  This limitation arises because these
+   fields are all prefixed with a two-byte length when being used as KDF
+   inputs.  There is no inherent length limitation on exporter_context.
+   If a single-stage KDF has an input length limit, then implementations
+   MUST limit the length of exporter_context accordingly, so that the
+   LabeledDerive call in Context.Export does not overflow the input
+   length limit.
 
-   This document defines LabeledExtract() and LabeledExpand() based on
-   the KDFs listed above.  These functions add prefixes to their
-   respective inputs ikm and info before calling the KDF's Extract() and
-   Expand() functions.  This leads to a reduction of the maximum input
-   length that is available for the inputs psk, psk_id, info,
-   exporter_context, ikm, i.e., the variable-length parameters provided
-   by HPKE applications.  The following table lists the maximum allowed
-   lengths of these fields for the KDFs defined in this document, as
-   inclusive bounds in bytes:
+   For two-stage KDFs, this document defines LabeledExtract() and
+   LabeledExpand() based on the KDFs listed above.  These functions add
+   prefixes to their respective inputs ikm and info before calling the
+   KDF's Extract() and Expand() functions.  This leads to a reduction of
+   the maximum input length that is available for the inputs psk,
+   psk_id, info, exporter_context, ikm, i.e., the variable-length
+   parameters provided by HPKE applications.  The following table lists
+   the maximum allowed lengths of these fields for the KDFs defined in
+   this document, as inclusive bounds in bytes:
 
     +==================+==============+===============+===============+
     | Input            | HKDF-SHA256  | HKDF-SHA384   | HKDF-SHA512   |

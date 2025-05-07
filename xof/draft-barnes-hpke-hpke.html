@@ -1058,11 +1058,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">HPKE</td>
-<td class="right">April 2025</td>
+<td class="right">May 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 31 October 2025</td>
+<td class="center">Expires 8 November 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1075,12 +1075,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-barnes-hpke-hpke-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-04-29" class="published">29 April 2025</time>
+<time datetime="2025-05-07" class="published">7 May 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-10-31">31 October 2025</time></dd>
+<dd class="expires"><time datetime="2025-11-08">8 November 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1145,7 +1145,7 @@ agreement, HMAC-based key derivation function (HKDF), and SHA2.<a href="#section
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 31 October 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 8 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1772,8 +1772,8 @@ def LabeledDerive(ikm, label, context, L):
     "HPKE_v1",
     suite_id,
     lengthPrefixed(label),
-    lengthPrefixed(context),
-    I2OSP(L, 4)
+    I2OSP(L, 2)
+    context,
   )
   return Derive(labeled_ikm, L)
 </pre><a href="#section-4-10" class="pilcrow">¶</a>
@@ -1832,11 +1832,7 @@ for the Diffie-Hellman group in use. <a href="#derive-key-pair" class="auto inte
 <pre>
 # For use with single-stage KDFs
 def ExtractAndExpand(dh, kem_context):
-  secrets = concat(
-    lengthPrefixed(dh),
-    lengthPrefixed(kem_context)
-  )
-  return LabeledDerive(secrets, "shared_secret", "", Nsecret)
+  return LabeledDerive(dh, "shared_secret", kem_context, Nsecret)
 
 # For use with two-stage KDFs
 def ExtractAndExpand(dh, kem_context):
@@ -2809,8 +2805,14 @@ algorithm whose output length is <code>Npk</code>.<a href="#section-7.1.5-3" cla
           <h4 id="name-input-length-restrictions">
 <a href="#section-7.2.1" class="section-number selfRef">7.2.1. </a><a href="#name-input-length-restrictions" class="section-name selfRef">Input Length Restrictions</a>
           </h4>
-<p id="section-7.2.1-1">[[ TODO(RLB): Determine what this section should say about single-stage KDFs. ]]<a href="#section-7.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-2">This document defines <code>LabeledExtract()</code> and <code>LabeledExpand()</code> based on the
+<p id="section-7.2.1-1">For single-stage KDFs, there is length limit of 65,535 bytes for the <code>psk</code>,
+<code>psk_id</code>, <code>info</code> fields. This limitation arises because these fields are all
+prefixed with a two-byte length when being used as KDF inputs. There is no
+inherent length limitation on <code>exporter_context</code>.  If a single-stage KDF has an
+input length limit, then implementations MUST limit the length of
+<code>exporter_context</code> accordingly, so that the <code>LabeledDerive</code> call in
+<code>Context.Export</code> does not overflow the input length limit.<a href="#section-7.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-2">For two-stage KDFs, this document defines <code>LabeledExtract()</code> and <code>LabeledExpand()</code> based on the
 KDFs listed above. These functions add prefixes to their respective
 inputs <code>ikm</code> and <code>info</code> before calling the KDF's <code>Extract()</code> and <code>Expand()</code>
 functions. This leads to a reduction of the maximum input length that
