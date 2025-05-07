@@ -415,8 +415,8 @@ def LabeledDerive(ikm, label, context, L):
     "HPKE_v1",
     suite_id,
     lengthPrefixed(label),
-    lengthPrefixed(context),
-    I2OSP(L, 4)
+    I2OSP(L, 2)
+    context,
   )
   return Derive(labeled_ikm, L)
 ~~~
@@ -466,11 +466,7 @@ for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
 ~~~
 # For use with single-stage KDFs
 def ExtractAndExpand(dh, kem_context):
-  secrets = concat(
-    lengthPrefixed(dh),
-    lengthPrefixed(kem_context)
-  )
-  return LabeledDerive(secrets, "shared_secret", "", Nsecret)
+  return LabeledDerive(dh, "shared_secret", kem_context, Nsecret)
 
 # For use with two-stage KDFs
 def ExtractAndExpand(dh, kem_context):
@@ -1216,9 +1212,15 @@ algorithm whose output length is `Npk`.
 
 ### Input Length Restrictions {#kdf-input-length}
 
-[[ TODO(RLB): Determine what this section should say about single-stage KDFs. ]]
+For single-stage KDFs, there is length limit of 65,535 bytes for the `psk`,
+`psk_id`, `info` fields. This limitation arises because these fields are all
+prefixed with a two-byte length when being used as KDF inputs. There is no
+inherent length limitation on `exporter_context`.  If a single-stage KDF has an
+input length limit, then implementations MUST limit the length of
+`exporter_context` accordingly, so that the `LabeledDerive` call in
+`Context.Export` does not overflow the input length limit.
 
-This document defines `LabeledExtract()` and `LabeledExpand()` based on the
+For two-stage KDFs, this document defines `LabeledExtract()` and `LabeledExpand()` based on the
 KDFs listed above. These functions add prefixes to their respective
 inputs `ikm` and `info` before calling the KDF's `Extract()` and `Expand()`
 functions. This leads to a reduction of the maximum input length that
