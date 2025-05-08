@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-04T01:25:25.835925+00:00",
+  "timestamp": "2025-05-08T01:19:39.947835+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -687,13 +687,13 @@
       "labels": [],
       "body": "This PR adds support for single-stage KDFs, for example, SHAKE or TurboSHAKE.  As [discussed on the CFRG list](https://mailarchive.ietf.org/arch/msg/cfrg/L8sWP0VdrKLKp_MUbgjSqx5ArMw/), these KDFs can make HPKE up to 20% faster.\r\n\r\nI have implemented this change by generally making single-stage and two-stage KDFs parallel.  It would have disturbed less text to treat single-stage KDFs as an add-on / alternative to the base RFC 9180 two-stage KDF definition.  But I think this ends up being a little cleaner.\r\n\r\nThe part I am least confident about is the security considerations.  I added some text to the Domain Separation section that I think is true.  I had no idea what to put in the Input Length Restrictions section, so I just added a TODO.\r\n\r\nFixes #3 ",
       "createdAt": "2025-04-28T14:42:40Z",
-      "updatedAt": "2025-05-01T15:19:14Z",
+      "updatedAt": "2025-05-07T19:29:50Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
       "headRepository": "hpkewg/hpke",
       "headRefName": "xof",
-      "headRefOid": "27872f8dddcb421feedb8749fc3ed718e43881d8",
+      "headRefOid": "64dafd810b5d3de3df87858e2dde040a9c172483",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1080,6 +1080,26 @@
               "body": "Removing that length would not just be an optimization, because it causes joint limit for psk_id and info. Which is something no existing KDF has, and looking at RFC 9180 Section 7.2.1, no HPKE KDF is envisioned to have.\r\n\r\nAnd copying the context into buffer is not good, as it either requires dynamic allocation or having small limits like the recommended 64 byte limit for info and exporter_context from RFC 9180, which have proven to be too small for actual applications. Scatter-gather (avoiding both dynamic allocation and small limits) should be easy to implement.\r\n\r\nAnd on optimizations, I think moving the output length field before the label and making it 2 bytes would be a small optimization. No existing KDF allows exporting more than 16,320 bytes in one shot, and the minmax size is 8,160 bytes. Both fit into 2 byte length field.\r\n\r\n\r\n",
               "createdAt": "2025-05-01T15:19:14Z",
               "updatedAt": "2025-05-01T15:19:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86oQa8j",
+          "commit": {
+            "abbreviatedOid": "27872f8"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-07T18:50:23Z",
+          "updatedAt": "2025-05-07T18:50:24Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "Putting all this together, if we use this construction:\r\n\r\n```\r\n  labeled_ikm = concat(\r\n    ikm,\r\n    \"HPKE_v1\",\r\n    suite_id,\r\n    lengthPrefixed(label),\r\n    I2OSP(L, 2)\r\n    context,\r\n)\r\n```\r\n\r\n... it seems like we tick all the boxes\r\n\r\n* [X] The encoding is injective, since the only indefinite-length value is the last one\r\n* [X] There's no joint limit on `psk_id + info` (though there is on each field individually)",
+              "createdAt": "2025-05-07T18:50:23Z",
+              "updatedAt": "2025-05-07T18:50:24Z"
             }
           ]
         }
