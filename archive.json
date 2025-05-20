@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-08T01:19:39.947835+00:00",
+  "timestamp": "2025-05-20T01:21:11.849774+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -188,6 +188,51 @@
           "body": "I don't think the notion of a change controller is salient here.  For example, there is no change controller listed for the TLS registries; no mention at all in RFC 8447.  All of the registries here are Specification Required, and the provisions for change control in RFC 8126 don't advise having a change controller for Specification Required registries.",
           "createdAt": "2025-03-24T17:23:26Z",
           "updatedAt": "2025-03-24T17:23:26Z"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "I_kwDOOLtax863HW-M",
+      "title": "IANA: Recommended column?",
+      "url": "https://github.com/hpkewg/hpke/issues/17",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "After #5, @sftcd asks the question about whether the group sees value in a Recommended column, like those in RFC 8447([bis](https://datatracker.ietf.org/doc/html/draft-ietf-tls-rfc8447bis-09)).\n\nAn argument for this is that we might split the difference between accepted and non-existent.  For those who feel like the pure PQ modes (like the existing codepoints 0x0040-0x0042) are unacceptable, this would provide some encouragement to use the PQ/T modes instead.",
+      "createdAt": "2025-05-19T00:16:36Z",
+      "updatedAt": "2025-05-20T01:03:08Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I would strongly prefer not to add this column.  My impression from the experience with RFC 8447 is that these Recommended columns are all cost and no benefit.  Working groups spend time arguing over the values, and then no implementor pays attention.  This is a point on which letting the market sort things out has worked fine; most people use modern algorithms, and those who don't wouldn't be persuaded by a Y in a registry.\n\nHPKE is an even more restricted case than TLS.  HPKE tends to get embedded in other protocols, like MLS or ECH.  So even if you believe Recommended improves interoperability in general, there's even less need for it at the HPKE level, since it can get solved at higher layers.",
+          "createdAt": "2025-05-19T00:44:15Z",
+          "updatedAt": "2025-05-19T00:44:15Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "NONE",
+          "body": "> I would strongly prefer not to add this column.\n\nI'm neutral as to whether we use that or some other mechanism.\n\n> My impression from the experience with RFC 8447 is that these Recommended columns are all cost and no benefit. Working groups spend time arguing over the values, and then no implementor pays attention. \n\nThe above seems like something where someone could gather data - has anyone? (Not to my knowledge.)\n\n> This is a point on which letting the market sort things out has worked fine; most people use modern algorithms, and those who don't wouldn't be persuaded by a Y in a registry.\n> \n> HPKE is an even more restricted case than TLS. HPKE tends to get embedded in other protocols, like MLS or ECH. So even if you believe Recommended improves interoperability in general, there's even less need for it at the HPKE level, since it can get solved at higher layers.\n\nI'm not sure above MLS, but ECH (section 9) just says that unless there's some other profile somewhere you MUST implement x25519+hkdf-sha256, hkdf-sha256, aes-128-gcm. That's been mostly pretty ok 'till now as there weren't that many non-crazy combinations (though there are some implementations that don't allow all combinations of the kems, kdfs and aeads that they do support), but adding all these PQ options can potentially make interop a good bit worse, if people start using their favourites without more guidance. \n\nAgain, I don't mind how we tell people to not bother with mlkem-512 (assuming that's what we agree), but there are going to be so many combinations we really should provide some guidance, either as part of this work, or via updates to ECH/MLS (but that last seems quite heavyweight).",
+          "createdAt": "2025-05-19T16:51:15Z",
+          "updatedAt": "2025-05-19T16:51:15Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@sftcd - What would you think about using the Security Considerations for this instead of registry text?  There's probably pretty broad agreement that:\n\n* Hybrids are more conservative than pure PQ, but we include pure PQ because some organizations need it\n* ML-KEM-512 should be avoided, but we include it for completeness",
+          "createdAt": "2025-05-20T00:25:02Z",
+          "updatedAt": "2025-05-20T00:25:02Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "NONE",
+          "body": "> [@sftcd](https://github.com/sftcd) - What would you think about using the Security Considerations for this instead of registry text? \n\nI've no objection to trying that, but wonder whether we can craft good text to guide DEs for future assignment requests given the zoo of PQ algs. \n\n> There's probably pretty broad agreement that:\n> \n> * Hybrids are more conservative than pure PQ, but we include pure PQ because some organizations need it\n\nAs an aside: I've not gotten the (technical) \"need\" bit of that but yes people express that desire.\n\n> * ML-KEM-512 should be avoided, but we include it for completeness\n\nAgain, I wonder if we can craft (security considerations) text that works for other PQ combinations we might dislike, but no harm trying. I'd say this is maybe a thing to not try decide too early, and we may be better waiting to see who implements what, for what, with what quirks, and then figure out how best to document things.\n\n",
+          "createdAt": "2025-05-20T01:03:06Z",
+          "updatedAt": "2025-05-20T01:03:06Z"
         }
       ]
     }
