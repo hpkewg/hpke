@@ -5,15 +5,15 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 21 September 2025                                       B. Lipp
+Expires: 3 December 2025                                         B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                           20 March 2025
+                                                             1 June 2025
 
 
                       Hybrid Public Key Encryption
-                     draft-barnes-hpke-hpke-latest
+                      draft-ietf-hpke-hpke-latest
 
 Abstract
 
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 September 2025.
+   This Internet-Draft will expire on 3 December 2025.
 
 Copyright Notice
 
@@ -1980,9 +1980,9 @@ Table of Contents
    [I-D.ietf-tls-esni]
               Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
               Encrypted Client Hello", Work in Progress, Internet-Draft,
-              draft-ietf-tls-esni-23, 19 February 2025,
+              draft-ietf-tls-esni-24, 20 March 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
-              esni-23>.
+              esni-24>.
 
    [IEEE1363] Institute of Electrical and Electronics Engineers, "IEEE
               1363a, Standard Specifications for Public Key Cryptography
@@ -2053,10 +2053,7 @@ Table of Contents
               for DNS (EDNS(0))", RFC 8467, DOI 10.17487/RFC8467,
               October 2018, <https://www.rfc-editor.org/rfc/rfc8467>.
 
-   [RFC8696]  Housley, R., "Using Pre-Shared Key (PSK) in the
-              Cryptographic Message Syntax (CMS)", RFC 8696,
-              DOI 10.17487/RFC8696, December 2019,
-              <https://www.rfc-editor.org/rfc/rfc8696>.
+   [RFC8696]  "*** BROKEN REFERENCE ***".
 
    [RFC8937]  Cremers, C., Garratt, L., Smyshlyaev, S., Sullivan, N.,
               and C. Wood, "Randomness Improvements for Security
