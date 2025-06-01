@@ -1,7 +1,7 @@
 ---
 title: Hybrid Public Key Encryption
 abbrev: HPKE
-docname: draft-barnes-hpke-hpke-latest
+docname: draft-ietf-hpke-hpke-latest
 date:
 category: std
 workgroup: HPKE
