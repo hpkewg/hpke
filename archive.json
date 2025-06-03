@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-20T01:21:11.849774+00:00",
+  "timestamp": "2025-06-03T01:22:00.607559+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -1149,6 +1149,34 @@
           ]
         }
       ]
+    },
+    {
+      "number": 18,
+      "id": "PR_kwDOOLtax86Ygo4O",
+      "title": "Reflect WG adoption",
+      "url": "https://github.com/hpkewg/hpke/pull/18",
+      "state": "MERGED",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-01T22:07:29Z",
+      "updatedAt": "2025-06-01T23:03:41Z",
+      "baseRepository": "hpkewg/hpke",
+      "baseRefName": "main",
+      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "headRepository": "hpkewg/hpke",
+      "headRefName": "adopt",
+      "headRefOid": "66b8c594870a9e2104d1d7ac1d9d77a2a50c99f6",
+      "closedAt": "2025-06-01T23:03:41Z",
+      "mergedAt": "2025-06-01T23:03:41Z",
+      "mergedBy": "yaroslavros",
+      "mergeCommit": {
+        "oid": "9bfd25388626e0541d88f00a2680e1214563b2a3"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
