@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-03T01:22:00.607559+00:00",
+  "timestamp": "2025-06-05T01:20:53.929691+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -62,7 +62,7 @@
       "labels": [],
       "body": "HPKE has four modes: Base, PSK, Auth, and AuthPSK.  Auth and AuthPSK are supported by DHKEM, but no other known KEM.  And there is no known application usage of them.  So we should remove them from this updated spec.",
       "createdAt": "2025-03-20T10:06:18Z",
-      "updatedAt": "2025-04-18T18:00:11Z",
+      "updatedAt": "2025-06-04T16:54:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -71,6 +71,20 @@
           "body": "For what it's worth, we plan to use the `Auth` mode in freedomofpress/securedrop-protocol#48.  We'd be happy to discuss our use-case further either here or on the mailing list.",
           "createdAt": "2025-04-18T01:40:53Z",
           "updatedAt": "2025-04-18T18:00:10Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "body": "@cfm we have an upcoming interim meeting if you want to make a case for these ahead of that.  (Your attendance at that meeting would be helpful; this is one of the issues we plan to discuss.)",
+          "createdAt": "2025-06-04T04:48:24Z",
+          "updatedAt": "2025-06-04T04:48:24Z"
+        },
+        {
+          "author": "cfm",
+          "authorAssociation": "NONE",
+          "body": "Thanks, @martinthomson.  I'll attend Friday's interim meeting, and there's been some discussion already in <https://mailarchive.ietf.org/arch/msg/hpke/vByRJAtCXGx9byOkV-QBln7KTBE/>.  We've also been able to confirm at least one implementer's intention to preserve these modes (cryspen/hpke-rs#83).  I'd be happy to do further outreach like this if it will help inform the working group's decision.",
+          "createdAt": "2025-06-04T16:54:21Z",
+          "updatedAt": "2025-06-04T16:54:21Z"
         }
       ]
     },
@@ -88,9 +102,24 @@
       "labels": [],
       "body": "RFC 9180 has had several errata filed on it:\n\n* Verified\n    * [X] https://www.rfc-editor.org/errata/eid6941\n    * [X] https://www.rfc-editor.org/errata/eid7790\n    * [x] https://www.rfc-editor.org/errata/eid7934\n    * [X] https://www.rfc-editor.org/errata/eid7937\n    * [X] https://www.rfc-editor.org/errata/eid7932\n* HFDU\n    * [X] https://www.rfc-editor.org/errata/eid7251\n    * [X] https://www.rfc-editor.org/errata/eid7933\n\nThey should be addressed in this new document.",
       "createdAt": "2025-03-20T10:07:00Z",
-      "updatedAt": "2025-03-25T17:23:32Z",
+      "updatedAt": "2025-06-04T07:57:48Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "body": "Is this issue resolved?  Are there any questions you would like to float at the upcoming interim, in case the resolutions were tricky?\n\nMy own assessment is that these were all straightforward.  Virtually all were small and obvious.  We could just show the diffs briefly. Either way, we can highlight each change again at WGLC time, so that people can double check then.",
+          "createdAt": "2025-06-04T04:47:29Z",
+          "updatedAt": "2025-06-04T04:47:29Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree.  We should just merge the related PRs, and that will address this issue.",
+          "createdAt": "2025-06-04T07:57:47Z",
+          "updatedAt": "2025-06-04T07:57:47Z"
+        }
+      ]
     },
     {
       "number": 3,
