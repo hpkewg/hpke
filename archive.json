@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-05T01:20:53.929691+00:00",
+  "timestamp": "2025-06-08T01:28:33.945886+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -232,7 +232,7 @@
       "labels": [],
       "body": "After #5, @sftcd asks the question about whether the group sees value in a Recommended column, like those in RFC 8447([bis](https://datatracker.ietf.org/doc/html/draft-ietf-tls-rfc8447bis-09)).\n\nAn argument for this is that we might split the difference between accepted and non-existent.  For those who feel like the pure PQ modes (like the existing codepoints 0x0040-0x0042) are unacceptable, this would provide some encouragement to use the PQ/T modes instead.",
       "createdAt": "2025-05-19T00:16:36Z",
-      "updatedAt": "2025-05-20T01:03:08Z",
+      "updatedAt": "2025-06-06T20:34:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -262,6 +262,149 @@
           "body": "> [@sftcd](https://github.com/sftcd) - What would you think about using the Security Considerations for this instead of registry text? \n\nI've no objection to trying that, but wonder whether we can craft good text to guide DEs for future assignment requests given the zoo of PQ algs. \n\n> There's probably pretty broad agreement that:\n> \n> * Hybrids are more conservative than pure PQ, but we include pure PQ because some organizations need it\n\nAs an aside: I've not gotten the (technical) \"need\" bit of that but yes people express that desire.\n\n> * ML-KEM-512 should be avoided, but we include it for completeness\n\nAgain, I wonder if we can craft (security considerations) text that works for other PQ combinations we might dislike, but no harm trying. I'd say this is maybe a thing to not try decide too early, and we may be better waiting to see who implements what, for what, with what quirks, and then figure out how best to document things.\n\n",
           "createdAt": "2025-05-20T01:03:06Z",
           "updatedAt": "2025-05-20T01:03:06Z"
+        },
+        {
+          "author": "selfissued",
+          "authorAssociation": "NONE",
+          "body": "JOSE, COSE, and TLS all have a Recommended column for algorithms.  The purpose of this is to guide implementations to implement a common set of algorithm choices to improve interoperability.\n\nI believe we should do likewise.",
+          "createdAt": "2025-06-06T17:00:57Z",
+          "updatedAt": "2025-06-06T17:00:57Z"
+        },
+        {
+          "author": "schanzen",
+          "authorAssociation": "NONE",
+          "body": "+1 to having such a column, and similar to TLS having PQ-only KEMs it discouraged or not recommended to nuge general purpose library implementors to not expose/implement indiscriminately. The (in my impression) consensus on PQ-only KEMs versus PQ/T KEMs *at this time* is that PQ-only is riskier while having basically negligible performance advantages. Having implementors consider them to be on the same level and implement all for compatibility is, at this time, is putting end users of implementations and at risk.\nI also said in the interim that I think the PQ-only KEMs should at least be in another document as separate code points. ",
+          "createdAt": "2025-06-06T17:03:42Z",
+          "updatedAt": "2025-06-06T17:03:42Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have never heard an implementer say that a Recommended column was a significant factor in whether they did or did not implement an algorithm.  These columns cause massive amounts of debate, with negligible impact on deployed reality.  No benefit to security or interoperability.  They're not worth the effort.\n\nI also support the point @yaroslavros made on the call, that HPKE is most commonly used as a component -- in TLS, MLS, COSE, or JOSE.  If you think that Recommended matters, those registries have you covered.  In terms of more heat than light, if HPKE also has a Recommended column, it will attract the union of the controversies from all those groups, since if HPKE says Recommended=N, you're going to have a harder time justifying Recommended=Y in the TLS registry.",
+          "createdAt": "2025-06-06T17:44:51Z",
+          "updatedAt": "2025-06-06T17:44:51Z"
+        },
+        {
+          "author": "richsalz",
+          "authorAssociation": "NONE",
+          "body": "> I have never heard an implementer say that a Recommended column was a significant factor in whether they did or did not implement an algorithm.\n\nHave you heard about customers putting it in purchasing reqs?  I have :)",
+          "createdAt": "2025-06-06T17:56:31Z",
+          "updatedAt": "2025-06-06T17:56:31Z"
+        },
+        {
+          "author": "schanzen",
+          "authorAssociation": "NONE",
+          "body": "> In terms of more heat than light, if HPKE also has a Recommended column, it will attract the union of the controversies from all those groups, since if HPKE says Recommended=N, you're going to have a harder time justifying Recommended=Y in the TLS registry.\n\nAnd this would be bad how if it is a good decision to have it as N?",
+          "createdAt": "2025-06-06T18:19:22Z",
+          "updatedAt": "2025-06-06T18:19:22Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "NONE",
+          "body": "Normally I am in favor of the Recommended column, but in this case I agree with Richard, because, as he says, HPKE is really a method of packaging up algorithms and providing them to protocols. Thus, I think it would be better for those protocols to make the Recommended decision. This is particularly true for protocols like TLS which may use HPKE (in the case of TLS, in ECH) but also have the algorithms exposed directly to the protocol. It would be a weird outcome to have TLS simultaneously recommend algorithm X for key establishment but not for use in HPKE, but also weird to have it mark an algorithm Recommended=Y when HPKE marks it recommended=N.",
+          "createdAt": "2025-06-06T19:03:46Z",
+          "updatedAt": "2025-06-06T19:03:46Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "NONE",
+          "body": "> > In terms of more heat than light, if HPKE also has a Recommended column, it will attract the union of the controversies from all those groups, since if HPKE says Recommended=N, you're going to have a harder time justifying Recommended=Y in the TLS registry.\n> \n> And this would be bad how if it is a good decision to have it as N?\n\nThis assumes that somehow we have some unambiguous way of defining a \"good decision\". Rather, people have differing opinions and different groups of those people -- even if they may have a common subset -- may reach different conclusions.",
+          "createdAt": "2025-06-06T19:06:36Z",
+          "updatedAt": "2025-06-06T19:06:36Z"
+        },
+        {
+          "author": "richsalz",
+          "authorAssociation": "NONE",
+          "body": "I find ekr's reasoning in https://github.com/hpkewg/hpke/issues/17#issuecomment-2950272234 compelling. I'd like to see text like that in the \"iana actions\" section.",
+          "createdAt": "2025-06-06T19:09:32Z",
+          "updatedAt": "2025-06-06T19:09:32Z"
+        },
+        {
+          "author": "selfissued",
+          "authorAssociation": "NONE",
+          "body": "I could live with the outcome of providing the rationale for why we don't have a Recommended column in the specification.",
+          "createdAt": "2025-06-06T19:28:37Z",
+          "updatedAt": "2025-06-06T19:28:37Z"
+        },
+        {
+          "author": "schanzen",
+          "authorAssociation": "NONE",
+          "body": "> > > In terms of more heat than light, if HPKE also has a Recommended column, it will attract the union of the controversies from all those groups, since if HPKE says Recommended=N, you're going to have a harder time justifying Recommended=Y in the TLS registry.\n> > \n> > \n> > And this would be bad how if it is a good decision to have it as N?\n> \n> This assumes that somehow we have some unambiguous way of defining a \"good decision\". Rather, people have differing opinions and different groups of those people -- even if they may have a common subset -- may reach different conclusions.\n\nAre you saying that in order to not inconvenience other WGs a WG should in doubt go with what is more compatible, instead of what would be the better choice? I am not sure that sits right with me. How can I trust as an implementor using HPKE that the algorithms at my disposal are of similar quality, or even safe? They may just be there for legacy reasons but actually highly discouraged from use. That should be very transparent and obvious.",
+          "createdAt": "2025-06-06T19:46:15Z",
+          "updatedAt": "2025-06-06T19:46:15Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "NONE",
+          "body": "> Are you saying that in order to not inconvenience other WGs a WG should in doubt go with what is more compatible, instead of what would be the better choice?\n\nNo, I'm not saying that, nor did my comment say anything like that.\n\n\n> I am not sure that sits right with me. How can I trust as an implementor using HPKE that the algorithms at my disposal are of similar quality, or even safe? They may just be there for legacy reasons but actually highly discouraged from use. That should be very transparent and obvious.\n\nWhat I'm saying, as above, is that \"an implementor using HPKE\" is most likely using it in some other protocol and should refer to that protocol for what is recommended.",
+          "createdAt": "2025-06-06T19:48:37Z",
+          "updatedAt": "2025-06-06T19:48:37Z"
+        },
+        {
+          "author": "schanzen",
+          "authorAssociation": "NONE",
+          "body": "> Normally I am in favor of the Recommended column, but in this case I agree with Richard, because, as he says, HPKE is really a method of packaging up algorithms and providing them to protocols. Thus, I think it would be better for those protocols to make the Recommended decision. This is particularly true for protocols like TLS which may use HPKE (in the case of TLS, in ECH) but also have the algorithms exposed directly to the protocol. It would be a weird outcome to have TLS simultaneously recommend algorithm X for key establishment but not for use in HPKE, but also weird to have it mark an algorithm Recommended=Y when HPKE marks it recommended=N.\n\nYes and no. This percieved wierdness is on one hand a result from the decision that was made against the same objections brought here. Saying that \"well we have decided that over there, so we are going to have to follow\" is basically what everybody fearing the risk of PQ-only KEMs in TLS ultimately has: Normalization of its use and silencing of voices through this act that raise the concerns using exactly this argument: \"We are going to use it because its in TLS, what can possibly go wrong, right?\"\n\nRegarding the \"wierdness\" of having different requirements on the KEM for different things: TLS Key Agreement IS a completely different beast. It would not be odd at all if the primitives are different for the ECH. For example, having a secure generic combiner for the PQ and T KEMs is of less concern in TLS (not ECH) than HPKE because of the transcript hashes.\nBut HPKE would be used for ECH. So there, it would not be odd at all if PQ and T is combined differently with different requirements for good reasons.",
+          "createdAt": "2025-06-06T20:07:12Z",
+          "updatedAt": "2025-06-06T20:07:12Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "NONE",
+          "body": "> Yes and no. This percieved wierdness is on one hand a result from the decision that was made against the same objections brought here. Saying that \"well we have decided that over there, so we are going to have to follow\" is basically what everybody fearing the risk of PQ-only KEMs in TLS ultimately has: Normalization of its use and silencing of voices through this act that raise the concerns using exactly this argument: \"We are going to use it because its in TLS, what can possibly go wrong, right?\"\n\nThis comment also seems to be responding to some point I am not making, which has nothing to do with doing something in HPKE purely because it's in TLS. What's at stake in *this* issue is merely whether there is a column in the IANA registry for HPKE about whether it's Recommended. The lack of such a column does not in any way preclude you from opposing the use of a particular algorithm in some other protocol that is used in TLS (or whatever).\n\n\n> Regarding the \"wierdness\" of having different requirements on the KEM for different things: TLS Key Agreement IS a completely different beast. It would not be odd at all if the primitives are different for the ECH. For example, having a secure generic combiner for the PQ and T KEMs is of less concern in TLS (not ECH) than HPKE because of the transcript hashes. But HPKE would be used for ECH. So there, it would not be odd at all if PQ and T is combined differently with different requirements for good reasons.\n\nThis too is not the question at hand. It does in fact seem likely that PQ and T will be defined differently in ECH and TLS. However, if TLS recommends the use of algorithm X in KEX *and* X is specified in HPKE, but there is some technical issue that means that X can't be safely used for ECH, that seems like it's a sign of something severely wrong with the X-for-HPKE binding.\n\n\n\n\n\n\n\n",
+          "createdAt": "2025-06-06T20:34:43Z",
+          "updatedAt": "2025-06-06T20:34:43Z"
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "id": "I_kwDOOLtax866SKHS",
+      "title": "Add a \"comments\" column to IANA registries",
+      "url": "https://github.com/hpkewg/hpke/issues/20",
+      "state": "OPEN",
+      "author": "richsalz",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-06T16:52:28Z",
+      "updatedAt": "2025-06-06T17:58:12Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Without more detail, it's hard to discern intent, but this seems like a bad idea.",
+          "createdAt": "2025-06-06T17:01:14Z",
+          "updatedAt": "2025-06-06T17:01:14Z"
+        },
+        {
+          "author": "richsalz",
+          "authorAssociation": "NONE",
+          "body": "Why is it bad?  Adding a free-text field *now* before you\u2019ll need it seems like future-proofing to me.\r\n",
+          "createdAt": "2025-06-06T17:34:57Z",
+          "updatedAt": "2025-06-06T17:34:57Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As the saying goes, YAGNI",
+          "createdAt": "2025-06-06T17:36:59Z",
+          "updatedAt": "2025-06-06T17:36:59Z"
+        },
+        {
+          "author": "richsalz",
+          "authorAssociation": "NONE",
+          "body": "DHCPv6 has a \u201cmnemonic\u201d column.\r\nmailparameters Registered States has a \u201cUse\u201d column.\r\nMulticast email SMTP Extensions has a Note column.\r\n\r\nI stopped looking.\r\n\r\n\r\n",
+          "createdAt": "2025-06-06T17:55:19Z",
+          "updatedAt": "2025-06-06T17:55:19Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If there's WG consensus to add a comment to one or more algorithms, we can add the column.  But there's no point to adding it without a need.  It's not futureproofing, because whatever thing makes the comment can also add the column.",
+          "createdAt": "2025-06-06T17:58:11Z",
+          "updatedAt": "2025-06-06T17:58:11Z"
         }
       ]
     }
@@ -761,7 +904,7 @@
       "labels": [],
       "body": "This PR adds support for single-stage KDFs, for example, SHAKE or TurboSHAKE.  As [discussed on the CFRG list](https://mailarchive.ietf.org/arch/msg/cfrg/L8sWP0VdrKLKp_MUbgjSqx5ArMw/), these KDFs can make HPKE up to 20% faster.\r\n\r\nI have implemented this change by generally making single-stage and two-stage KDFs parallel.  It would have disturbed less text to treat single-stage KDFs as an add-on / alternative to the base RFC 9180 two-stage KDF definition.  But I think this ends up being a little cleaner.\r\n\r\nThe part I am least confident about is the security considerations.  I added some text to the Domain Separation section that I think is true.  I had no idea what to put in the Input Length Restrictions section, so I just added a TODO.\r\n\r\nFixes #3 ",
       "createdAt": "2025-04-28T14:42:40Z",
-      "updatedAt": "2025-05-07T19:29:50Z",
+      "updatedAt": "2025-06-06T16:49:14Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
@@ -828,6 +971,27 @@
           "body": "I was thinking of trying to parse \"sec\" (exporter) labeled_ikm as \"secret\" (main KDF) labeled_ikm.\r\n\r\nThe exporter secret gets parsed as psk. Then it goes to parse the magic as 18,512 byte shared secret, which causes the parsing to desync. And it looks like it is theoretically possible for things to resync in the end.\r\n\r\nOf course, this will never happen in practice, because no KEM has output of that size, and it is extremely unlikely for KEM output to have valid magic (there are at least 17 fixed bytes in play).",
           "createdAt": "2025-04-30T16:14:53Z",
           "updatedAt": "2025-04-30T16:14:53Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Interim 2025-06-06:\r\n* Add note about length restriction\r\n* Then clear to merge",
+          "createdAt": "2025-06-06T16:18:15Z",
+          "updatedAt": "2025-06-06T16:18:15Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "body": "Action to add a note about the length restrictions on inputs, imposed by the `lengthPrefixed()` function used for various fields.  (Down from ~2^61 previously)",
+          "createdAt": "2025-06-06T16:18:22Z",
+          "updatedAt": "2025-06-06T16:18:22Z"
+        },
+        {
+          "author": "richsalz",
+          "authorAssociation": "NONE",
+          "body": "I'd prefer we didn't have the same names for single-stage. This makes it easier for implementors to map directly from the RFC to their public API. Because when implementors add single-stage, they're going to have to pick a name on their own if their language doesn't have overloading. It would be good to have a \"hint\" for them to just use, if possible.",
+          "createdAt": "2025-06-06T16:21:29Z",
+          "updatedAt": "2025-06-06T16:21:29Z"
         }
       ],
       "reviews": [
@@ -1176,6 +1340,126 @@
               "updatedAt": "2025-05-07T18:50:24Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86tLRc2",
+          "commit": {
+            "abbreviatedOid": "64dafd8"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:21:09Z",
+          "updatedAt": "2025-06-06T16:21:10Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "Is it possible to distinguish these with different names? They have the same function signature? Or maybe some magic about an interface or template ",
+              "createdAt": "2025-06-06T16:21:09Z",
+              "updatedAt": "2025-06-06T16:21:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86tLR0-",
+          "commit": {
+            "abbreviatedOid": "64dafd8"
+          },
+          "author": "richsalz",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:21:53Z",
+          "updatedAt": "2025-06-06T16:21:53Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "completely agree; we were writing at the same time: https://github.com/hpkewg/hpke/pull/16#issuecomment-2949790941\r\n",
+              "createdAt": "2025-06-06T16:21:53Z",
+              "updatedAt": "2025-06-06T16:21:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86tLR0_",
+          "commit": {
+            "abbreviatedOid": "64dafd8"
+          },
+          "author": "dconnolly",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:21:53Z",
+          "updatedAt": "2025-06-06T16:21:53Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "```\r\n- SingleStage()\r\n- TwoStage()\r\n```",
+              "createdAt": "2025-06-06T16:21:53Z",
+              "updatedAt": "2025-06-06T16:25:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86tLSoO",
+          "commit": {
+            "abbreviatedOid": "64dafd8"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:23:29Z",
+          "updatedAt": "2025-06-06T16:23:30Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "@dconnolly works for me.  In the call sites, I would refer to them as `XShot()`, where `X = 1, 2`.",
+              "createdAt": "2025-06-06T16:23:29Z",
+              "updatedAt": "2025-06-06T16:23:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86tLWAH",
+          "commit": {
+            "abbreviatedOid": "64dafd8"
+          },
+          "author": "richsalz",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:29:55Z",
+          "updatedAt": "2025-06-06T16:29:55Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "Don't change the names of the existing methods.  Add an alias if you must.",
+              "createdAt": "2025-06-06T16:29:55Z",
+              "updatedAt": "2025-06-06T16:29:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86tLjgA",
+          "commit": {
+            "abbreviatedOid": "64dafd8"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:49:14Z",
+          "updatedAt": "2025-06-06T16:49:14Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "I would suggest something like:\r\n\r\n```python\r\nif usingSingleStageKDF():\r\n    foo = ExtractExpandOneStage(...)\r\nelse\r\n    foo = ExtractExpandTwoStage(...)\r\n```",
+              "createdAt": "2025-06-06T16:49:14Z",
+              "updatedAt": "2025-06-06T16:49:14Z"
+            }
+          ]
         }
       ]
     },
@@ -1204,6 +1488,32 @@
       "mergeCommit": {
         "oid": "9bfd25388626e0541d88f00a2680e1214563b2a3"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 19,
+      "id": "PR_kwDOOLtax86Zaewq",
+      "title": "Remove the Auth modes",
+      "url": "https://github.com/hpkewg/hpke/pull/19",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #1 \r\n\r\nMarked as WIP because the test vectors for these modes still need removing.",
+      "createdAt": "2025-06-06T15:58:37Z",
+      "updatedAt": "2025-06-06T15:59:32Z",
+      "baseRepository": "hpkewg/hpke",
+      "baseRefName": "main",
+      "baseRefOid": "67a5ceed4eff0c558b6326ee747b3ba8d3882d0c",
+      "headRepository": "hpkewg/hpke",
+      "headRefName": "no-auth",
+      "headRefOid": "1307b6c90a075eae324e7d5af50d7a1a775cb07a",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
