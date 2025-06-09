@@ -3155,13 +3155,14 @@ the given mode satisfies the property.<a href="#section-9.1.2-6" class="pilcrow"
 necessary to prove their security. The results from <span>[<a href="#CS01" class="cite xref">CS01</a>]</span> provide
 some indication that any IND-CCA2-secure KEM will suffice here, but are
 not conclusive given the differences in the schemes.<a href="#section-9.1.2-8" class="pilcrow">¶</a></p>
-<p id="section-9.1.2-9">A detailed computational analysis of HPKE's Auth mode single-shot
-encryption API has been done in <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span>.
-The paper defines security notions for authenticated
-KEMs and for authenticated public key encryption, using the outsider and
-insider security terminology known from signcryption <span>[<a href="#SigncryptionDZ10" class="cite xref">SigncryptionDZ10</a>]</span>.
-The analysis proves that DHKEM's <code>AuthEncap()</code>/<code>AuthDecap()</code> interface
-fulfills these notions for all Diffie-Hellman groups specified in this document.
+<p id="section-9.1.2-9">A detailed computational analysis of HPKE's Auth mode single-shot encryption API
+has been done in <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span>.  The paper defines security notions for
+authenticated KEMs and for authenticated public key encryption, using the
+outsider and insider security terminology known from signcryption
+<span>[<a href="#SigncryptionDZ10" class="cite xref">SigncryptionDZ10</a>]</span>.  The analysis proves that DHKEM's AuthEncap()/AuthDecap()
+interface fulfills the notions of Outsider-CCA, Insider-CCA, and Outsider-Auth
+for all Diffie-Hellman groups specified in this document. It does not fulfill
+the notion of Insider-Auth defined in the paper.
 The analysis also provides exact security bounds, under the assumptions that the
 gap Diffie-Hellman (GDH) problem is hard in the appropriate subgroup <span>[<a href="#GAP" class="cite xref">GAP</a>]</span>,
 and that HKDF can be modeled as a random oracle.<a href="#section-9.1.2-9" class="pilcrow">¶</a></p>

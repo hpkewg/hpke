@@ -1463,11 +1463,13 @@ Table of Contents
    security notions for authenticated KEMs and for authenticated public
    key encryption, using the outsider and insider security terminology
    known from signcryption [SigncryptionDZ10].  The analysis proves that
-   DHKEM's AuthEncap()/AuthDecap() interface fulfills these notions for
-   all Diffie-Hellman groups specified in this document.  The analysis
-   also provides exact security bounds, under the assumptions that the
-   gap Diffie-Hellman (GDH) problem is hard in the appropriate subgroup
-   [GAP], and that HKDF can be modeled as a random oracle.
+   DHKEM's AuthEncap()/AuthDecap() interface fulfills the notions of
+   Outsider-CCA, Insider-CCA, and Outsider-Auth for all Diffie-Hellman
+   groups specified in this document.  It does not fulfill the notion of
+   Insider-Auth defined in the paper.  The analysis also provides exact
+   security bounds, under the assumptions that the gap Diffie-Hellman
+   (GDH) problem is hard in the appropriate subgroup [GAP], and that
+   HKDF can be modeled as a random oracle.
 
    Further, [ABHKLR20] proves composition theorems, showing that HPKE's
    Auth mode fulfills the security notions of authenticated public key
