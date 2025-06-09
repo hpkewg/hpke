@@ -229,27 +229,17 @@ informative:
 
   GCM: DOI.10.6028/NIST.SP.800-38D
 
-  NaCl:
-    title: "Public-key authenticated encryption: crypto_box"
-    target: https://nacl.cr.yp.to/box.html
-    date: 2019
-
-
 --- abstract
 
-This document describes a scheme for hybrid public key encryption (HPKE).
-This scheme provides a variant of public key encryption of arbitrary-sized
-plaintexts for a recipient public key. It also includes three authenticated
-variants, including one that authenticates possession of a pre-shared key
-and two optional ones that authenticate possession of a key encapsulation
-mechanism (KEM) private key. HPKE works for any combination of an asymmetric
-KEM, key derivation function (KDF), and authenticated encryption with
-additional data (AEAD) encryption function. Some authenticated variants may not
-be supported by all KEMs. We provide instantiations of the scheme using widely
-used and efficient primitives, such as Elliptic Curve Diffie-Hellman (ECDH) key
-agreement, HMAC-based key derivation function (HKDF), and SHA2.
-
-This document is a product of the Crypto Forum Research Group (CFRG) in the IRTF.
+This document describes a scheme for hybrid public key encryption (HPKE).  This
+scheme provides a variant of public key encryption of arbitrary-sized plaintexts
+for a recipient public key. It also includes a variant that authenticates
+possession of a pre-shared key. HPKE works for any combination of an
+asymmetric KEM, key derivation function (KDF), and authenticated encryption
+with additional data (AEAD) encryption function. We provide instantiations of
+the scheme using widely used and efficient primitives, such as Elliptic Curve
+Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation function (HKDF),
+and SHA2.
 
 --- middle
 
@@ -496,21 +486,23 @@ constructed so that only the holder of `skR` can decapsulate the key from
 (e.g., to fold in identity information) and an `aad` parameter that
 provides additional authenticated data to the AEAD algorithm in use.
 
-In addition to the base case of encrypting to a public key, we
-include three authenticated variants: one that authenticates
-possession of a pre-shared key, one that authenticates
-possession of a KEM private key, and one that authenticates possession of both
-a pre-shared key and a KEM private key. All authenticated variants contribute
-additional keying material to the encryption operation. The following one-byte
-values will be used to distinguish between modes:
+In addition to the base case of encrypting to a public key, we include a variant
+that authenticates possession of a pre-shared key. The authenticated variant
+contributes additional keying material to the encryption operation. The
+following one-byte values will be used to distinguish between modes:
 
 | Mode          | Value |
 |:==============|:======|
 | mode_base     | 0x00  |
 | mode_psk      | 0x01  |
+| RESERVED      | 0x02  |
+| RESERVED      | 0x03  |
 {: #hpke-modes title="HPKE Modes"}
 
-All these cases follow the same basic two-step pattern:
+(The values 0x02 and 0x03 were used in {{RFC9180}} to reflect additional
+variants which have been removed from this specification.)
+
+Both variants follow the same basic two-step pattern:
 
 1. Set up an encryption context that is shared between the sender
    and the recipient.
@@ -593,9 +585,9 @@ def VerifyPSKInputs(mode, psk, psk_id):
   if got_psk != got_psk_id:
     raise Exception("Inconsistent PSK inputs")
 
-  if got_psk and (mode in [mode_base, mode_auth]):
+  if got_psk and mode == mode_base:
     raise Exception("PSK input provided when not needed")
-  if (not got_psk) and (mode in [mode_psk, mode_auth_psk]):
+  if (not got_psk) and mode == mode_psk:
     raise Exception("Missing required PSK input")
 
 def KeySchedule<ROLE>(mode, shared_secret, info, psk, psk_id):
@@ -980,8 +972,7 @@ def DeriveKeyPair(ikm):
 The following public keys are subject to validation if the group
 requires public key validation: the sender MUST validate the recipient's
 public key `pkR`; the recipient MUST validate the ephemeral public key
-`pkE`; in authenticated modes, the recipient MUST validate the sender's
-static public key `pkS`. Validation failure yields a `ValidationError`.
+`pkE`. Validation failure yields a `ValidationError`.
 
 For P-256, P-384 and P-521, senders and recipients MUST perform partial
 public key validation on all public key inputs, as defined in Section 5.6.2.3.4
@@ -1431,7 +1422,7 @@ Such a situation could also lead to the reuse of the same KEM shared secret
 and thus to the reuse of same key-nonce pairs for the AEAD.
 The AEADs specified in this document are not secure
 in case of nonce reuse. This attack vector is particularly relevant in
-authenticated modes because knowledge of the ephemeral randomness is not
+the authenticated mode because knowledge of the ephemeral randomness is not
 enough to derive `shared_secret` in these modes.
 
 One way for applications to mitigate the impacts of bad ephemeral randomness is
