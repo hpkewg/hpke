@@ -5,6 +5,7 @@ docname: draft-ietf-hpke-hpke-latest
 date:
 category: std
 workgroup: HPKE
+obsoletes: 9180
 
 ipr: trust200902
 keyword: Internet-Draft
@@ -545,12 +546,15 @@ context. The key schedule inputs are as follows:
 Senders and recipients MUST validate KEM inputs and outputs as described
 in {{kem-ids}}.
 
-The `psk` and `psk_id` fields MUST appear together or not at all.
+The `info` parameter used by HPKE is not related to the optional string `info`
+used by the `LabeledExpand()` or `Expand()` functions detailed in {{base-crypto}}.
+
+The `psk` and `psk_id` parameters MUST appear together or not at all.
 That is, if a non-default value is provided for one of them, then
 the other MUST be set to a non-default value. This requirement is
 encoded in `VerifyPSKInputs()` below.
 
-The `psk`, `psk_id`, and `info` fields have maximum lengths that depend
+The `psk`, `psk_id`, and `info` parameters have maximum lengths that depend
 on the KDF itself, on the definition of `LabeledExtract()`, and on the
 constant labels used together with them. See {{kdf-input-length}} for
 precise limits on these lengths.
@@ -608,9 +612,12 @@ def KeySchedule<ROLE>(mode, shared_secret, info, psk, psk_id):
   return Context<ROLE>(key, base_nonce, 0, exporter_secret)
 ~~~~~
 
-The `ROLE` template parameter is either S or R, depending on the role of
-sender or recipient, respectively. See {{hpke-dem}} for a discussion of the
-key schedule output, including the role-specific `Context` structure and its API.
+The `ROLE` template parameter is either S or R, depending on the role
+of sender or recipient, respectively. The third parameter in the
+`Context<ROLE>` refers to the sequence number, that is initialised with
+a 0 value. See {{hpke-dem}} for a discussion of the key schedule output,
+including the role-specific Context structure and its API, and the
+usage of the sequence number.
 
 Note that the `key_schedule_context` construction in `KeySchedule()` is
 equivalent to serializing a structure of the following form in the TLS presentation
@@ -755,9 +762,9 @@ for more details.
 
 It is up to the application to ensure that encryptions and decryptions are
 done in the proper sequence, so that encryption and decryption nonces align.
-If `ContextS.Seal()` or `ContextR.Open()` would cause the `seq` field to
+If `ContextS.Seal()` or `ContextR.Open()` would cause the `seq` parameter to
 overflow, then the implementation MUST fail with an error. (In the pseudocode
-below, `Context<ROLE>.IncrementSeq()` fails with an error when `seq` overflows,
+above, `Context<ROLE>.IncrementSeq()` fails with an error when `seq` overflows,
 which causes `ContextS.Seal()` and `ContextR.Open()` to fail accordingly.)
 Note that the internal `Seal()` and `Open()` calls inside correspond to the
 context's AEAD algorithm.
@@ -773,7 +780,7 @@ KDF Expand function. For the KDFs defined in this specification, `L` has
 a maximum value of `255*Nh`. Future specifications that define new KDFs
 MUST specify a bound for `L`.
 
-The `exporter_context` field has a maximum length that depends on the KDF
+The `exporter_context` parameter has a maximum length that depends on the KDF
 itself, on the definition of `LabeledExpand()`, and on the constant labels
 used together with them. See {{kdf-input-length}} for precise limits on this
 length.
@@ -793,9 +800,10 @@ key schedule, as they are not used by the Export interface described above.
 
 ## Encryption and Decryption {#single-shot-encryption}
 
-In many cases, applications encrypt only a single message to a recipient's public key.
-This section provides templates for HPKE APIs that implement stateless "single-shot"
-encryption and decryption using APIs specified in {{hpke-kem}} and {{hpke-dem}}:
+In many cases, applications encrypt only a single message to a recipient's
+public key.  This section provides templates for HPKE APIs that implement
+stateless "single-shot" encryption and decryption using APIs specified in
+{{encryption-context}} and {{hpke-dem}}:
 
 ~~~~~
 def Seal<MODE>(pkR, info, aad, pt, ...):
@@ -967,6 +975,11 @@ def DeriveKeyPair(ikm):
   return (sk, pk(sk))
 ~~~
 
+The `suite_id` used implicitly in `LabeledExtract()` and `LabeledExpand()`
+for `DeriveKeyPair(ikm)` is derived from the KEM identifier of the
+DHKEM in use (see {{kem-ids}}), that is, based on the type of key
+pair been generated for that DHKEM type.
+
 ### Validation of Inputs and Outputs {#validation}
 
 The following public keys are subject to validation if the group
@@ -1011,7 +1024,7 @@ inputs `ikm` and `info` before calling the KDF's `Extract()` and `Expand()`
 functions. This leads to a reduction of the maximum input length that
 is available for the inputs `psk`, `psk_id`, `info`, `exporter_context`,
 `ikm`, i.e., the variable-length parameters provided by HPKE applications.
-The following table lists the maximum allowed lengths of these fields
+The following table lists the maximum allowed lengths of these parameters
 for the KDFs defined in this document, as inclusive bounds in bytes:
 
 | Input               | HKDF-SHA256  | HKDF-SHA384   | HKDF-SHA512   |
@@ -1029,9 +1042,13 @@ unlikely to be reached in practical applications. Future specifications
 that define new KDFs MUST specify bounds for these variable-length
 parameters.
 
-The RECOMMENDED limit for these values is 64 bytes. This would enable
-interoperability with implementations that statically allocate memory
-for these inputs to avoid memory allocations.
+Since the above bounds are larger than any values used in practice, it may be
+useful for implementations to impose a lower limit on the values they will
+accept (for example, to avoid dynamic allocations).  Implementations SHOULD set
+such a limit to be no less than maximum `Nsk` size for a KEM supported by the
+implementation.  For an implementation that supports all of the KEMs in this
+document, the limit would be 66 bytes, which is the `Nsk` value for DHKEM(P-521,
+HKDF-SHA512).
 
 The values for `psk`, `psk_id`, `info`, and `ikm`, which are inputs to
 `LabeledExtract()`, were computed with the following expression:
