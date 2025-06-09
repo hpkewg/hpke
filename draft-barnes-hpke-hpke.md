@@ -354,7 +354,7 @@ HPKE variants rely on the following primitives:
 
 * A key derivation function (KDF) of one of the two following forms:
 
-  * A single-stage KDF:
+  * A one-stage KDF:
     - `Derive(ikm, L)`: Derive an `L`-byte value from the input keying material
       `ikm`.
     - `Nh` The security strength of the KDF, in bytes.
@@ -408,7 +408,7 @@ The following functions are defined to facilitate domain separation of
 KDF calls as well as context binding:
 
 ~~~
-# For use with single-stage KDFs
+# For use with one-stage KDFs
 def LabeledDerive(ikm, label, context, L):
   labeled_ikm = concat(
     ikm,
@@ -440,6 +440,12 @@ this KEM algorithm; if used in the remainder of HPKE, it MUST start with
 "HPKE" and identify the entire ciphersuite in use. See sections {{dhkem}}
 and {{encryption-context}} for details.
 
+Certain functions have a different structure depending on whether a one-stage or
+two-stage KDF is being used.  Implementations of such functions will have the
+suffixes `_OneStage` and `_TwoStage`, respectively.  For example, the `Foo`
+function would be invoked by calling `Foo_OneStage` when using a one-stage KDF,
+and by calling `Foo_TwoStage` when using a two-stage KDF.
+
 ## DH-Based KEM (DHKEM) {#dhkem}
 
 Suppose we are given a KDF, and a Diffie-Hellman (DH) group providing the
@@ -464,12 +470,12 @@ for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
 `DeriveKeyPair()` function specification for DHKEMs defined in this document.
 
 ~~~
-# For use with single-stage KDFs
-def ExtractAndExpand(dh, kem_context):
+# For use with one-stage KDFs
+def ExtractAndExpand_OneStage(dh, kem_context):
   return LabeledDerive(dh, "shared_secret", kem_context, Nsecret)
 
 # For use with two-stage KDFs
-def ExtractAndExpand(dh, kem_context):
+def ExtractAndExpand_TwoStage(dh, kem_context):
   eae_prk = LabeledExtract("", "eae_prk", dh)
   shared_secret = LabeledExpand(eae_prk, "shared_secret",
                                 kem_context, Nsecret)
@@ -681,8 +687,8 @@ def VerifyPSKInputs(mode, psk, psk_id):
   if (not got_psk) and (mode in [mode_psk, mode_auth_psk]):
     raise Exception("Missing required PSK input")
 
-# For use with a single-stage KDF
-def CombineSecrets(mode, shared_secret, info, psk, psk_id):
+# For use with a one-stage KDF
+def CombineSecrets_OneStage(mode, shared_secret, info, psk, psk_id):
   secrets = concat(
     lengthPrefixed(psk),
     lengthPrefixed(shared_secret),
@@ -702,7 +708,7 @@ def CombineSecrets(mode, shared_secret, info, psk, psk_id):
   return (key, base_nonce, exporter_secret)
 
 # For use with a two-stage KDF
-def CombineSecrets(mode, shared_secret, info, psk, psk_id):
+def CombineSecrets_TwoStage(mode, shared_secret, info, psk, psk_id):
   psk_id_hash = LabeledExtract("", "psk_id_hash", psk_id)
   info_hash = LabeledExtract("", "info_hash", info)
   key_schedule_context = concat(mode, psk_id_hash, info_hash)
@@ -956,13 +962,13 @@ used together with them. See {{kdf-input-length}} for precise limits on this
 length.
 
 ~~~~~
-# For use with a single-stage KDF
-def Context.Export(exporter_context, L):
+# For use with a one-stage KDF
+def Context.Export_OneStage(exporter_context, L):
   return LabeledDerive(self.exporter_secret, "sec",
                        exporter_context, L)
 
 # For use with a two-stage KDF
-def Context.Export(exporter_context, L):
+def Context.Export_TwoStage(exporter_context, L):
   return LabeledExpand(self.exporter_secret, "sec",
                        exporter_context, L)
 ~~~~~
@@ -1108,12 +1114,12 @@ For P-256, P-384, and P-521, the `DeriveKeyPair()` function of the KEM performs
 rejection sampling over field elements:
 
 ~~~
-# For use with a single-stage KDF
-def DeriveCandidate(ikm, counter):
+# For use with a one-stage KDF
+def DeriveCandidate_OneStage(ikm, counter):
   return LabeledDerive(ikm, "candidate", I2OSP(counter, 1), Nsk)
 
 # For use with a two-stage KDF
-def DeriveCandidate(ikm, counter):
+def DeriveCandidate_TwoStage(ikm, counter):
   # Note: dkp_prk may be derived once and cached
   dkp_prk = LabeledExtract("", "dkp_prk", ikm)
   return LabeledExpand(dkp_prk, "candidate",
@@ -1156,13 +1162,13 @@ See {{api-errors}} for information about dealing with such failures.
 For X25519 and X448, the `DeriveKeyPair()` function applies a KDF to the input:
 
 ~~~
-# For use with a single-stage KDF
-def DeriveKeyPair(ikm):
+# For use with a one-stage KDF
+def DeriveKeyPair_OneStage(ikm):
   sk = LabeledDerive(ikm, "sk", "", Nsk)
   return (sk, pk(sk))
 
 # For use with a two-stage KDF
-def DeriveKeyPair(ikm):
+def DeriveKeyPair_TwoStage(ikm):
   dkp_prk = LabeledExtract("", "dkp_prk", ikm)
   sk = LabeledExpand(dkp_prk, "sk", "", Nsk)
   return (sk, pk(sk))
@@ -1212,10 +1218,10 @@ algorithm whose output length is `Npk`.
 
 ### Input Length Restrictions {#kdf-input-length}
 
-For single-stage KDFs, there is length limit of 65,535 bytes for the `psk`,
+For one-stage KDFs, there is length limit of 65,535 bytes for the `psk`,
 `psk_id`, `info` fields. This limitation arises because these fields are all
 prefixed with a two-byte length when being used as KDF inputs. There is no
-inherent length limitation on `exporter_context`.  If a single-stage KDF has an
+inherent length limitation on `exporter_context`.  If a one-stage KDF has an
 input length limit, then implementations MUST limit the length of
 `exporter_context` accordingly, so that the `LabeledDerive` call in
 `Context.Export` does not overflow the input length limit.
@@ -1665,7 +1671,7 @@ using prefix-free sets of `suite_id` values in `LabeledExtract()`,
 Recall that a set is prefix-free if no element is a prefix of another within the
 set.
 
-Separation between uses of the single-stage and two-stage KDFs is ensured by the
+Separation between uses of the one-stage and two-stage KDFs is ensured by the
 inclusion of the `suite_id` in `LabeledExtract`, `LabeledExpand`, and
 `LabeledDerive`.
 
