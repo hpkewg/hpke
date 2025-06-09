@@ -441,10 +441,12 @@ this KEM algorithm; if used in the remainder of HPKE, it MUST start with
 and {{encryption-context}} for details.
 
 Certain functions have a different structure depending on whether a one-stage or
-two-stage KDF is being used.  Implementations of such functions will have the
-suffixes `_OneStage` and `_TwoStage`, respectively.  For example, the `Foo`
-function would be invoked by calling `Foo_OneStage` when using a one-stage KDF,
-and by calling `Foo_TwoStage` when using a two-stage KDF.
+two-stage KDF is being used.  For clarity, such functions will be described
+twice in this document, once with the suffix `_OneStage` and once with the
+suffix `_TwoStage`, representing the versions of the function to be used with a
+one-stage or two-stage KDF, respectively.  For example, the `Foo` function would
+be invoked by calling `Foo_OneStage` when using a one-stage KDF, and by calling
+`Foo_TwoStage` when using a two-stage KDF.
 
 ## DH-Based KEM (DHKEM) {#dhkem}
 
