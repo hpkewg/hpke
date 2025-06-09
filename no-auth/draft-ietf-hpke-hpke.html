@@ -1070,6 +1070,9 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="workgroup">HPKE</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
 <dd class="internet-draft">draft-ietf-hpke-hpke-latest</dd>
+<dt class="label-obsoletes">Obsoletes:</dt>
+<dd class="obsoletes">
+<a href="https://www.rfc-editor.org/rfc/rfc9180" class="eref">9180</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2025-06-09" class="published">9 June 2025</time>
@@ -1884,24 +1887,26 @@ and the recipient (optional; default value "").<a href="#section-5.1-2.4.1" clas
         </ul>
 <p id="section-5.1-3">Senders and recipients MUST validate KEM inputs and outputs as described
 in <a href="#kem-ids" class="auto internal xref">Section 7.1</a>.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
-<p id="section-5.1-4">The <code>psk</code> and <code>psk_id</code> fields MUST appear together or not at all.
+<p id="section-5.1-4">The <code>info</code> parameter used by HPKE is not related to the optional string <code>info</code>
+used by the <code>LabeledExpand()</code> or <code>Expand()</code> functions detailed in <a href="#base-crypto" class="auto internal xref">Section 4</a>.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1-5">The <code>psk</code> and <code>psk_id</code> parameters MUST appear together or not at all.
 That is, if a non-default value is provided for one of them, then
 the other MUST be set to a non-default value. This requirement is
-encoded in <code>VerifyPSKInputs()</code> below.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
-<p id="section-5.1-5">The <code>psk</code>, <code>psk_id</code>, and <code>info</code> fields have maximum lengths that depend
+encoded in <code>VerifyPSKInputs()</code> below.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+<p id="section-5.1-6">The <code>psk</code>, <code>psk_id</code>, and <code>info</code> parameters have maximum lengths that depend
 on the KDF itself, on the definition of <code>LabeledExtract()</code>, and on the
 constant labels used together with them. See <a href="#kdf-input-length" class="auto internal xref">Section 7.2.1</a> for
-precise limits on these lengths.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
-<p id="section-5.1-6">The <code>key</code>, <code>base_nonce</code>, and <code>exporter_secret</code> computed by the key schedule
+precise limits on these lengths.<a href="#section-5.1-6" class="pilcrow">¶</a></p>
+<p id="section-5.1-7">The <code>key</code>, <code>base_nonce</code>, and <code>exporter_secret</code> computed by the key schedule
 have the property that they are only known to the holder of the recipient
 private key, and the entity that used the KEM to generate <code>shared_secret</code> and
-<code>enc</code>.<a href="#section-5.1-6" class="pilcrow">¶</a></p>
-<p id="section-5.1-7">The HPKE algorithm identifiers, i.e., the KEM <code>kem_id</code>, KDF <code>kdf_id</code>, and
+<code>enc</code>.<a href="#section-5.1-7" class="pilcrow">¶</a></p>
+<p id="section-5.1-8">The HPKE algorithm identifiers, i.e., the KEM <code>kem_id</code>, KDF <code>kdf_id</code>, and
 AEAD <code>aead_id</code> 2-byte code points, as defined in <a href="#kemid-values" class="auto internal xref">Table 2</a>, <a href="#kdfid-values" class="auto internal xref">Table 3</a>,
 and <a href="#aeadid-values" class="auto internal xref">Table 5</a>, respectively, are assumed implicit from the implementation
 and not passed as parameters. The implicit <code>suite_id</code> value used within
-<code>LabeledExtract</code> and <code>LabeledExpand</code> is defined based on them as follows:<a href="#section-5.1-7" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.1-8">
+<code>LabeledExtract</code> and <code>LabeledExpand</code> is defined based on them as follows:<a href="#section-5.1-8" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1-9">
 <pre>
 suite_id = concat(
   "HPKE",
@@ -1909,9 +1914,9 @@ suite_id = concat(
   I2OSP(kdf_id, 2),
   I2OSP(aead_id, 2)
 )
-</pre><a href="#section-5.1-8" class="pilcrow">¶</a>
+</pre><a href="#section-5.1-9" class="pilcrow">¶</a>
 </div>
-<div class="alignLeft art-text artwork" id="section-5.1-9">
+<div class="alignLeft art-text artwork" id="section-5.1-10">
 <pre>
 default_psk = ""
 default_psk_id = ""
@@ -1943,22 +1948,25 @@ def KeySchedule&lt;ROLE&gt;(mode, shared_secret, info, psk, psk_id):
                                   key_schedule_context, Nh)
 
   return Context&lt;ROLE&gt;(key, base_nonce, 0, exporter_secret)
-</pre><a href="#section-5.1-9" class="pilcrow">¶</a>
+</pre><a href="#section-5.1-10" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1-10">The <code>ROLE</code> template parameter is either S or R, depending on the role of
-sender or recipient, respectively. See <a href="#hpke-dem" class="auto internal xref">Section 5.2</a> for a discussion of the
-key schedule output, including the role-specific <code>Context</code> structure and its API.<a href="#section-5.1-10" class="pilcrow">¶</a></p>
-<p id="section-5.1-11">Note that the <code>key_schedule_context</code> construction in <code>KeySchedule()</code> is
+<p id="section-5.1-11">The <code>ROLE</code> template parameter is either S or R, depending on the role
+of sender or recipient, respectively. The third parameter in the
+<code>Context&lt;ROLE&gt;</code> refers to the sequence number, that is initialised with
+a 0 value. See <a href="#hpke-dem" class="auto internal xref">Section 5.2</a> for a discussion of the key schedule output,
+including the role-specific Context structure and its API, and the
+usage of the sequence number.<a href="#section-5.1-11" class="pilcrow">¶</a></p>
+<p id="section-5.1-12">Note that the <code>key_schedule_context</code> construction in <code>KeySchedule()</code> is
 equivalent to serializing a structure of the following form in the TLS presentation
-syntax:<a href="#section-5.1-11" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.1-12">
+syntax:<a href="#section-5.1-12" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1-13">
 <pre>
 struct {
     uint8 mode;
     opaque psk_id_hash[Nh];
     opaque info_hash[Nh];
 } KeyScheduleContext;
-</pre><a href="#section-5.1-12" class="pilcrow">¶</a>
+</pre><a href="#section-5.1-13" class="pilcrow">¶</a>
 </div>
 <div id="hpke-kem">
 <section id="section-5.1.1">
@@ -2111,9 +2119,9 @@ needed using use the secret export interface; see <a href="#hpke-export" class="
 for more details.<a href="#section-5.2-13" class="pilcrow">¶</a></p>
 <p id="section-5.2-14">It is up to the application to ensure that encryptions and decryptions are
 done in the proper sequence, so that encryption and decryption nonces align.
-If <code>ContextS.Seal()</code> or <code>ContextR.Open()</code> would cause the <code>seq</code> field to
+If <code>ContextS.Seal()</code> or <code>ContextR.Open()</code> would cause the <code>seq</code> parameter to
 overflow, then the implementation MUST fail with an error. (In the pseudocode
-below, <code>Context&lt;ROLE&gt;.IncrementSeq()</code> fails with an error when <code>seq</code> overflows,
+above, <code>Context&lt;ROLE&gt;.IncrementSeq()</code> fails with an error when <code>seq</code> overflows,
 which causes <code>ContextS.Seal()</code> and <code>ContextR.Open()</code> to fail accordingly.)
 Note that the internal <code>Seal()</code> and <code>Open()</code> calls inside correspond to the
 context's AEAD algorithm.<a href="#section-5.2-14" class="pilcrow">¶</a></p>
@@ -2132,7 +2140,7 @@ a secret derived from the internal exporter secret using the corresponding
 KDF Expand function. For the KDFs defined in this specification, <code>L</code> has
 a maximum value of <code>255*Nh</code>. Future specifications that define new KDFs
 MUST specify a bound for <code>L</code>.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
-<p id="section-5.3-2">The <code>exporter_context</code> field has a maximum length that depends on the KDF
+<p id="section-5.3-2">The <code>exporter_context</code> parameter has a maximum length that depends on the KDF
 itself, on the definition of <code>LabeledExpand()</code>, and on the constant labels
 used together with them. See <a href="#kdf-input-length" class="auto internal xref">Section 7.2.1</a> for precise limits on this
 length.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
@@ -2161,9 +2169,10 @@ key schedule, as they are not used by the Export interface described above.<a hr
         <h3 id="name-encryption-and-decryption-2">
 <a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-encryption-and-decryption-2" class="section-name selfRef">Encryption and Decryption</a>
         </h3>
-<p id="section-6.1-1">In many cases, applications encrypt only a single message to a recipient's public key.
-This section provides templates for HPKE APIs that implement stateless "single-shot"
-encryption and decryption using APIs specified in <a href="#hpke-kem" class="auto internal xref">Section 5.1.1</a> and <a href="#hpke-dem" class="auto internal xref">Section 5.2</a>:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-1">In many cases, applications encrypt only a single message to a recipient's
+public key.  This section provides templates for HPKE APIs that implement
+stateless "single-shot" encryption and decryption using APIs specified in
+<a href="#encryption-context" class="auto internal xref">Section 5.1</a> and <a href="#hpke-dem" class="auto internal xref">Section 5.2</a>:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.1-2">
 <pre>
 def Seal&lt;MODE&gt;(pkR, info, aad, pt, ...):
@@ -2432,6 +2441,10 @@ def DeriveKeyPair(ikm):
   return (sk, pk(sk))
 </pre><a href="#section-7.1.3-9" class="pilcrow">¶</a>
 </div>
+<p id="section-7.1.3-10">The <code>suite_id</code> used implicitly in <code>LabeledExtract()</code> and <code>LabeledExpand()</code>
+for <code>DeriveKeyPair(ikm)</code> is derived from the KEM identifier of the
+DHKEM in use (see <a href="#kem-ids" class="auto internal xref">Section 7.1</a>), that is, based on the type of key
+pair been generated for that DHKEM type.<a href="#section-7.1.3-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="validation">
@@ -2531,7 +2544,7 @@ inputs <code>ikm</code> and <code>info</code> before calling the KDF's <code>Ext
 functions. This leads to a reduction of the maximum input length that
 is available for the inputs <code>psk</code>, <code>psk_id</code>, <code>info</code>, <code>exporter_context</code>,
 <code>ikm</code>, i.e., the variable-length parameters provided by HPKE applications.
-The following table lists the maximum allowed lengths of these fields
+The following table lists the maximum allowed lengths of these parameters
 for the KDFs defined in this document, as inclusive bounds in bytes:<a href="#section-7.2.1-1" class="pilcrow">¶</a></p>
 <span id="name-application-input-limits"></span><div id="input-limits">
 <table class="center" id="table-4">
@@ -2586,9 +2599,13 @@ input length of the underlying hash function; these limits are large and
 unlikely to be reached in practical applications. Future specifications
 that define new KDFs MUST specify bounds for these variable-length
 parameters.<a href="#section-7.2.1-3" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-4">The RECOMMENDED limit for these values is 64 bytes. This would enable
-interoperability with implementations that statically allocate memory
-for these inputs to avoid memory allocations.<a href="#section-7.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-4">Since the above bounds are larger than any values used in practice, it may be
+useful for implementations to impose a lower limit on the values they will
+accept (for example, to avoid dynamic allocations).  Implementations SHOULD set
+such a limit to be no less than maximum <code>Nsk</code> size for a KEM supported by the
+implementation.  For an implementation that supports all of the KEMs in this
+document, the limit would be 66 bytes, which is the <code>Nsk</code> value for DHKEM(P-521,
+HKDF-SHA512).<a href="#section-7.2.1-4" class="pilcrow">¶</a></p>
 <p id="section-7.2.1-5">The values for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>ikm</code>, which are inputs to
 <code>LabeledExtract()</code>, were computed with the following expression:<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.2.1-6">
