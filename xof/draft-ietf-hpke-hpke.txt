@@ -13,7 +13,7 @@ Expires: 11 December 2025                                        B. Lipp
 
 
                       Hybrid Public Key Encryption
-                     draft-barnes-hpke-hpke-latest
+                      draft-ietf-hpke-hpke-latest
 
 Abstract
 
