@@ -5,11 +5,11 @@
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Standards Track                            K. Bhargavan
-Expires: 3 December 2025                                         B. Lipp
+Expires: 11 December 2025                                        B. Lipp
                                                                    Inria
                                                                  C. Wood
                                                                    Apple
-                                                             1 June 2025
+                                                             9 June 2025
 
 
                       Hybrid Public Key Encryption
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 December 2025.
+   This Internet-Draft will expire on 11 December 2025.
 
 Copyright Notice
 
@@ -891,7 +891,7 @@ Table of Contents
    In many cases, applications encrypt only a single message to a
    recipient's public key.  This section provides templates for HPKE
    APIs that implement stateless "single-shot" encryption and decryption
-   using APIs specified in Section 5.1.1 and Section 5.2:
+   using APIs specified in Section 5.1 and Section 5.2:
 
    def Seal<MODE>(pkR, info, aad, pt, ...):
      enc, ctx = Setup<MODE>S(pkR, info, ...)
@@ -2053,7 +2053,10 @@ Table of Contents
               for DNS (EDNS(0))", RFC 8467, DOI 10.17487/RFC8467,
               October 2018, <https://www.rfc-editor.org/rfc/rfc8467>.
 
-   [RFC8696]  "*** BROKEN REFERENCE ***".
+   [RFC8696]  Housley, R., "Using Pre-Shared Key (PSK) in the
+              Cryptographic Message Syntax (CMS)", RFC 8696,
+              DOI 10.17487/RFC8696, December 2019,
+              <https://www.rfc-editor.org/rfc/rfc8696>.
 
    [RFC8937]  Cremers, C., Garratt, L., Smyshlyaev, S., Sullivan, N.,
               and C. Wood, "Randomness Improvements for Security
