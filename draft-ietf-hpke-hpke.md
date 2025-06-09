@@ -1157,9 +1157,13 @@ unlikely to be reached in practical applications. Future specifications
 that define new KDFs MUST specify bounds for these variable-length
 parameters.
 
-The RECOMMENDED limit for these values is 64 bytes. This would enable
-interoperability with implementations that statically allocate memory
-for these inputs to avoid memory allocations.
+Since the above bounds are larger than any values used in practice, it may be
+useful for implementations to impose a lower limit on the values they will
+accept (for example, to avoid dynamic allocations).  Implementations SHOULD set
+such a limit to be no less than maximum `Nsk` size for a KEM supported by the
+implementation.  For an implementation that supports all of the KEMs in this
+document, the limit would be 66 bytes, which is the `Nsk` value for DHKEM(P-521,
+HKDF-SHA512).
 
 The values for `psk`, `psk_id`, `info`, and `ikm`, which are inputs to
 `LabeledExtract()`, were computed with the following expression:
