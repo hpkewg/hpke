@@ -2,10 +2,10 @@
 
 This is the working area for the individual Internet-Draft, "Hybrid Public Key Encryption".
 
-* [Editor's Copy](https://hpkewg.github.io/hpke/#go.draft-barnes-hpke-hpke.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-barnes-hpke-hpke)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-barnes-hpke-hpke)
-* [Compare Editor's Copy to Individual Draft](https://hpkewg.github.io/hpke/#go.draft-barnes-hpke-hpke.diff)
+* [Editor's Copy](https://hpkewg.github.io/hpke/#go.draft-ietf-hpke-hpke.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-hpke-hpke)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-ietf-hpke-hpke)
+* [Compare Editor's Copy to Individual Draft](https://hpkewg.github.io/hpke/#go.draft-ietf-hpke-hpke.diff)
 
 
 ## Contributing
