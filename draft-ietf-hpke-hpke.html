@@ -2289,7 +2289,7 @@ for more details.<a href="#section-5.2-13" class="pilcrow">¶</a></p>
 done in the proper sequence, so that encryption and decryption nonces align.
 If <code>ContextS.Seal()</code> or <code>ContextR.Open()</code> would cause the <code>seq</code> field to
 overflow, then the implementation MUST fail with an error. (In the pseudocode
-below, <code>Context&lt;ROLE&gt;.IncrementSeq()</code> fails with an error when <code>seq</code> overflows,
+above, <code>Context&lt;ROLE&gt;.IncrementSeq()</code> fails with an error when <code>seq</code> overflows,
 which causes <code>ContextS.Seal()</code> and <code>ContextR.Open()</code> to fail accordingly.)
 Note that the internal <code>Seal()</code> and <code>Open()</code> calls inside correspond to the
 context's AEAD algorithm.<a href="#section-5.2-14" class="pilcrow">¶</a></p>
