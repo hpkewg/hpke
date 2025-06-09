@@ -1078,6 +1078,11 @@ Table of Contents
      sk = LabeledExpand(dkp_prk, "sk", "", Nsk)
      return (sk, pk(sk))
 
+   The suite_id used implicitly in LabeledExtract() and LabeledExpand()
+   for DeriveKeyPair(ikm) is derived from the KEM identifier of the
+   DHKEM in use (see Section 7.1), that is, based on the type of key
+   pair been generated for that DHKEM type.
+
 7.1.4.  Validation of Inputs and Outputs
 
    The following public keys are subject to validation if the group

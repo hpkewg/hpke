@@ -2615,6 +2615,10 @@ def DeriveKeyPair(ikm):
   return (sk, pk(sk))
 </pre><a href="#section-7.1.3-9" class="pilcrow">¶</a>
 </div>
+<p id="section-7.1.3-10">The <code>suite_id</code> used implicitly in <code>LabeledExtract()</code> and <code>LabeledExpand()</code>
+for <code>DeriveKeyPair(ikm)</code> is derived from the KEM identifier of the
+DHKEM in use (see <a href="#kem-ids" class="auto internal xref">Section 7.1</a>), that is, based on the type of key
+pair been generated for that DHKEM type.<a href="#section-7.1.3-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="validation">
