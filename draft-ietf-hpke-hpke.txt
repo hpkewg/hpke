@@ -4,9 +4,9 @@
 
 HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
-Intended status: Standards Track                            K. Bhargavan
-Expires: 11 December 2025                                        B. Lipp
-                                                                   Inria
+Obsoletes: 9180 (if approved)                               K. Bhargavan
+Intended status: Standards Track                                 B. Lipp
+Expires: 11 December 2025                                          Inria
                                                                  C. Wood
                                                                    Apple
                                                              9 June 2025
