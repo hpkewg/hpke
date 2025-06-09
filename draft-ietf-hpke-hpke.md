@@ -875,7 +875,7 @@ It is up to the application to ensure that encryptions and decryptions are
 done in the proper sequence, so that encryption and decryption nonces align.
 If `ContextS.Seal()` or `ContextR.Open()` would cause the `seq` field to
 overflow, then the implementation MUST fail with an error. (In the pseudocode
-below, `Context<ROLE>.IncrementSeq()` fails with an error when `seq` overflows,
+above, `Context<ROLE>.IncrementSeq()` fails with an error when `seq` overflows,
 which causes `ContextS.Seal()` and `ContextR.Open()` to fail accordingly.)
 Note that the internal `Seal()` and `Open()` calls inside correspond to the
 context's AEAD algorithm.
