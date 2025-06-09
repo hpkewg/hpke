@@ -1092,6 +1092,11 @@ def DeriveKeyPair(ikm):
   return (sk, pk(sk))
 ~~~
 
+The `suite_id` used implicitly in `LabeledExtract()` and `LabeledExpand()`
+for `DeriveKeyPair(ikm)` is derived from the KEM identifier of the
+DHKEM in use (see {{kem-ids}}), that is, based on the type of key
+pair been generated for that DHKEM type.
+
 ### Validation of Inputs and Outputs {#validation}
 
 The following public keys are subject to validation if the group
