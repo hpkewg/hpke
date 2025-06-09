@@ -1798,10 +1798,12 @@ this KEM algorithm; if used in the remainder of HPKE, it MUST start with
 "HPKE" and identify the entire ciphersuite in use. See sections <a href="#dhkem" class="auto internal xref">Section 4.1</a>
 and <a href="#encryption-context" class="auto internal xref">Section 5.1</a> for details.<a href="#section-4-12" class="pilcrow">¶</a></p>
 <p id="section-4-13">Certain functions have a different structure depending on whether a one-stage or
-two-stage KDF is being used.  Implementations of such functions will have the
-suffixes <code>_OneStage</code> and <code>_TwoStage</code>, respectively.  For example, the <code>Foo</code>
-function would be invoked by calling <code>Foo_OneStage</code> when using a one-stage KDF,
-and by calling <code>Foo_TwoStage</code> when using a two-stage KDF.<a href="#section-4-13" class="pilcrow">¶</a></p>
+two-stage KDF is being used.  For clarity, such functions will be described
+twice in this document, once with the suffix <code>_OneStage</code> and once with the
+suffix <code>_TwoStage</code>, representing the versions of the function to be used with a
+one-stage or two-stage KDF, respectively.  For example, the <code>Foo</code> function would
+be invoked by calling <code>Foo_OneStage</code> when using a one-stage KDF, and by calling
+<code>Foo_TwoStage</code> when using a two-stage KDF.<a href="#section-4-13" class="pilcrow">¶</a></p>
 <div id="dhkem">
 <section id="section-4.1">
         <h3 id="name-dh-based-kem-dhkem">
