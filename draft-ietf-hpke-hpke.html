@@ -2056,9 +2056,12 @@ def KeySchedule&lt;ROLE&gt;(mode, shared_secret, info, psk, psk_id):
   return Context&lt;ROLE&gt;(key, base_nonce, 0, exporter_secret)
 </pre><a href="#section-5.1-10" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1-11">The <code>ROLE</code> template parameter is either S or R, depending on the role of
-sender or recipient, respectively. See <a href="#hpke-dem" class="auto internal xref">Section 5.2</a> for a discussion of the
-key schedule output, including the role-specific <code>Context</code> structure and its API.<a href="#section-5.1-11" class="pilcrow">¶</a></p>
+<p id="section-5.1-11">The <code>ROLE</code> template parameter is either S or R, depending on the role
+of sender or recipient, respectively. The third parameter in the
+<code>Context&lt;ROLE&gt;</code> refers to the sequence number, that is initialised with
+a 0 value. See <a href="#hpke-dem" class="auto internal xref">Section 5.2</a> for a discussion of the key schedule output,
+including the role-specific Context structure and its API, and the
+usage of the sequence number.<a href="#section-5.1-11" class="pilcrow">¶</a></p>
 <p id="section-5.1-12">Note that the <code>key_schedule_context</code> construction in <code>KeySchedule()</code> is
 equivalent to serializing a structure of the following form in the TLS presentation
 syntax:<a href="#section-5.1-12" class="pilcrow">¶</a></p>
