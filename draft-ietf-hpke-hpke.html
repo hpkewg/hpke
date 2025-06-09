@@ -2771,9 +2771,13 @@ input length of the underlying hash function; these limits are large and
 unlikely to be reached in practical applications. Future specifications
 that define new KDFs MUST specify bounds for these variable-length
 parameters.<a href="#section-7.2.1-3" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-4">The RECOMMENDED limit for these values is 64 bytes. This would enable
-interoperability with implementations that statically allocate memory
-for these inputs to avoid memory allocations.<a href="#section-7.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-4">Since the above bounds are larger than any values used in practice, it may be
+useful for implementations to impose a lower limit on the values they will
+accept (for example, to avoid dynamic allocations).  Implementations SHOULD set
+such a limit to be no less than maximum <code>Nsk</code> size for a KEM supported by the
+implementation.  For an implementation that supports all of the KEMs in this
+document, the limit would be 66 bytes, which is the <code>Nsk</code> value for DHKEM(P-521,
+HKDF-SHA512).<a href="#section-7.2.1-4" class="pilcrow">¶</a></p>
 <p id="section-7.2.1-5">The values for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>ikm</code>, which are inputs to
 <code>LabeledExtract()</code>, were computed with the following expression:<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.2.1-6">
