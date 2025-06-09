@@ -1926,7 +1926,8 @@ Table of Contents
 
 11.  IANA Considerations
 
-   IANA has created three new registries:
+   IANA created three new registries as requested in Section 11 of
+   [RFC9180]:
 
    *  HPKE KEM Identifiers
 
@@ -1935,7 +1936,10 @@ Table of Contents
    *  HPKE AEAD Identifiers
 
    All these registries are under "Hybrid Public Key Encryption", and
-   administered under a Specification Required policy [RFC8126]
+   administered under a Specification Required policy [RFC8126].
+
+   This document requests that entries in these registries referring to
+   RFC 9180 be updated to refer to this document.
 
 11.1.  KEM Identifiers
 
@@ -2188,6 +2192,10 @@ Table of Contents
               and C. Wood, "Randomness Improvements for Security
               Protocols", RFC 8937, DOI 10.17487/RFC8937, October 2020,
               <https://www.rfc-editor.org/rfc/rfc8937>.
+
+   [RFC9180]  Barnes, R., Bhargavan, K., Lipp, B., and C. Wood, "Hybrid
+              Public Key Encryption", RFC 9180, DOI 10.17487/RFC9180,
+              February 2022, <https://www.rfc-editor.org/rfc/rfc9180>.
 
    [SECG]     "Elliptic Curve Cryptography, Standards for Efficient
               Cryptography Group, ver. 2", 2009,
