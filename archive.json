@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-08T01:28:33.945886+00:00",
+  "timestamp": "2025-06-10T01:22:51.684706+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -93,7 +93,7 @@
       "id": "I_kwDOOLtax86u7cxW",
       "title": "Apply Errata on RFC 9180",
       "url": "https://github.com/hpkewg/hpke/issues/2",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -102,12 +102,12 @@
       "labels": [],
       "body": "RFC 9180 has had several errata filed on it:\n\n* Verified\n    * [X] https://www.rfc-editor.org/errata/eid6941\n    * [X] https://www.rfc-editor.org/errata/eid7790\n    * [x] https://www.rfc-editor.org/errata/eid7934\n    * [X] https://www.rfc-editor.org/errata/eid7937\n    * [X] https://www.rfc-editor.org/errata/eid7932\n* HFDU\n    * [X] https://www.rfc-editor.org/errata/eid7251\n    * [X] https://www.rfc-editor.org/errata/eid7933\n\nThey should be addressed in this new document.",
       "createdAt": "2025-03-20T10:07:00Z",
-      "updatedAt": "2025-06-04T07:57:48Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-09T18:37:00Z",
+      "closedAt": "2025-06-09T18:36:58Z",
       "comments": [
         {
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Is this issue resolved?  Are there any questions you would like to float at the upcoming interim, in case the resolutions were tricky?\n\nMy own assessment is that these were all straightforward.  Virtually all were small and obvious.  We could just show the diffs briefly. Either way, we can highlight each change again at WGLC time, so that people can double check then.",
           "createdAt": "2025-06-04T04:47:29Z",
           "updatedAt": "2025-06-04T04:47:29Z"
@@ -118,6 +118,13 @@
           "body": "I agree.  We should just merge the related PRs, and that will address this issue.",
           "createdAt": "2025-06-04T07:57:47Z",
           "updatedAt": "2025-06-04T07:57:47Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Related PRs have been merged.",
+          "createdAt": "2025-06-09T18:36:58Z",
+          "updatedAt": "2025-06-09T18:36:58Z"
         }
       ]
     },
@@ -126,15 +133,15 @@
       "id": "I_kwDOOLtax86u7d4w",
       "title": "Add support for non-two-stage KDFs",
       "url": "https://github.com/hpkewg/hpke/issues/3",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The KDF interface in HPKE requires discrete Extract and Expand operations.  More modern, sponge-based KDFs such as SHAKE do not have these discrete steps.  We should define a new, alternative KDF interface that can be used by KDFs of this form.",
       "createdAt": "2025-03-20T10:08:29Z",
-      "updatedAt": "2025-03-20T10:08:29Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-09T19:38:20Z",
+      "closedAt": "2025-06-09T19:38:20Z",
       "comments": []
     },
     {
@@ -187,15 +194,15 @@
       "id": "I_kwDOOLtax86u8Wfz",
       "title": "IANA registry takeover",
       "url": "https://github.com/hpkewg/hpke/issues/5",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "martinthomson",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "We can make this an IETF registry",
       "createdAt": "2025-03-20T11:13:35Z",
-      "updatedAt": "2025-03-24T17:23:27Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-09T19:42:35Z",
+      "closedAt": "2025-06-09T19:42:35Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -206,7 +213,7 @@
         },
         {
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "It seems like there isn't a change controller listed for these registries.  Should we update that to point to the IETF?",
           "createdAt": "2025-03-24T06:28:43Z",
           "updatedAt": "2025-03-24T06:28:43Z"
@@ -415,24 +422,26 @@
       "id": "PR_kwDOOLtax86Pv9d7",
       "title": "Fix Erratum 6941",
       "url": "https://github.com/hpkewg/hpke/pull/6",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid6941",
       "createdAt": "2025-03-23T04:54:18Z",
-      "updatedAt": "2025-03-24T06:16:38Z",
+      "updatedAt": "2025-06-09T17:51:06Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid6941",
-      "headRefOid": "8e0ba1fb4b1d206909858b833eb4dfec3598bdef",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "814c874aff01d488fded1a050978f5ad45ea54c7",
+      "closedAt": "2025-06-09T17:51:00Z",
+      "mergedAt": "2025-06-09T17:51:00Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "ca65af15ba0597003d91e66e55a77e7ceaabd7a2"
+      },
       "comments": [],
       "reviews": [
         {
@@ -441,7 +450,7 @@
             "abbreviatedOid": "8e0ba1f"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-03-24T06:16:36Z",
@@ -462,24 +471,26 @@
       "id": "PR_kwDOOLtax86Pv9fP",
       "title": "Fix Erratum 7251",
       "url": "https://github.com/hpkewg/hpke/pull/7",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid7251",
       "createdAt": "2025-03-23T04:54:44Z",
-      "updatedAt": "2025-03-27T13:31:14Z",
+      "updatedAt": "2025-06-09T17:51:24Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid7251",
-      "headRefOid": "0dd09d8a4d2885bc8029c7a6f1f33e0968a523e5",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "59ca2d6cbdc267e0d1e25e435adf1ea77fcd9c8a",
+      "closedAt": "2025-06-09T17:51:22Z",
+      "mergedAt": "2025-06-09T17:51:21Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "32f31d741695a2cbd8ce755a1e7c6ab625cfbe82"
+      },
       "comments": [],
       "reviews": [
         {
@@ -488,7 +499,7 @@
             "abbreviatedOid": "3bd7747"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-03-24T06:22:30Z",
@@ -528,7 +539,7 @@
             "abbreviatedOid": "f31aad0"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "Much better, thanks.",
           "createdAt": "2025-03-27T00:19:29Z",
@@ -549,24 +560,26 @@
       "id": "PR_kwDOOLtax86Pv9hP",
       "title": "Fix Erratum 7932",
       "url": "https://github.com/hpkewg/hpke/pull/8",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid7932",
       "createdAt": "2025-03-23T04:55:18Z",
-      "updatedAt": "2025-03-24T06:23:16Z",
+      "updatedAt": "2025-06-09T17:51:39Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid7932",
-      "headRefOid": "90bfb59052b65644be45e1975519e28b11aa8fdc",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "41852e64d96e84da4159f605c365f6c524913709",
+      "closedAt": "2025-06-09T17:51:37Z",
+      "mergedAt": "2025-06-09T17:51:36Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "c59b99cf523e913a084f61d737672aaa3703d5a0"
+      },
       "comments": [],
       "reviews": [
         {
@@ -575,7 +588,7 @@
             "abbreviatedOid": "90bfb59"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-03-24T06:23:16Z",
@@ -589,24 +602,26 @@
       "id": "PR_kwDOOLtax86Pv9k1",
       "title": "Fix Erratum 7790",
       "url": "https://github.com/hpkewg/hpke/pull/9",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid7790",
       "createdAt": "2025-03-23T04:56:17Z",
-      "updatedAt": "2025-03-24T17:35:52Z",
+      "updatedAt": "2025-06-09T17:51:53Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid7790",
-      "headRefOid": "f07bbc6809350079fb20f98a94657ee1e4b78786",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "5202577c9b47ebf1e3b6af33d3438ac918d2916a",
+      "closedAt": "2025-06-09T17:51:51Z",
+      "mergedAt": "2025-06-09T17:51:51Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "8bdcf5a2e0517eba9e79a9fc29a04ac1544aa234"
+      },
       "comments": [],
       "reviews": [
         {
@@ -615,7 +630,7 @@
             "abbreviatedOid": "23fd83e"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-03-24T06:24:09Z",
@@ -636,24 +651,26 @@
       "id": "PR_kwDOOLtax86Pv9ou",
       "title": "Fix Erratum 7933",
       "url": "https://github.com/hpkewg/hpke/pull/10",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid7933",
       "createdAt": "2025-03-23T04:56:43Z",
-      "updatedAt": "2025-03-24T17:38:01Z",
+      "updatedAt": "2025-06-09T17:52:14Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid7933",
-      "headRefOid": "c0fe3c3f9f01dacbc5754a2134bbb357b33bd80d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "1ae7efeb9ef3ebe99385d5780e5697572f3371ab",
+      "closedAt": "2025-06-09T17:52:12Z",
+      "mergedAt": "2025-06-09T17:52:11Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "b839e40caff6a97d3113080b8094af20fe0a2353"
+      },
       "comments": [],
       "reviews": [
         {
@@ -662,7 +679,7 @@
             "abbreviatedOid": "64b1036"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "You went with parameter elsewhere...",
           "createdAt": "2025-03-24T06:27:12Z",
@@ -683,24 +700,26 @@
       "id": "PR_kwDOOLtax86Pv9qL",
       "title": "Fix Erratum 7937",
       "url": "https://github.com/hpkewg/hpke/pull/11",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid7937",
       "createdAt": "2025-03-23T04:57:08Z",
-      "updatedAt": "2025-03-23T21:04:50Z",
+      "updatedAt": "2025-06-09T17:54:14Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid7937",
-      "headRefOid": "d048edcf18c2a476935b97606a42aa1578f2955e",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "1d90e21712dd960fcfd79fa0faf87fa7bf44e78e",
+      "closedAt": "2025-06-09T17:54:05Z",
+      "mergedAt": "2025-06-09T17:54:05Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "dba55a1b54428e26937ffe4213e8236fdc65c841"
+      },
       "comments": [],
       "reviews": []
     },
@@ -709,24 +728,26 @@
       "id": "PR_kwDOOLtax86Px8UV",
       "title": "Fix Erratum 7934",
       "url": "https://github.com/hpkewg/hpke/pull/12",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.rfc-editor.org/errata/eid7934\r\n\r\nThis PR implements the change described in the notes of erratum 7934, replacing all instances of \"field\" with \"parameter\", except where \"field\" is referring to a mathematical field.",
       "createdAt": "2025-03-23T21:04:31Z",
-      "updatedAt": "2025-03-24T17:37:34Z",
+      "updatedAt": "2025-06-09T18:36:39Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "eid7934",
-      "headRefOid": "78f5ff5b4dfd879830b717a7a047a794e7f61a63",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "685c3b02cbfc2233e1404cdd1c779391df71b1e7",
+      "closedAt": "2025-06-09T18:36:36Z",
+      "mergedAt": "2025-06-09T18:36:36Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "5eb55d1119e90ddc2111ad12fb891a5c1721c3c3"
+      },
       "comments": [],
       "reviews": [
         {
@@ -735,7 +756,7 @@
             "abbreviatedOid": "768e178"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-03-24T06:26:09Z",
@@ -756,24 +777,26 @@
       "id": "PR_kwDOOLtax86Px9Sz",
       "title": "Update IANA considerations",
       "url": "https://github.com/hpkewg/hpke/pull/13",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The IANA registries already exist, so this document doesn't need to specify them.",
       "createdAt": "2025-03-23T21:13:20Z",
-      "updatedAt": "2025-03-24T17:49:11Z",
+      "updatedAt": "2025-06-09T19:42:38Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "42e54f04ff8bf2eae0f3654a2ff37ef8b51247bc",
       "headRepository": "hpkewg/hpke",
       "headRefName": "iana",
-      "headRefOid": "cea14596c3967605f6a8f071816d2312d384424c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "e229901f0f833a3eb90a30becb9f8bead3eefa3e",
+      "closedAt": "2025-06-09T19:42:34Z",
+      "mergedAt": "2025-06-09T19:42:34Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "6f03329d4a83f96699748e1f3e8c0ebd4c3e5042"
+      },
       "comments": [
         {
           "author": "bifurcation",
@@ -781,6 +804,13 @@
           "body": "The cross-reference to RFC 9180 is sub-optimal.  Maybe we should inline the column definitions, or even delete the algorithm definitions altogether (since they already exist in RFC 9180).",
           "createdAt": "2025-03-23T21:18:05Z",
           "updatedAt": "2025-03-23T21:18:05Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR wasn't explicitly discussed in the interim, but it didn't come up in the IANA discussion, so I'm assuming folks are OK with it.",
+          "createdAt": "2025-06-09T19:42:29Z",
+          "updatedAt": "2025-06-09T19:42:29Z"
         }
       ],
       "reviews": [
@@ -790,7 +820,7 @@
             "abbreviatedOid": "1d74848"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-03-24T06:29:48Z",
@@ -831,24 +861,26 @@
       "id": "PR_kwDOOLtax86P6Txq",
       "title": "Mark this document as obsoleting RFC 9180",
       "url": "https://github.com/hpkewg/hpke/pull/14",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-03-24T17:44:23Z",
-      "updatedAt": "2025-03-25T01:33:29Z",
+      "updatedAt": "2025-06-09T18:40:33Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "obsolete",
-      "headRefOid": "aeb50a7595d54f74bb14741339feca9508d3b69d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "11e28ecc81c4b2e131ca9e62b8cc0b21e9296e9d",
+      "closedAt": "2025-06-09T18:40:31Z",
+      "mergedAt": "2025-06-09T18:40:30Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "860d9a8c4b37ea0e224bdb2a6b6a309de04f66cf"
+      },
       "comments": [],
       "reviews": [
         {
@@ -857,7 +889,7 @@
             "abbreviatedOid": "aeb50a7"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-03-25T01:33:29Z",
@@ -897,24 +929,26 @@
       "id": "PR_kwDOOLtax86ULitL",
       "title": "Allow for single-stage KDFs",
       "url": "https://github.com/hpkewg/hpke/pull/16",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR adds support for single-stage KDFs, for example, SHAKE or TurboSHAKE.  As [discussed on the CFRG list](https://mailarchive.ietf.org/arch/msg/cfrg/L8sWP0VdrKLKp_MUbgjSqx5ArMw/), these KDFs can make HPKE up to 20% faster.\r\n\r\nI have implemented this change by generally making single-stage and two-stage KDFs parallel.  It would have disturbed less text to treat single-stage KDFs as an add-on / alternative to the base RFC 9180 two-stage KDF definition.  But I think this ends up being a little cleaner.\r\n\r\nThe part I am least confident about is the security considerations.  I added some text to the Domain Separation section that I think is true.  I had no idea what to put in the Input Length Restrictions section, so I just added a TODO.\r\n\r\nFixes #3 ",
       "createdAt": "2025-04-28T14:42:40Z",
-      "updatedAt": "2025-06-06T16:49:14Z",
+      "updatedAt": "2025-06-09T19:38:19Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "6e0ed184c3c2da40066b6b4eeaf4d4c02863e68e",
+      "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
       "headRepository": "hpkewg/hpke",
       "headRefName": "xof",
-      "headRefOid": "64dafd810b5d3de3df87858e2dde040a9c172483",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "15fac25c6cf8b3b148b47f95bfdc93dbf891ec45",
+      "closedAt": "2025-06-09T19:38:19Z",
+      "mergedAt": "2025-06-09T19:38:19Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "42e54f04ff8bf2eae0f3654a2ff37ef8b51247bc"
+      },
       "comments": [
         {
           "author": "ilaril",
@@ -981,7 +1015,7 @@
         },
         {
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Action to add a note about the length restrictions on inputs, imposed by the `lengthPrefixed()` function used for various fields.  (Down from ~2^61 previously)",
           "createdAt": "2025-06-06T16:18:22Z",
           "updatedAt": "2025-06-06T16:18:22Z"
@@ -992,6 +1026,13 @@
           "body": "I'd prefer we didn't have the same names for single-stage. This makes it easier for implementors to map directly from the RFC to their public API. Because when implementors add single-stage, they're going to have to pick a name on their own if their language doesn't have overloading. It would be good to have a \"hint\" for them to just use, if possible.",
           "createdAt": "2025-06-06T16:21:29Z",
           "updatedAt": "2025-06-06T16:21:29Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Action to add a note about the length restrictions on inputs, imposed by the `lengthPrefixed()` function used for various fields. (Down from ~2^61 previously)\r\n\r\nActually, this was already in the PR:\r\n\r\n> For one-stage KDFs, there is length limit of 65,535 bytes for the `psk`,\r\n> `psk_id`, `info` fields. This limitation arises because these fields are all\r\n> prefixed with a two-byte length when being used as KDF inputs.",
+          "createdAt": "2025-06-09T19:11:28Z",
+          "updatedAt": "2025-06-09T19:11:28Z"
         }
       ],
       "reviews": [
@@ -1087,7 +1128,7 @@
             "abbreviatedOid": "aabd724"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-04-29T04:33:49Z",
@@ -1107,7 +1148,7 @@
             "abbreviatedOid": "aabd724"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-04-29T04:36:46Z",
@@ -1127,7 +1168,7 @@
             "abbreviatedOid": "aabd724"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-04-29T04:38:59Z",
@@ -1247,7 +1288,7 @@
             "abbreviatedOid": "27872f8"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-04-30T23:58:40Z",
@@ -1287,7 +1328,7 @@
             "abbreviatedOid": "27872f8"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-05-01T06:34:33Z",
@@ -1415,9 +1456,9 @@
           "comments": [
             {
               "originalPosition": 86,
-              "body": "@dconnolly works for me.  In the call sites, I would refer to them as `XShot()`, where `X = 1, 2`.",
+              "body": "@dconnolly works for me.  In the call sites, I would refer to them as `XStage()`, where `X = 1, 2`.",
               "createdAt": "2025-06-06T16:23:29Z",
-              "updatedAt": "2025-06-06T16:23:30Z"
+              "updatedAt": "2025-06-09T18:46:40Z"
             }
           ]
         },
@@ -1447,7 +1488,7 @@
             "abbreviatedOid": "64dafd8"
           },
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2025-06-06T16:49:14Z",
@@ -1458,6 +1499,46 @@
               "body": "I would suggest something like:\r\n\r\n```python\r\nif usingSingleStageKDF():\r\n    foo = ExtractExpandOneStage(...)\r\nelse\r\n    foo = ExtractExpandTwoStage(...)\r\n```",
               "createdAt": "2025-06-06T16:49:14Z",
               "updatedAt": "2025-06-06T16:49:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86tgyc2",
+          "commit": {
+            "abbreviatedOid": "74a4f32"
+          },
+          "author": "richsalz",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-09T19:11:19Z",
+          "updatedAt": "2025-06-09T19:11:19Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "Are we defining an API?  Perhaps say \"for clarity in this document, the definition and use of such functions will have suffixes ...\"",
+              "createdAt": "2025-06-09T19:11:19Z",
+              "updatedAt": "2025-06-09T19:11:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86tg1qW",
+          "commit": {
+            "abbreviatedOid": "74a4f32"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-09T19:15:58Z",
+          "updatedAt": "2025-06-09T19:15:58Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "Reworded.",
+              "createdAt": "2025-06-09T19:15:58Z",
+              "updatedAt": "2025-06-09T19:15:59Z"
             }
           ]
         }
@@ -1503,19 +1584,33 @@
       "labels": [],
       "body": "Fixes #1 \r\n\r\nMarked as WIP because the test vectors for these modes still need removing.",
       "createdAt": "2025-06-06T15:58:37Z",
-      "updatedAt": "2025-06-06T15:59:32Z",
+      "updatedAt": "2025-06-09T20:08:38Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
-      "baseRefOid": "67a5ceed4eff0c558b6326ee747b3ba8d3882d0c",
+      "baseRefOid": "860d9a8c4b37ea0e224bdb2a6b6a309de04f66cf",
       "headRepository": "hpkewg/hpke",
       "headRefName": "no-auth",
-      "headRefOid": "1307b6c90a075eae324e7d5af50d7a1a775cb07a",
+      "headRefOid": "415677c226e4156718388ee1c17814e86d1bc8a9",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOOLtax86thaze",
+          "commit": {
+            "abbreviatedOid": "415677c"
+          },
+          "author": "OR13",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-09T20:08:38Z",
+          "updatedAt": "2025-06-09T20:08:38Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
