@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-10T01:22:51.684706+00:00",
+  "timestamp": "2025-06-17T01:22:38.836109+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -936,7 +936,7 @@
       "labels": [],
       "body": "This PR adds support for single-stage KDFs, for example, SHAKE or TurboSHAKE.  As [discussed on the CFRG list](https://mailarchive.ietf.org/arch/msg/cfrg/L8sWP0VdrKLKp_MUbgjSqx5ArMw/), these KDFs can make HPKE up to 20% faster.\r\n\r\nI have implemented this change by generally making single-stage and two-stage KDFs parallel.  It would have disturbed less text to treat single-stage KDFs as an add-on / alternative to the base RFC 9180 two-stage KDF definition.  But I think this ends up being a little cleaner.\r\n\r\nThe part I am least confident about is the security considerations.  I added some text to the Domain Separation section that I think is true.  I had no idea what to put in the Input Length Restrictions section, so I just added a TODO.\r\n\r\nFixes #3 ",
       "createdAt": "2025-04-28T14:42:40Z",
-      "updatedAt": "2025-06-09T19:38:19Z",
+      "updatedAt": "2025-06-16T04:05:58Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "79c295bd9c35015d01bdfab5cda85d9da4b9335f",
@@ -1539,6 +1539,26 @@
               "body": "Reworded.",
               "createdAt": "2025-06-09T19:15:58Z",
               "updatedAt": "2025-06-09T19:15:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOOLtax86urQTz",
+          "commit": {
+            "abbreviatedOid": "15fac25"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-16T04:05:58Z",
+          "updatedAt": "2025-06-16T04:05:58Z",
+          "comments": [
+            {
+              "originalPosition": 36,
+              "body": "Missing a colon here. I think.",
+              "createdAt": "2025-06-16T04:05:58Z",
+              "updatedAt": "2025-06-16T04:05:59Z"
             }
           ]
         }
