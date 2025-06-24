@@ -1255,6 +1255,27 @@ a new KEM might not have an efficient algorithm for determining whether or not a
 public key is valid. In this case, an invalid public key might instead yield an
 `OpenError` when trying to decrypt a ciphertext.
 
+# Operational Considerations
+
+The sender and receiver of an HPKE message need to be configured in exactly the
+same way.  Namely, they need to be configure to use the same KEM, KDF, and AEAD
+algorithms, the same mode of HPKE, and the same PSK ID and PSK inputs (in
+the PSK mode).
+
+It is up to the application using HPKE to ensure that senders and receivers are
+properly configured.  In protocols that embed HPKE as a component, HPKE
+configuration can be done as part of the overall protocol configuration.  For
+example, in MLS {{RFC9420}}, HPKE algorithms are set as part of the overall MLS
+cipher suite, and only the base mode is used.
+
+Libraries that implement HPKE independent of any application should generally
+prefer APIs that allow callers to specify KEM, KDF, and AEAD algorithms
+independently, as opposed to being bundled into "suites".  Such APIs help ensure
+that a sender and receiver using different HPKE libraries will be able to
+configure their libraries in compatible ways.  If there is concern that library
+users will select inappropriate combinations of algorithms (e.g., P-521 with
+HKDF-SHA256), a library could rule out these specific combinations.
+
 # Security Considerations {#sec-considerations}
 
 ## Security Properties {#sec-properties}
