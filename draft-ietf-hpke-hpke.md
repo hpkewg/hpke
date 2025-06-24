@@ -1265,7 +1265,7 @@ the PSK mode).
 It is up to the application using HPKE to ensure that senders and receivers are
 properly configured.  In protocols that embed HPKE as a component, HPKE
 configuration can be done as part of the overall protocol configuration.  For
-example, in MLS {{RFC9420}}, HPKE algorithms are set as part of the overall MLS
+example, in MLS {{?RFC9420}}, HPKE algorithms are set as part of the overall MLS
 cipher suite, and only the base mode is used.
 
 Libraries that implement HPKE independent of any application should generally
