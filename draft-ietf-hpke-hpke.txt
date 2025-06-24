@@ -6,10 +6,10 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 11 December 2025                                          Inria
+Expires: 26 December 2025                                          Inria
                                                                  C. Wood
                                                                    Apple
-                                                             9 June 2025
+                                                            24 June 2025
 
 
                       Hybrid Public Key Encryption
@@ -20,19 +20,13 @@ Abstract
    This document describes a scheme for hybrid public key encryption
    (HPKE).  This scheme provides a variant of public key encryption of
    arbitrary-sized plaintexts for a recipient public key.  It also
-   includes three authenticated variants, including one that
-   authenticates possession of a pre-shared key and two optional ones
-   that authenticate possession of a key encapsulation mechanism (KEM)
-   private key.  HPKE works for any combination of an asymmetric KEM,
-   key derivation function (KDF), and authenticated encryption with
-   additional data (AEAD) encryption function.  Some authenticated
-   variants may not be supported by all KEMs.  We provide instantiations
-   of the scheme using widely used and efficient primitives, such as
-   Elliptic Curve Diffie-Hellman (ECDH) key agreement, HMAC-based key
-   derivation function (HKDF), and SHA2.
-
-   This document is a product of the Crypto Forum Research Group (CFRG)
-   in the IRTF.
+   includes a variant that authenticates possession of a pre-shared key.
+   HPKE works for any combination of an asymmetric KEM, key derivation
+   function (KDF), and authenticated encryption with additional data
+   (AEAD) encryption function.  We provide instantiations of the scheme
+   using widely used and efficient primitives, such as Elliptic Curve
+   Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation
+   function (HKDF), and SHA2.
 
 Discussion Venues
 
@@ -56,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 December 2025.
+   This Internet-Draft will expire on 26 December 2025.
 
 Copyright Notice
 
@@ -83,8 +77,6 @@ Table of Contents
      5.1.  Creating the Encryption Context
        5.1.1.  Encryption to a Public Key
        5.1.2.  Authentication Using a Pre-Shared Key
-       5.1.3.  Authentication Using an Asymmetric Key
-       5.1.4.  Authentication Using Both a PSK and an Asymmetric Key
      5.2.  Encryption and Decryption
      5.3.  Secret Export
    6.  Single-Shot APIs
@@ -106,13 +98,11 @@ Table of Contents
      8.2.  Errors
    9.  Security Considerations
      9.1.  Security Properties
-       9.1.1.  Key-Compromise Impersonation
-       9.1.2.  Computational Analysis
-       9.1.3.  Post-Quantum Security
+       9.1.1.  Computational Analysis
+       9.1.2.  Post-Quantum Security
      9.2.  Security Requirements on a KEM Used within HPKE
        9.2.1.  Encap/Decap Interface
-       9.2.2.  AuthEncap/AuthDecap Interface
-       9.2.3.  KEM Key Reuse
+       9.2.2.  KEM Key Reuse
      9.3.  Security Requirements on a KDF
      9.4.  Security Requirements on an AEAD
      9.5.  Pre-Shared Key Recommendations
@@ -139,38 +129,24 @@ Table of Contents
      B.1.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
        B.1.1.  Base Setup Information
        B.1.2.  PSK Setup Information
-       B.1.3.  Auth Setup Information
-       B.1.4.  AuthPSK Setup Information
      B.2.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
        B.2.1.  Base Setup Information
        B.2.2.  PSK Setup Information
-       B.2.3.  Auth Setup Information
-       B.2.4.  AuthPSK Setup Information
      B.3.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
        B.3.1.  Base Setup Information
        B.3.2.  PSK Setup Information
-       B.3.3.  Auth Setup Information
-       B.3.4.  AuthPSK Setup Information
      B.4.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA512, AES-128-GCM
        B.4.1.  Base Setup Information
        B.4.2.  PSK Setup Information
-       B.4.3.  Auth Setup Information
-       B.4.4.  AuthPSK Setup Information
      B.5.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
        B.5.1.  Base Setup Information
        B.5.2.  PSK Setup Information
-       B.5.3.  Auth Setup Information
-       B.5.4.  AuthPSK Setup Information
      B.6.  DHKEM(P-521, HKDF-SHA512), HKDF-SHA512, AES-256-GCM
        B.6.1.  Base Setup Information
        B.6.2.  PSK Setup Information
-       B.6.3.  Auth Setup Information
-       B.6.4.  AuthPSK Setup Information
      B.7.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, Export-Only AEAD
        B.7.1.  Base Setup Information
        B.7.2.  PSK Setup Information
-       B.7.3.  Auth Setup Information
-       B.7.4.  AuthPSK Setup Information
    Authors' Addresses
 
 1.  Introduction
@@ -290,14 +266,6 @@ Table of Contents
          skR to recover the ephemeral symmetric key (the KEM shared
          secret) from its encapsulated representation enc.  This
          function can raise a DecapError on decapsulation failure.
-
-      -  AuthEncap(pkR, skS) (optional): Same as Encap(), and the
-         outputs encode an assurance that the KEM shared secret was
-         generated by the holder of the private key skS.
-
-      -  AuthDecap(enc, skR, pkS) (optional): Same as Decap(), and the
-         recipient is assured that the KEM shared secret was generated
-         by the holder of the private key skS.
 
       -  Nsecret: The length in bytes of a KEM shared secret produced by
          this KEM.
@@ -474,29 +442,6 @@ Table of Contents
      shared_secret = ExtractAndExpand(dh, kem_context)
      return shared_secret
 
-   def AuthEncap(pkR, skS):
-     skE, pkE = GenerateKeyPair()
-     dh = concat(DH(skE, pkR), DH(skS, pkR))
-     enc = SerializePublicKey(pkE)
-
-     pkRm = SerializePublicKey(pkR)
-     pkSm = SerializePublicKey(pk(skS))
-     kem_context = concat(enc, pkRm, pkSm)
-
-     shared_secret = ExtractAndExpand(dh, kem_context)
-     return shared_secret, enc
-
-   def AuthDecap(enc, skR, pkS):
-     pkE = DeserializePublicKey(enc)
-     dh = concat(DH(skR, pkE), DH(skR, pkS))
-
-     pkRm = SerializePublicKey(pk(skR))
-     pkSm = SerializePublicKey(pkS)
-     kem_context = concat(enc, pkRm, pkSm)
-
-     shared_secret = ExtractAndExpand(dh, kem_context)
-     return shared_secret
-
    The implicit suite_id value used within LabeledExtract,
    LabeledExpand, and LabeledDerive is defined as follows, where kem_id
    is defined in Section 7.1:
@@ -519,13 +464,6 @@ Table of Contents
    elliptic curve point [IEEE1363].  For X25519 and X448, the size Ndh
    is equal to 32 and 56, respectively (see [RFC7748], Section 5).
 
-   It is important to note that the AuthEncap() and AuthDecap()
-   functions of the DHKEM variants defined in this document are
-   vulnerable to key-compromise impersonation (KCI).  This means the
-   assurance that the KEM shared secret was generated by the holder of
-   the private key skS does not hold if the recipient private key skR is
-   compromised.  See Section 9.1 for more details.
-
    Senders and recipients MUST validate KEM inputs and outputs as
    described in Section 7.1.
 
@@ -542,29 +480,29 @@ Table of Contents
    use.
 
    In addition to the base case of encrypting to a public key, we
-   include three authenticated variants: one that authenticates
-   possession of a pre-shared key, one that authenticates possession of
-   a KEM private key, and one that authenticates possession of both a
-   pre-shared key and a KEM private key.  All authenticated variants
-   contribute additional keying material to the encryption operation.
-   The following one-byte values will be used to distinguish between
-   modes:
+   include a variant that authenticates possession of a pre-shared key.
+   The authenticated variant contributes additional keying material to
+   the encryption operation.  The following one-byte values will be used
+   to distinguish between modes:
 
-                         +===============+=======+
-                         | Mode          | Value |
-                         +===============+=======+
-                         | mode_base     | 0x00  |
-                         +---------------+-------+
-                         | mode_psk      | 0x01  |
-                         +---------------+-------+
-                         | mode_auth     | 0x02  |
-                         +---------------+-------+
-                         | mode_auth_psk | 0x03  |
-                         +---------------+-------+
+                           +===========+=======+
+                           | Mode      | Value |
+                           +===========+=======+
+                           | mode_base | 0x00  |
+                           +-----------+-------+
+                           | mode_psk  | 0x01  |
+                           +-----------+-------+
+                           | RESERVED  | 0x02  |
+                           +-----------+-------+
+                           | RESERVED  | 0x03  |
+                           +-----------+-------+
 
                             Table 1: HPKE Modes
 
-   All these cases follow the same basic two-step pattern:
+   (The values 0x02 and 0x03 were used in [RFC9180] to reflect
+   additional variants which have been removed from this specification.)
+
+   Both variants follow the same basic two-step pattern:
 
    1.  Set up an encryption context that is shared between the sender
        and the recipient.
@@ -588,11 +526,6 @@ Table of Contents
    alongside a ciphertext from the sender to the recipient.
    Specification of such a mechanism is left to the application.  See
    Section 10 for more details.
-
-   Note that some KEMs may not support AuthEncap() or AuthDecap().  For
-   such KEMs, only mode_base or mode_psk are supported.  Future
-   specifications which define new KEMs MUST indicate whether these
-   modes are supported.  See Section 7.1.5 for more details.
 
    The procedures described in this section are laid out in a Python-
    like pseudocode.  The algorithms in use are left implicit.
@@ -639,14 +572,6 @@ Table of Contents
    recipient private key, and the entity that used the KEM to generate
    shared_secret and enc.
 
-   In the Auth and AuthPSK modes, the recipient is assured that the
-   sender held the private key skS.  This assurance is limited for the
-   DHKEM variants defined in this document because of key-compromise
-   impersonation, as described in Section 4.1 and Section 9.1.  If in
-   the PSK and AuthPSK modes, the psk and psk_id arguments are provided
-   as required, then the recipient is assured that the sender held the
-   corresponding pre-shared key.  See Section 9.1 for more details.
-
    The HPKE algorithm identifiers, i.e., the KEM kem_id, KDF kdf_id, and
    AEAD aead_id 2-byte code points, as defined in Table 2, Table 3, and
    Table 5, respectively, are assumed implicit from the implementation
@@ -670,9 +595,9 @@ Table of Contents
      if got_psk != got_psk_id:
        raise Exception("Inconsistent PSK inputs")
 
-     if got_psk and (mode in [mode_base, mode_auth]):
+     if got_psk and mode == mode_base:
        raise Exception("PSK input provided when not needed")
-     if (not got_psk) and (mode in [mode_psk, mode_auth_psk]):
+     if (not got_psk) and mode == mode_psk:
        raise Exception("Missing required PSK input")
 
    # For use with a one-stage KDF
@@ -784,65 +709,6 @@ Table of Contents
   def SetupPSKR(enc, skR, info, psk, psk_id):
     shared_secret = Decap(enc, skR)
     return KeyScheduleR(mode_psk, shared_secret, info, psk, psk_id)
-
-5.1.3.  Authentication Using an Asymmetric Key
-
-   This variant extends the base mechanism by allowing the recipient to
-   authenticate that the sender possessed a given KEM private key.  This
-   is because AuthDecap(enc, skR, pkS) produces the correct KEM shared
-   secret only if the encapsulated value enc was produced by
-   AuthEncap(pkR, skS), where skS is the private key corresponding to
-   pkS.  In other words, at most two entities (precisely two, in the
-   case of DHKEM) could have produced this secret, so if the recipient
-   is at most one, then the sender is the other with overwhelming
-   probability.
-
-   The primary difference from the base case is that the calls to
-   Encap() and Decap() are replaced with calls to AuthEncap() and
-   AuthDecap(), which add the sender public key to their internal
-   context string.  The function parameters pkR and pkS are public keys,
-   and enc is an encapsulated KEM shared secret.
-
-   Obviously, this variant can only be used with a KEM that provides
-   AuthEncap() and AuthDecap() procedures.
-
-   This mechanism authenticates only the key pair of the sender, not any
-   other identifier.  If an application wishes to bind HPKE ciphertexts
-   or exported secrets to another identity for the sender (e.g., an
-   email address or domain name), then this identifier should be
-   included in the info parameter to avoid identity misbinding issues
-   [IMB].
-
-   def SetupAuthS(pkR, info, skS):
-     shared_secret, enc = AuthEncap(pkR, skS)
-     return enc, KeyScheduleS(mode_auth, shared_secret, info,
-                              default_psk, default_psk_id)
-
-   def SetupAuthR(enc, skR, info, pkS):
-     shared_secret = AuthDecap(enc, skR, pkS)
-     return KeyScheduleR(mode_auth, shared_secret, info,
-                         default_psk, default_psk_id)
-
-5.1.4.  Authentication Using Both a PSK and an Asymmetric Key
-
-   This mode is a straightforward combination of the PSK and
-   authenticated modes.  Like the PSK mode, a PSK is provided as input
-   to the key schedule, and like the authenticated mode, authenticated
-   KEM variants are used.
-
-   def SetupAuthPSKS(pkR, info, psk, psk_id, skS):
-     shared_secret, enc = AuthEncap(pkR, skS)
-     return enc, KeyScheduleS(mode_auth_psk, shared_secret, info,
-                              psk, psk_id)
-
-   def SetupAuthPSKR(enc, skR, info, psk, psk_id, pkS):
-     shared_secret = AuthDecap(enc, skR, pkS)
-     return KeyScheduleR(mode_auth_psk, shared_secret, info,
-                         psk, psk_id)
-
-   The PSK MUST have at least 32 bytes of entropy and SHOULD be of
-   length Nh bytes or longer.  See Section 9.5 for a more detailed
-   discussion.
 
 5.2.  Encryption and Decryption
 
@@ -982,18 +848,18 @@ Table of Contents
      ctx = Setup<MODE>R(enc, skR, info, ...)
      return ctx.Open(aad, ct)
 
-   The MODE template parameter is one of Base, PSK, Auth, or AuthPSK.
-   The optional parameters indicated by "..." depend on MODE and may be
-   empty.  For example, SetupBase() has no additional parameters.
-   SealAuthPSK() and OpenAuthPSK() would be implemented as follows:
+   The MODE template parameter is either Base or PSK.  The optional
+   parameters indicated by "..." depend on MODE and may be empty.  For
+   example, SetupBase() has no additional parameters.  SealPSK() and
+   OpenPSK() would be implemented as follows:
 
-   def SealAuthPSK(pkR, info, aad, pt, psk, psk_id, skS):
-     enc, ctx = SetupAuthPSKS(pkR, info, psk, psk_id, skS)
+   def SealPSK(pkR, info, aad, pt, psk, psk_id):
+     enc, ctx = SetupPSKS(pkR, info, psk, psk_id)
      ct = ctx.Seal(aad, pt)
      return enc, ct
 
-   def OpenAuthPSK(enc, skR, info, aad, ct, psk, psk_id, pkS):
-     ctx = SetupAuthPSKR(enc, skR, info, psk, psk_id, pkS)
+   def OpenPSK(enc, skR, info, aad, ct, psk, psk_id):
+     ctx = SetupPSKR(enc, skR, info, psk, psk_id)
      return ctx.Open(aad, ct)
 
 6.2.  Secret Export
@@ -1012,9 +878,9 @@ Table of Contents
      ctx = Setup<MODE>R(enc, skR, info, ...)
      return ctx.Export(exporter_context, L)
 
-   As in Section 6.1, the MODE template parameter is one of Base, PSK,
-   Auth, or AuthPSK.  The optional parameters indicated by "..." depend
-   on MODE and may be empty.
+   As in Section 6.1, the MODE template parameter is either Base or PSK.
+   The optional parameters indicated by "..." depend on MODE and may be
+   empty.
 
 7.  Algorithm Identifiers
 
@@ -1051,10 +917,7 @@ Table of Contents
                              Table 2: KEM IDs
 
    The Auth column indicates if the KEM algorithm provides the
-   AuthEncap()/AuthDecap() interface and is therefore suitable for the
-   Auth and AuthPSK modes.  The meaning of all other columns is
-   explained in Section 11.1.  All algorithms are suitable for the PSK
-   mode.
+   AuthEncap()/AuthDecap() interface defined in [RFC9180].
 
 7.1.1.  SerializePublicKey and DeserializePublicKey
 
@@ -1181,9 +1044,7 @@ Table of Contents
    The following public keys are subject to validation if the group
    requires public key validation: the sender MUST validate the
    recipient's public key pkR; the recipient MUST validate the ephemeral
-   public key pkE; in authenticated modes, the recipient MUST validate
-   the sender's static public key pkS.  Validation failure yields a
-   ValidationError.
+   public key pkE.  Validation failure yields a ValidationError.
 
    For P-256, P-384 and P-521, senders and recipients MUST perform
    partial public key validation on all public key inputs, as defined in
@@ -1201,11 +1062,6 @@ Table of Contents
 7.1.5.  Future KEMs
 
    Section 9.2 lists security requirements on a KEM used within HPKE.
-
-   The AuthEncap() and AuthDecap() functions are OPTIONAL.  If a KEM
-   algorithm does not provide them, only the Base and PSK modes of HPKE
-   are supported.  Future specifications that define new KEMs MUST
-   indicate whether or not Auth and AuthPSK modes are supported.
 
    A KEM algorithm may support different encoding algorithms, with
    different output lengths, for KEM public keys.  Such KEM algorithms
@@ -1383,9 +1239,7 @@ Table of Contents
    recipient public key.  However, other KEM algorithms may not have an
    efficient algorithm for verifying the validity of public keys.  As a
    result, an equivalent error may not manifest until AEAD decryption at
-   the recipient.  As another example, DHKEM's AuthDecap() function will
-   produce invalid output if given the wrong sender public key.  This
-   error is not detectable until subsequent AEAD decryption.
+   the recipient.
 
    The errors in this document are meant as a guide for implementors.
    They are not an exhaustive list of all the errors an implementation
@@ -1428,8 +1282,7 @@ Table of Contents
       from a uniformly random bitstring of equal length, i.e.,
       Context.Export is a variable-length PRF
 
-   *  Sender authentication: Proof of sender origin for PSK, Auth, and
-      AuthPSK modes
+   *  Sender authentication: Proof of sender origin for the PSK mode
 
    These security goals are expected to hold for any honest sender and
    honest recipient keys, as well as if the honest sender and honest
@@ -1440,19 +1293,12 @@ Table of Contents
    including all public keys in the context of the key schedule.
 
    HPKE does not provide forward secrecy with respect to recipient
-   compromise.  In the Base and Auth modes, the secrecy properties are
-   only expected to hold if the recipient private key skR is not
-   compromised at any point in time.  In the PSK and AuthPSK modes, the
-   secrecy properties are expected to hold if the recipient private key
-   skR and the pre-shared key are not both compromised at any point in
-   time.  See Section 9.7 for more details.
-
-   In the Auth mode, sender authentication is generally expected to hold
-   if the sender private key skS is not compromised at the time of
-   message reception.  In the AuthPSK mode, sender authentication is
-   generally expected to hold if, at the time of message reception, the
-   sender private key skS and the pre-shared key are not both
-   compromised.
+   compromise.  In the Base mode, the secrecy properties are only
+   expected to hold if the recipient private key skR is not compromised
+   at any point in time.  In the PSK mode, the secrecy properties are
+   expected to hold if the recipient private key skR and the pre-shared
+   key are not both compromised at any point in time.  See Section 9.7
+   for more details.
 
    Besides forward secrecy and key-compromise impersonation, which are
    highlighted in this section because of their particular cryptographic
@@ -1462,43 +1308,7 @@ Table of Contents
    protection against bad ephemeral randomness.  Section 9.7 suggests
    application-level mitigations for some of them.
 
-9.1.1.  Key-Compromise Impersonation
-
-   The DHKEM variants defined in this document are vulnerable to key-
-   compromise impersonation attacks [BJM97], which means that sender
-   authentication cannot be expected to hold in the Auth mode if the
-   recipient private key skR is compromised, and in the AuthPSK mode if
-   the pre-shared key and the recipient private key skR are both
-   compromised.  NaCl's box interface [NaCl] has the same issue.  At the
-   same time, this enables repudiability.
-
-   As shown by [ABHKLR20], key-compromise impersonation attacks are
-   generally possible on HPKE because KEM ciphertexts are not bound to
-   HPKE messages.  An adversary who knows a recipient's private key can
-   decapsulate an observed KEM ciphertext, compute the key schedule, and
-   encrypt an arbitrary message that the recipient will accept as coming
-   from the original sender.  Importantly, this is possible even with a
-   KEM that is resistant to key-compromise impersonation attacks.  As a
-   result, mitigating this issue requires fundamental changes that are
-   out of scope of this specification.
-
-   Applications that require resistance against key-compromise
-   impersonation SHOULD take extra steps to prevent this attack.  One
-   possibility is to produce a digital signature over (enc, ct) tuples
-   using a sender's private key -- where ct is an AEAD ciphertext
-   produced by the single-shot or multi-shot API and enc is the
-   corresponding KEM encapsulated key.
-
-   Given these properties, pre-shared keys strengthen both the
-   authentication and the secrecy properties in certain adversary
-   models.  One particular example in which this can be useful is a
-   hybrid quantum setting: if a non-quantum-resistant KEM used with HPKE
-   is broken by a quantum computer, the security properties are
-   preserved through the use of a pre-shared key.  As described in
-   Section 7 of [RFC8696] this assumes that the pre-shared key has not
-   been compromised.
-
-9.1.2.  Computational Analysis
+9.1.1.  Computational Analysis
 
    It is shown in [CS01] that a hybrid public key encryption scheme of
    essentially the same form as the Base mode described here is IND-
@@ -1513,14 +1323,6 @@ Table of Contents
    verifying that the additional KDF calls do not cause the IND-CCA2
    property to fail, as well as verifying the additional export key
    secrecy property.
-
-   Analysis of the PSK, Auth, and AuthPSK modes defined in this document
-   additionally requires verifying the sender authentication property.
-   While the PSK mode just adds supplementary keying material to the key
-   schedule, the Auth and AuthPSK modes make use of a non-standard
-   authenticated KEM construction.  Generally, the authenticated modes
-   of HPKE can be viewed and analyzed as flavors of signcryption
-   [SigncryptionDZ10].
 
    A preliminary computational analysis of all HPKE modes has been done
    in [HPKEAnalysis], indicating asymptotic security for the case where
@@ -1555,10 +1357,6 @@ Table of Contents
           +---------+--------------+-------------+--------------+
           | PSK     |      Y       |      Y      |      Y       |
           +---------+--------------+-------------+--------------+
-          | Auth    |      Y       |      Y      |      Y       |
-          +---------+--------------+-------------+--------------+
-          | AuthPSK |      Y       |      Y      |      Y       |
-          +---------+--------------+-------------+--------------+
 
                                   Table 6
 
@@ -1567,58 +1365,22 @@ Table of Contents
    provide some indication that any IND-CCA2-secure KEM will suffice
    here, but are not conclusive given the differences in the schemes.
 
-   A detailed computational analysis of HPKE's Auth mode single-shot
-   encryption API has been done in [ABHKLR20].  The paper defines
-   security notions for authenticated KEMs and for authenticated public
-   key encryption, using the outsider and insider security terminology
-   known from signcryption [SigncryptionDZ10].  The analysis proves that
-   DHKEM's AuthEncap()/AuthDecap() interface fulfills the notions of
-   Outsider-CCA, Insider-CCA, and Outsider-Auth for all Diffie-Hellman
-   groups specified in this document.  It does not fulfill the notion of
-   Insider-Auth defined in the paper.  The analysis also provides exact
-   security bounds, under the assumptions that the gap Diffie-Hellman
-   (GDH) problem is hard in the appropriate subgroup [GAP], and that
-   HKDF can be modeled as a random oracle.
-
-   Further, [ABHKLR20] proves composition theorems, showing that HPKE's
-   Auth mode fulfills the security notions of authenticated public key
-   encryption for all KDFs and AEAD schemes specified in this document,
-   given any authenticated KEM satisfying the previously defined
-   security notions for authenticated KEMs.  The theorems assume that
-   the KEM is perfectly correct; they could easily be adapted to work
-   with KEMs that have a nonzero but negligible probability for
-   decryption failure.  The assumptions on the KDF are that Extract()
-   and Expand() can be modeled as pseudorandom functions wherein the
-   first argument is the key, respectively.  The assumption for the AEAD
-   is IND-CPA and IND-CTXT security.
-
-   In summary, the analysis in [ABHKLR20] proves that the single-shot
-   encryption API of HPKE's Auth mode satisfies the desired message
-   confidentiality and sender authentication properties listed at the
-   beginning of this section; it does not consider multiple messages,
-   nor the secret export API.
-
-9.1.3.  Post-Quantum Security
+9.1.2.  Post-Quantum Security
 
    All of [CS01], [HPKEAnalysis], and [ABHKLR20] are premised on
    classical security models and assumptions, and do not consider
    adversaries capable of quantum computation.  A full proof of post-
    quantum security would need to take appropriate security models and
    assumptions into account, in addition to simply using a post-quantum
-   KEM.  However, the composition theorems from [ABHKLR20] for HPKE's
-   Auth mode only make standard assumptions (i.e., no random oracle
-   assumption) that are expected to hold against quantum adversaries
-   (although with slightly worse bounds).  Thus, these composition
-   theorems, in combination with a post-quantum-secure authenticated
-   KEM, guarantee the post-quantum security of HPKE's Auth mode.
+   KEM.
 
    In future work, the analysis from [ABHKLR20] can be extended to cover
    HPKE's other modes and desired security properties.  The hybrid
    quantum-resistance property described above, which is achieved by
-   using the PSK or AuthPSK mode, is not proven in [HPKEAnalysis]
-   because this analysis requires the random oracle model; in a quantum
-   setting, this model needs adaption to, for example, the quantum
-   random oracle model.
+   using the PSK mode, is not proven in [HPKEAnalysis] because this
+   analysis requires the random oracle model; in a quantum setting, this
+   model needs adaption to, for example, the quantum random oracle
+   model.
 
 9.2.  Security Requirements on a KEM Used within HPKE
 
@@ -1639,39 +1401,10 @@ Table of Contents
    security properties.  An appropriate definition of IND-CCA2 security
    for KEMs can be found in [CS01] and [BHK09].
 
-9.2.2.  AuthEncap/AuthDecap Interface
-
-   The analysis of HPKE's Auth mode single-shot encryption API in
-   [ABHKLR20] provides composition theorems that guarantee that HPKE's
-   Auth mode achieves its desired security properties if the KEM's
-   AuthEncap()/AuthDecap() interface satisfies multi-user Outsider-CCA,
-   Outsider-Auth, and Insider-CCA security, as defined in the same
-   paper.
-
-   Intuitively, Outsider-CCA security formalizes confidentiality, and
-   Outsider-Auth security formalizes authentication of the KEM shared
-   secret in case none of the sender or recipient private keys are
-   compromised.  Insider-CCA security formalizes confidentiality of the
-   KEM shared secret in case the sender private key is known or chosen
-   by the adversary.  (If the recipient private key is known or chosen
-   by the adversary, confidentiality is trivially broken, because then
-   the adversary knows all secrets on the recipient's side).
-
-   An Insider-Auth security notion would formalize authentication of the
-   KEM shared secret in case the recipient private key is known or
-   chosen by the adversary.  (If the sender private key is known or
-   chosen by the adversary, it can create KEM ciphertexts in the name of
-   the sender).  Because of the generic attack on an analogous Insider-
-   Auth security notion of HPKE described in Section 9.1, a definition
-   of Insider-Auth security for KEMs used within HPKE is not useful.
-
-9.2.3.  KEM Key Reuse
+9.2.2.  KEM Key Reuse
 
    An ikm input to DeriveKeyPair() (Section 7.1.3) MUST NOT be reused
    elsewhere, in particular not with DeriveKeyPair() of a different KEM.
-
-   The randomness used in Encap() and AuthEncap() to generate the KEM
-   shared secret or its encapsulation MUST NOT be reused elsewhere.
 
    Since a KEM key pair belonging to a sender or recipient works with
    all modes, it can be used with multiple modes in parallel.  HPKE is
@@ -1694,9 +1427,9 @@ Table of Contents
 
 9.5.  Pre-Shared Key Recommendations
 
-   In the PSK and AuthPSK modes, the PSK MUST have at least 32 bytes of
-   entropy and SHOULD be of length Nh bytes or longer.  Using a PSK
-   longer than 32 bytes but shorter than Nh bytes is permitted.
+   In the PSK modes, the PSK MUST have at least 32 bytes of entropy and
+   SHOULD be of length Nh bytes or longer.  Using a PSK longer than 32
+   bytes but shorter than Nh bytes is permitted.
 
    HPKE is specified to use HKDF as its key derivation function.  HKDF
    is not designed to slow down dictionary attacks (see [RFC5869]).
@@ -1836,9 +1569,9 @@ Table of Contents
    Such a situation could also lead to the reuse of the same KEM shared
    secret and thus to the reuse of same key-nonce pairs for the AEAD.
    The AEADs specified in this document are not secure in case of nonce
-   reuse.  This attack vector is particularly relevant in authenticated
-   modes because knowledge of the ephemeral randomness is not enough to
-   derive shared_secret in these modes.
+   reuse.  This attack vector is particularly relevant in the
+   authenticated mode because knowledge of the ephemeral randomness is
+   not enough to derive shared_secret in these modes.
 
    One way for applications to mitigate the impacts of bad ephemeral
    randomness is to combine ephemeral randomness with a local long-term
@@ -1872,26 +1605,23 @@ Table of Contents
    Note that HPKE's limitations with regard to sender authentication
    become limits on recipient authentication in this context.  In
    particular, in the Base mode, there is no authentication of the
-   remote party at all.  Even in the Auth mode, where the remote party
-   has proven that they hold a specific private key, this authentication
-   is still subject to key-compromise impersonation, as discussed in
-   Section 9.1.1.
+   remote party at all.
 
 9.9.  Metadata Protection
 
-   The authenticated modes of HPKE (PSK, Auth, and AuthPSK) require that
-   the recipient know what key material to use for the sender.  This can
-   be signaled in applications by sending the PSK ID (psk_id above) and/
-   or the sender's public key (pkS).  However, these values themselves
-   might be considered sensitive, since, in a given application context,
-   they might identify the sender.
+   The PSK mode of HPKE requires that the recipient know what key
+   material to use for the sender.  This can be signaled in applications
+   by sending the PSK ID (psk_id above) and/or the sender's public key
+   (pkS).  However, these values themselves might be considered
+   sensitive, since, in a given application context, they might identify
+   the sender.
 
    An application that wishes to protect these metadata values without
    requiring further provisioning of keys can use an additional instance
    of HPKE, using the unauthenticated Base mode.  Where the application
-   might have sent (psk_id, pkS, enc, ciphertext) before, it would now
-   send (enc2, ciphertext2, enc, ciphertext), where (enc2, ciphertext2)
-   represent the encryption of the psk_id and pkS values.
+   might have sent (psk_id, enc, ciphertext) before, it would now send
+   (enc2, ciphertext2, enc, ciphertext), where (enc2, ciphertext2)
+   represent the encryption of the psk_id value.
 
    The cost of this approach is an additional KEM operation each for the
    sender and the recipient.  A potential lower-cost approach (involving
@@ -2024,9 +1754,7 @@ Table of Contents
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
 
-   [RFC5116]  McGrew, D., "An Interface and Algorithms for Authenticated
-              Encryption", RFC 5116, DOI 10.17487/RFC5116, January 2008,
-              <https://www.rfc-editor.org/rfc/rfc5116>.
+   [RFC5116]  "*** BROKEN REFERENCE ***".
 
    [RFC8017]  Moriarty, K., Ed., Kaliski, B., Jonsson, J., and A. Rusch,
               "PKCS #1: RSA Cryptography Specifications Version 2.2",
@@ -2057,13 +1785,6 @@ Table of Contents
               "Subtleties in the Definition of IND-CCA: When and How
               Should Challenge-Decryption be Disallowed?", 2009,
               <https://eprint.iacr.org/2009/418>.
-
-   [BJM97]    Blake-Wilson, S., Johnson, D., and A. Menezes, "Key
-              agreement protocols and their security analysis: Extended
-              Abstract", Springer Berlin Heidelberg, Lecture Notes in
-              Computer Science pp. 30-45, DOI 10.1007/bfb0024447,
-              ISBN ["9783540639275", "9783540696681"], 1997,
-              <https://doi.org/10.1007/bfb0024447>.
 
    [BNT19]    Bellare, M., Ng, R., and B. Tackmann, "Nonces Are Noticed:
               AEAD Revisited", 2019,
@@ -2110,9 +1831,9 @@ Table of Contents
    [I-D.ietf-tls-esni]
               Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
               Encrypted Client Hello", Work in Progress, Internet-Draft,
-              draft-ietf-tls-esni-24, 20 March 2025,
+              draft-ietf-tls-esni-25, 14 June 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
-              esni-24>.
+              esni-25>.
 
    [IEEE1363] Institute of Electrical and Electronics Engineers, "IEEE
               1363a, Standard Specifications for Public Key Cryptography
@@ -2148,19 +1869,13 @@ Table of Contents
               Standardized Versions of ECIES", 2010,
               <https://ieeexplore.ieee.org/abstract/document/5604194/>.
 
-   [NaCl]     "Public-key authenticated encryption: crypto_box", 2019,
-              <https://nacl.cr.yp.to/box.html>.
-
    [NISTCurves]
               "Digital signature standard (DSS)", National Institute of
               Standards and Technology (U.S.),
               DOI 10.6028/nist.fips.186-4, 2013,
               <https://doi.org/10.6028/nist.fips.186-4>.
 
-   [RFC1421]  Linn, J., "Privacy Enhancement for Internet Electronic
-              Mail: Part I: Message Encryption and Authentication
-              Procedures", RFC 1421, DOI 10.17487/RFC1421, February
-              1993, <https://www.rfc-editor.org/rfc/rfc1421>.
+   [RFC1421]  "*** BROKEN REFERENCE ***".
 
    [RFC5869]  Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
               Key Derivation Function (HKDF)", RFC 5869,
@@ -2179,19 +1894,9 @@ Table of Contents
               Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
               <https://www.rfc-editor.org/rfc/rfc8446>.
 
-   [RFC8467]  Mayrhofer, A., "Padding Policies for Extension Mechanisms
-              for DNS (EDNS(0))", RFC 8467, DOI 10.17487/RFC8467,
-              October 2018, <https://www.rfc-editor.org/rfc/rfc8467>.
+   [RFC8467]  "*** BROKEN REFERENCE ***".
 
-   [RFC8696]  Housley, R., "Using Pre-Shared Key (PSK) in the
-              Cryptographic Message Syntax (CMS)", RFC 8696,
-              DOI 10.17487/RFC8696, December 2019,
-              <https://www.rfc-editor.org/rfc/rfc8696>.
-
-   [RFC8937]  Cremers, C., Garratt, L., Smyshlyaev, S., Sullivan, N.,
-              and C. Wood, "Randomness Improvements for Security
-              Protocols", RFC 8937, DOI 10.17487/RFC8937, October 2020,
-              <https://www.rfc-editor.org/rfc/rfc8937>.
+   [RFC8937]  "*** BROKEN REFERENCE ***".
 
    [RFC9180]  Barnes, R., Bhargavan, K., Lipp, B., and C. Wood, "Hybrid
               Public Key Encryption", RFC 9180, DOI 10.17487/RFC9180,
@@ -2454,209 +2159,6 @@ B.1.2.2.  Exported Values
    exported_value:
    8aff52b45a1be3a734bc7a41e20b4e055ad4c4d22104b0c20285a7c4302401cd
 
-B.1.3.  Auth Setup Information
-
-   mode: 2
-   kem_id: 32
-   kdf_id: 1
-   aead_id: 1
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   6e6d8f200ea2fb20c30b003a8b4f433d2f4ed4c2658d5bc8ce2fef718059c9f7
-   pkEm:
-   23fb952571a14a25e3d678140cd0e5eb47a0961bb18afcf85896e5453c312e76
-   skEm:
-   ff4442ef24fbc3c1ff86375b0be1e77e88a0de1e79b30896d73411c5ff4c3518
-   ikmR:
-   f1d4a30a4cef8d6d4e3b016e6fd3799ea057db4f345472ed302a67ce1c20cdec
-   pkRm:
-   1632d5c2f71c2b38d0a8fcc359355200caa8b1ffdf28618080466c909cb69b2e
-   skRm:
-   fdea67cf831f1ca98d8e27b1f6abeb5b7745e9d35348b80fa407ff6958f9137e
-   ikmS:
-   94b020ce91d73fca4649006c7e7329a67b40c55e9e93cc907d282bbbff386f58
-   pkSm:
-   8b0c70873dc5aecb7f9ee4e62406a397b350e57012be45cf53b7105ae731790b
-   skSm:
-   dc4a146313cce60a278a5323d321f051c5707e9c45ba21a3479fecdf76fc69dd
-   enc:
-   23fb952571a14a25e3d678140cd0e5eb47a0961bb18afcf85896e5453c312e76
-   shared_secret:
-   2d6db4cf719dc7293fcbf3fa64690708e44e2bebc81f84608677958c0d4448a7
-   key_schedule_context: 02725611c9d98c07c03f60095cd32d400d8347d45ed670
-   97bbad50fc56da742d07cb6cffde367bb0565ba28bb02c90744a20f5ef37f3052352
-   6106f637abb05449
-   secret:
-   56c62333d9d9f7767f5b083fdfce0aa7e57e301b74029bb0cffa7331385f1dda
-   key: b062cb2c4dd4bca0ad7c7a12bbc341e6
-   base_nonce: a1bc314c1942ade7051ffed0
-   exporter_secret:
-   ee1a093e6e1c393c162ea98fdf20560c75909653550540a2700511b65c88c6f1
-
-B.1.3.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: a1bc314c1942ade7051ffed0
-   ct: 5fd92cc9d46dbf8943e72a07e42f363ed5f721212cd90bcfd072bfd9f44e06b8
-   0fd17824947496e21b680c141b
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: a1bc314c1942ade7051ffed1
-   ct: d3736bb256c19bfa93d79e8f80b7971262cb7c887e35c26370cfed62254369a1
-   b52e3d505b79dd699f002bc8ed
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: a1bc314c1942ade7051ffed2
-   ct: 122175cfd5678e04894e4ff8789e85dd381df48dcaf970d52057df2c9acc3b12
-   1313a2bfeaa986050f82d93645
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: a1bc314c1942ade7051ffed4
-   ct: dae12318660cf963c7bcbef0f39d64de3bf178cf9e585e756654043cc5059873
-   bc8af190b72afc43d1e0135ada
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: a1bc314c1942ade7051ffe2f
-   ct: 55d53d85fe4d9e1e97903101eab0b4865ef20cef28765a47f840ff99625b7d69
-   dee927df1defa66a036fc58ff2
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: a1bc314c1942ade7051fffd0
-   ct: 42fa248a0e67ccca688f2b1d13ba4ba84755acf764bd797c8f7ba3b9b1dc3330
-   326f8d172fef6003c79ec72319
-
-B.1.3.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   28c70088017d70c896a8420f04702c5a321d9cbf0279fba899b59e51bac72c85
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   25dfc004b0892be1888c3914977aa9c9bbaf2c7471708a49e1195af48a6f29ce
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   5a0131813abc9a522cad678eb6bafaabc43389934adb8097d23c5ff68059eb64
-
-B.1.4.  AuthPSK Setup Information
-
-   mode: 3
-   kem_id: 32
-   kdf_id: 1
-   aead_id: 1
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   4303619085a20ebcf18edd22782952b8a7161e1dbae6e46e143a52a96127cf84
-   pkEm:
-   820818d3c23993492cc5623ab437a48a0a7ca3e9639c140fe1e33811eb844b7c
-   skEm:
-   14de82a5897b613616a00c39b87429df35bc2b426bcfd73febcb45e903490768
-   ikmR:
-   4b16221f3b269a88e207270b5e1de28cb01f847841b344b8314d6a622fe5ee90
-   pkRm:
-   1d11a3cd247ae48e901939659bd4d79b6b959e1f3e7d66663fbc9412dd4e0976
-   skRm:
-   cb29a95649dc5656c2d054c1aa0d3df0493155e9d5da6d7e344ed8b6a64a9423
-   ikmS:
-   62f77dcf5df0dd7eac54eac9f654f426d4161ec850cc65c54f8b65d2e0b4e345
-   pkSm:
-   2bfb2eb18fcad1af0e4f99142a1c474ae74e21b9425fc5c589382c69b50cc57e
-   skSm:
-   fc1c87d2f3832adb178b431fce2ac77c7ca2fd680f3406c77b5ecdf818b119f4
-   psk:
-   0247fd33b913760fa1fa51e1892d9f307fbe65eb171e8132c2af18555a738b82
-   psk_id: 456e6e796e20447572696e206172616e204d6f726961
-   enc:
-   820818d3c23993492cc5623ab437a48a0a7ca3e9639c140fe1e33811eb844b7c
-   shared_secret:
-   f9d0e870aba28d04709b2680cb8185466c6a6ff1d6e9d1091d5bf5e10ce3a577
-   key_schedule_context: 03e78d5cf6190d275863411ff5edd0dece5d39fa48e04e
-   ec1ed9b71be34729d18ccb6cffde367bb0565ba28bb02c90744a20f5ef37f3052352
-   6106f637abb05449
-   secret:
-   5f96c55e4108c6691829aaabaa7d539c0b41d7c72aae94ae289752f056b6cec4
-   key: 1364ead92c47aa7becfa95203037b19a
-   base_nonce: 99d8b5c54669807e9fc70df1
-   exporter_secret:
-   f048d55eacbf60f9c6154bd4021774d1075ebf963c6adc71fa846f183ab2dde6
-
-B.1.4.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: 99d8b5c54669807e9fc70df1
-   ct: a84c64df1e11d8fd11450039d4fe64ff0c8a99fca0bd72c2d4c3e0400bc14a40
-   f27e45e141a24001697737533e
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: 99d8b5c54669807e9fc70df0
-   ct: 4d19303b848f424fc3c3beca249b2c6de0a34083b8e909b6aa4c3688505c05ff
-   e0c8f57a0a4c5ab9da127435d9
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: 99d8b5c54669807e9fc70df3
-   ct: 0c085a365fbfa63409943b00a3127abce6e45991bc653f182a80120868fc507e
-   9e4d5e37bcc384fc8f14153b24
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: 99d8b5c54669807e9fc70df5
-   ct: 000a3cd3a3523bf7d9796830b1cd987e841a8bae6561ebb6791a3f0e34e89a4f
-   b539faeee3428b8bbc082d2c1a
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: 99d8b5c54669807e9fc70d0e
-   ct: 576d39dd2d4cc77d1a14a51d5c5f9d5e77586c3d8d2ab33bdec6379e28ce5c50
-   2f0b1cbd09047cf9eb9269bb52
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: 99d8b5c54669807e9fc70cf1
-   ct: 13239bab72e25e9fd5bb09695d23c90a24595158b99127505c8a9ff9f127e0d6
-   57f71af59d67d4f4971da028f9
-
-B.1.4.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   08f7e20644bb9b8af54ad66d2067457c5f9fcb2a23d9f6cb4445c0797b330067
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   52e51ff7d436557ced5265ff8b94ce69cf7583f49cdb374e6aad801fc063b010
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   a30c20370c026bbea4dca51cb63761695132d342bae33a6a11527d3e7679436d
-
 B.2.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
 
 B.2.1.  Base Setup Information
@@ -2852,211 +2354,6 @@ B.2.2.2.  Exported Values
    exported_value:
    ad40e3ae14f21c99bfdebc20ae14ab86f4ca2dc9a4799d200f43a25f99fa78ae
 
-B.2.3.  Auth Setup Information
-
-   mode: 2
-   kem_id: 32
-   kdf_id: 1
-   aead_id: 3
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   938d3daa5a8904540bc24f48ae90eed3f4f7f11839560597b55e7c9598c996c0
-   pkEm:
-   f7674cc8cd7baa5872d1f33dbaffe3314239f6197ddf5ded1746760bfc847e0e
-   skEm:
-   c94619e1af28971c8fa7957192b7e62a71ca2dcdde0a7cc4a8a9e741d600ab13
-   ikmR:
-   64835d5ee64aa7aad57c6f2e4f758f7696617f8829e70bc9ac7a5ef95d1c756c
-   pkRm:
-   1a478716d63cb2e16786ee93004486dc151e988b34b475043d3e0175bdb01c44
-   skRm:
-   3ca22a6d1cda1bb9480949ec5329d3bf0b080ca4c45879c95eddb55c70b80b82
-   ikmS:
-   9d8f94537d5a3ddef71234c0baedfad4ca6861634d0b94c3007fed557ad17df6
-   pkSm:
-   f0f4f9e96c54aeed3f323de8534fffd7e0577e4ce269896716bcb95643c8712b
-   skSm:
-   2def0cb58ffcf83d1062dd085c8aceca7f4c0c3fd05912d847b61f3e54121f05
-   enc:
-   f7674cc8cd7baa5872d1f33dbaffe3314239f6197ddf5ded1746760bfc847e0e
-   shared_secret:
-   d2d67828c8bc9fa661cf15a31b3ebf1febe0cafef7abfaaca580aaf6d471e3eb
-   key_schedule_context: 02431df6cd95e11ff49d7013563baf7f11588c75a6611e
-   e2a4404a49306ae4cfc5b69c5718a60cc5876c358d3f7fc31ddb598503f67be58ea1
-   e798c0bb19eb9796
-   secret:
-   3022dfc0a81d6e09a2e6daeeb605bb1ebb9ac49535540d9a4c6560064a6c6da8
-   key:
-   b071fd1136680600eb447a845a967d35e9db20749cdf9ce098bcc4deef4b1356
-   base_nonce: d20577dff16d7cea2c4bf780
-   exporter_secret:
-   be2d93b82071318cdb88510037cf504344151f2f9b9da8ab48974d40a2251dd7
-
-B.2.3.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: d20577dff16d7cea2c4bf780
-   ct: ab1a13c9d4f01a87ec3440dbd756e2677bd2ecf9df0ce7ed73869b98e00c09be
-   111cb9fdf077347aeb88e61bdf
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: d20577dff16d7cea2c4bf781
-   ct: 3265c7807ffff7fdace21659a2c6ccffee52a26d270c76468ed74202a65478bf
-   aedfff9c2b7634e24f10b71016
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: d20577dff16d7cea2c4bf782
-   ct: 3aadee86ad2a05081ea860033a9d09dbccb4acac2ded0891da40f51d4df19925
-   f7a767b076a5cbc9355c8fd35e
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: d20577dff16d7cea2c4bf784
-   ct: 502ecccd5c2be3506a081809cc58b43b94f77cbe37b8b31712d9e21c9e61aa69
-   46a8e922f54eae630f88eb8033
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: d20577dff16d7cea2c4bf77f
-   ct: 652e597ba20f3d9241cda61f33937298b1169e6adf72974bbe454297502eb4be
-   132e1c5064702fc165c2ddbde8
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: d20577dff16d7cea2c4bf680
-   ct: 3be14e8b3bbd1028cf2b7d0a691dbbeff71321e7dec92d3c2cfb30a0994ab246
-   af76168480285a60037b4ba13a
-
-B.2.3.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   070cffafd89b67b7f0eeb800235303a223e6ff9d1e774dce8eac585c8688c872
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   2852e728568d40ddb0edde284d36a4359c56558bb2fb8837cd3d92e46a3a14a8
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   1df39dc5dd60edcbf5f9ae804e15ada66e885b28ed7929116f768369a3f950ee
-
-B.2.4.  AuthPSK Setup Information
-
-   mode: 3
-   kem_id: 32
-   kdf_id: 1
-   aead_id: 3
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   49d6eac8c6c558c953a0a252929a818745bb08cd3d29e15f9f5db5eb2e7d4b84
-   pkEm:
-   656a2e00dc9990fd189e6e473459392df556e9a2758754a09db3f51179a3fc02
-   skEm:
-   5e6dd73e82b856339572b7245d3cbb073a7561c0bee52873490e305cbb710410
-   ikmR:
-   f3304ddcf15848488271f12b75ecaf72301faabf6ad283654a14c398832eb184
-   pkRm:
-   a5099431c35c491ec62ca91df1525d6349cb8aa170c51f9581f8627be6334851
-   skRm:
-   7b36a42822e75bf3362dfabbe474b3016236408becb83b859a6909e22803cb0c
-   ikmS:
-   20ade1d5203de1aadfb261c4700b6432e260d0d317be6ebbb8d7fffb1f86ad9d
-   pkSm:
-   3ac5bd4dd66ff9f2740bef0d6ccb66daa77bff7849d7895182b07fb74d087c45
-   skSm:
-   90761c5b0a7ef0985ed66687ad708b921d9803d51637c8d1cb72d03ed0f64418
-   psk:
-   0247fd33b913760fa1fa51e1892d9f307fbe65eb171e8132c2af18555a738b82
-   psk_id: 456e6e796e20447572696e206172616e204d6f726961
-   enc:
-   656a2e00dc9990fd189e6e473459392df556e9a2758754a09db3f51179a3fc02
-   shared_secret:
-   86a6c0ed17714f11d2951747e660857a5fd7616c933ef03207808b7a7123fe67
-   key_schedule_context: 036870c4c76ca38ae43efbec0f2377d109499d7ce73f4a
-   9e1ec37f21d3d063b97cb69c5718a60cc5876c358d3f7fc31ddb598503f67be58ea1
-   e798c0bb19eb9796
-   secret:
-   22670daee17530c9564001d0a7e740e80d0bcc7ae15349f472fcc9e057cbc259
-   key:
-   49c7e6d7d2d257aded2a746fe6a9bf12d4de8007c4862b1fdffe8c35fb65054c
-   base_nonce: abac79931e8c1bcb8a23960a
-   exporter_secret:
-   7c6cc1bb98993cd93e2599322247a58fd41fdecd3db895fb4c5fd8d6bbe606b5
-
-B.2.4.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: abac79931e8c1bcb8a23960a
-   ct: 9aa52e29274fc6172e38a4461361d2342585d3aeec67fb3b721ecd63f059577c
-   7fe886be0ede01456ebc67d597
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: abac79931e8c1bcb8a23960b
-   ct: 59460bacdbe7a920ef2806a74937d5a691d6d5062d7daafcad7db7e4d8c649ad
-   ffe575c1889c5c2e3a49af8e3e
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: abac79931e8c1bcb8a239608
-   ct: 5688ff6a03ba26ae936044a5c800f286fb5d1eccdd2a0f268f6ff9773b511693
-   18d1a1466bb36263415071db00
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: abac79931e8c1bcb8a23960e
-   ct: d936b7a01f5c7dc4c3dc04e322cc694684ee18dd71719196874e5235aed3cfb0
-   6cadcd3bc7da0877488d7c551d
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: abac79931e8c1bcb8a2396f5
-   ct: 4d4c462f7b9b637eaf1f4e15e325b7bc629c0af6e3073422c86064cc3c98cff8
-   7300f054fd56dd57dc34358beb
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: abac79931e8c1bcb8a23970a
-   ct: 9b7f84224922d2a9edd7b2c2057f3bcf3a547f17570575e626202e593bfdd99e
-   9878a1af9e41ded58c7fb77d2f
-
-B.2.4.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   c23ebd4e7a0ad06a5dddf779f65004ce9481069ce0f0e6dd51a04539ddcbd5cd
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   ed7ff5ca40a3d84561067ebc8e01702bc36cf1eb99d42a92004642b9dfaadd37
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   d3bae066aa8da27d527d85c040f7dd6ccb60221c902ee36a82f70bcd62a60ee4
-
 B.3.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
 
 B.3.1.  Base Setup Information
@@ -3249,209 +2546,6 @@ B.3.2.2.  Exported Values
    L: 32
    exported_value:
    164e02144d44b607a7722e58b0f4156e67c0c2874d74cf71da6ca48a4cbdc5e0
-
-B.3.3.  Auth Setup Information
-
-   mode: 2
-   kem_id: 16
-   kdf_id: 1
-   aead_id: 1
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   798d82a8d9ea19dbc7f2c6dfa54e8a6706f7cdc119db0813dacf8440ab37c857
-   pkEm: 042224f3ea800f7ec55c03f29fc9865f6ee27004f818fcbdc6dc68932c1e52
-   e15b79e264a98f2c535ef06745f3d308624414153b22c7332bc1e691cb4af4d53454
-   skEm:
-   6b8de0873aed0c1b2d09b8c7ed54cbf24fdf1dfc7a47fa501f918810642d7b91
-   ikmR:
-   7bc93bde8890d1fb55220e7f3b0c107ae7e6eda35ca4040bb6651284bf0747ee
-   pkRm: 04423e363e1cd54ce7b7573110ac121399acbc9ed815fae03b72ffbd4c18b0
-   1836835c5a09513f28fc971b7266cfde2e96afe84bb0f266920e82c4f53b36e1a78d
-   skRm:
-   d929ab4be2e59f6954d6bedd93e638f02d4046cef21115b00cdda2acb2a4440e
-   ikmS:
-   874baa0dcf93595a24a45a7f042e0d22d368747daaa7e19f80a802af19204ba8
-   pkSm: 04a817a0902bf28e036d66add5d544cc3a0457eab150f104285df1e293b5c1
-   0eef8651213e43d9cd9086c80b309df22cf37609f58c1127f7607e85f210b2804f73
-   skSm:
-   1120ac99fb1fccc1e8230502d245719d1b217fe20505c7648795139d177f0de9
-   enc: 042224f3ea800f7ec55c03f29fc9865f6ee27004f818fcbdc6dc68932c1e52e
-   15b79e264a98f2c535ef06745f3d308624414153b22c7332bc1e691cb4af4d53454
-   shared_secret:
-   d4aea336439aadf68f9348880aa358086f1480e7c167b6ef15453ba69b94b44f
-   key_schedule_context: 02b88d4e6d91759e65e87c470e8b9141113e9ad5f0c8ce
-   efc1e088c82e6980500798e486f9c9c09c9b5c753ac72d6005de254c607d1b534ed1
-   1d493ae1c1d9ac85
-   secret:
-   fd0a93c7c6f6b1b0dd6a822d7b16f6c61c83d98ad88426df4613c3581a2319f1
-   key: 19aa8472b3fdc530392b0e54ca17c0f5
-   base_nonce: b390052d26b67a5b8a8fcaa4
-   exporter_secret:
-   f152759972660eb0e1db880835abd5de1c39c8e9cd269f6f082ed80e28acb164
-
-B.3.3.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: b390052d26b67a5b8a8fcaa4
-   ct: 82ffc8c44760db691a07c5627e5fc2c08e7a86979ee79b494a17cc3405446ac2
-   bdb8f265db4a099ed3289ffe19
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: b390052d26b67a5b8a8fcaa5
-   ct: b0a705a54532c7b4f5907de51c13dffe1e08d55ee9ba59686114b05945494d96
-   725b239468f1229e3966aa1250
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: b390052d26b67a5b8a8fcaa6
-   ct: 8dc805680e3271a801790833ed74473710157645584f06d1b53ad439078d880b
-   23e25256663178271c80ee8b7c
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: b390052d26b67a5b8a8fcaa0
-   ct: 04c8f7aae1584b61aa5816382cb0b834a5d744f420e6dffb5ddcec633a21b8b3
-   472820930c1ea9258b035937a2
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: b390052d26b67a5b8a8fca5b
-   ct: 4a319462eaedee37248b4d985f64f4f863d31913fe9e30b6e13136053b69fe5d
-   70853c84c60a84bb5495d5a678
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: b390052d26b67a5b8a8fcba4
-   ct: 28e874512f8940fafc7d06135e7589f6b4198bc0f3a1c64702e72c9e6abaf9f0
-   5cb0d2f11b03a517898815c934
-
-B.3.3.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   837e49c3ff629250c8d80d3c3fb957725ed481e59e2feb57afd9fe9a8c7c4497
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   594213f9018d614b82007a7021c3135bda7b380da4acd9ab27165c508640dbda
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   14fe634f95ca0d86e15247cca7de7ba9b73c9b9deb6437e1c832daf7291b79d5
-
-B.3.4.  AuthPSK Setup Information
-
-   mode: 3
-   kem_id: 16
-   kdf_id: 1
-   aead_id: 1
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   3c1fceb477ec954c8d58ef3249e4bb4c38241b5925b95f7486e4d9f1d0d35fbb
-   pkEm: 046a1de3fc26a3d43f4e4ba97dbe24f7e99181136129c48fbe872d4743e2b1
-   31357ed4f29a7b317dc22509c7b00991ae990bf65f8b236700c82ab7c11a84511401
-   skEm:
-   36f771e411cf9cf72f0701ef2b991ce9743645b472e835fe234fb4d6eb2ff5a0
-   ikmR:
-   abcc2da5b3fa81d8aabd91f7f800a8ccf60ec37b1b585a5d1d1ac77f258b6cca
-   pkRm: 04d824d7e897897c172ac8a9e862e4bd820133b8d090a9b188b8233a64dfbc
-   5f725aa0aa52c8462ab7c9188f1c4872f0c99087a867e8a773a13df48a627058e1b3
-   skRm:
-   bdf4e2e587afdf0930644a0c45053889ebcadeca662d7c755a353d5b4e2a8394
-   ikmS:
-   6262031f040a9db853edd6f91d2272596eabbc78a2ed2bd643f770ecd0f19b82
-   pkSm: 049f158c750e55d8d5ad13ede66cf6e79801634b7acadcad72044eac2ae1d0
-   480069133d6488bf73863fa988c4ba8bde1c2e948b761274802b4d8012af4f13af9e
-   skSm:
-   b0ed8721db6185435898650f7a677affce925aba7975a582653c4cb13c72d240
-   psk:
-   0247fd33b913760fa1fa51e1892d9f307fbe65eb171e8132c2af18555a738b82
-   psk_id: 456e6e796e20447572696e206172616e204d6f726961
-   enc: 046a1de3fc26a3d43f4e4ba97dbe24f7e99181136129c48fbe872d4743e2b13
-   1357ed4f29a7b317dc22509c7b00991ae990bf65f8b236700c82ab7c11a84511401
-   shared_secret:
-   d4c27698391db126f1612d9e91a767f10b9b19aa17e1695549203f0df7d9aebe
-   key_schedule_context: 03b873cdf2dff4c1434988053b7a775e980dd2039ea24f
-   950b26b056ccedcb933198e486f9c9c09c9b5c753ac72d6005de254c607d1b534ed1
-   1d493ae1c1d9ac85
-   secret:
-   3bf9d4c7955da2740414e73081fa74d6f6f2b4b9645d0685219813ce99a2f270
-   key: 4d567121d67fae1227d90e11585988fb
-   base_nonce: 67c9d05330ca21e5116ecda6
-   exporter_secret:
-   3f479020ae186788e4dfd4a42a21d24f3faabb224dd4f91c2b2e5e9524ca27b2
-
-B.3.4.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: 67c9d05330ca21e5116ecda6
-   ct: b9f36d58d9eb101629a3e5a7b63d2ee4af42b3644209ab37e0a272d44365407d
-   b8e655c72e4fa46f4ff81b9246
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: 67c9d05330ca21e5116ecda7
-   ct: 51788c4e5d56276771032749d015d3eea651af0c7bb8e3da669effffed299ea1
-   f641df621af65579c10fc09736
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: 67c9d05330ca21e5116ecda4
-   ct: 3b5a2be002e7b29927f06442947e1cf709b9f8508b03823127387223d7127034
-   71c266efc355f1bc2036f3027c
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: 67c9d05330ca21e5116ecda2
-   ct: 8ddbf1242fe5c7d61e1675496f3bfdb4d90205b3dfbc1b12aab41395d71a8211
-   8e095c484103107cf4face5123
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: 67c9d05330ca21e5116ecd59
-   ct: 6de25ceadeaec572fbaa25eda2558b73c383fe55106abaec24d518ef6724a7ce
-   698f83ecdc53e640fe214d2f42
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: 67c9d05330ca21e5116ecca6
-   ct: f380e19d291e12c5e378b51feb5cd50f6d00df6cb2af8393794c4df342126c2e
-   29633fe7e8ce49587531affd4d
-
-B.3.4.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   595ce0eff405d4b3bb1d08308d70a4e77226ce11766e0a94c4fdb5d90025c978
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   110472ee0ae328f57ef7332a9886a1992d2c45b9b8d5abc9424ff68630f7d38d
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   18ee4d001a9d83a4c67e76f88dd747766576cac438723bad0700a910a4d717e6
 
 B.4.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA512, AES-128-GCM
 
@@ -3652,215 +2746,6 @@ B.4.2.2.  Exported Values
    exported_value:
    2f6d4f7a18ec48de1ef4469f596aada4afdf6d79b037ed3c07e0118f8723bffc
 
-B.4.3.  Auth Setup Information
-
-   mode: 2
-   kem_id: 16
-   kdf_id: 3
-   aead_id: 1
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   6bb031aa9197562da0b44e737db2b9e61f6c3ea1138c37de28fc37ac29bc7350
-   pkEm: 04fec59fa9f76f5d0f6c1660bb179cb314ed97953c53a60ab38f8e6ace60fd
-   59178084d0dd66e0f79172992d4ddb2e91172ce24949bcebfff158dcc417f2c6e9c6
-   skEm:
-   93cddd5288e7ef4884c8fe321d075df01501b993ff49ffab8184116f39b3c655
-   ikmR:
-   649a3f92edbb7a2516a0ade0b7dccc58a37240c4ba06f9726a952227b4adf6ff
-   pkRm: 04378bad519aab406e04d0e5608bcca809c02d6afd2272d4dd03e9357bd0ee
-   e8adf84c8deba3155c9cf9506d1d4c8bfefe3cf033a75716cc3cc07295100ec96276
-   skRm:
-   1ea4484be482bf25fdb2ed39e6a02ed9156b3e57dfb18dff82e4a048de990236
-   ikmS:
-   4d79b8691aab55a7265e8490a04bb3860ed64dece90953ad0dc43a6ea59b4bf2
-   pkSm: 0404d3c1f9fca22eb4a6d326125f0814c35593b1da8ea0d11a640730b215a2
-   59b9b98a34ad17e21617d19fe1d4fa39a4828bfdb306b729ec51c543caca3b2d9529
-   skSm:
-   02b266d66919f7b08f42ae0e7d97af4ca98b2dae3043bb7e0740ccadc1957579
-   enc: 04fec59fa9f76f5d0f6c1660bb179cb314ed97953c53a60ab38f8e6ace60fd5
-   9178084d0dd66e0f79172992d4ddb2e91172ce24949bcebfff158dcc417f2c6e9c6
-   shared_secret:
-   1ed49f6d7ada333d171cd63861a1cb700a1ec4236755a9cd5f9f8f67a2f8e7b3
-   key_schedule_context: 025b8a3617af7789ee716e7911c7e77f84cdc4cc46e60f
-   b7e19e4059f9aeadc00585e26874d1ddde76e551a7679cd47168c466f6e1f705cc93
-   74c192778a34fcd5ca221d77e229a9d11b654de7942d685069c633b2362ce3b3d8ea
-   4891c9a2a87a4eb7cdb289ba5e2ecbf8cd2c8498bb4a383dc021454d70d46fcbbad1
-   252ef4f9
-   secret: 9c846ba81ddbbd57bc26d99da6cf7ab956bb735ecd47fe21ed14241c7079
-   1b7484c1d06663d21a5d97bf1be70d56ab727f650c4f859c5ed3f71f8928b3c082dd
-   key: 9d4b1c83129f3de6db95faf3d539dcf1
-   base_nonce: ea4fd7a485ee5f1f4b62c1b7
-   exporter_secret: ca2410672369aae1afd6c2639f4fe34ca36d35410c090608d29
-   24f60def17f910d7928575434d7f991b1f19d3e8358b8278ff59ced0d5eed4774cec
-   72e12766e
-
-B.4.3.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: ea4fd7a485ee5f1f4b62c1b7
-   ct: 2480179d880b5f458154b8bfe3c7e8732332de84aabf06fc440f6b31f169e154
-   157fa9eb44f2fa4d7b38a9236e
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: ea4fd7a485ee5f1f4b62c1b6
-   ct: 10cd81e3a816d29942b602a92884348171a31cbd0f042c3057c65cd93c540943
-   a5b05115bd520c09281061935b
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: ea4fd7a485ee5f1f4b62c1b5
-   ct: 920743a88d8cf6a09e1a3098e8be8edd09db136e9d543f215924043af8c7410f
-   68ce6aa64fd2b1a176e7f6b3fd
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: ea4fd7a485ee5f1f4b62c1b3
-   ct: 6b11380fcc708fc8589effb5b5e0394cbd441fa5e240b5500522150ca8265d65
-   ff55479405af936e2349119dcd
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: ea4fd7a485ee5f1f4b62c148
-   ct: d084eca50e7554bb97ba34c4482dfe32c9a2b7f3ab009c2d1b68ecbf97bee2d2
-   8cd94b6c829b96361f2701772d
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: ea4fd7a485ee5f1f4b62c0b7
-   ct: 247da592cc4ce834a94de2c79f5730ee49342470a021e4a4bc2bb77c53b17413
-   e94d94f57b4fdaedcf97cfe7b1
-
-B.4.3.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   f03fbc82f321a0ab4840e487cb75d07aafd8e6f68485e4f7ff72b2f55ff24ad6
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   1ce0cadec0a8f060f4b5070c8f8888dcdfefc2e35819df0cd559928a11ff0891
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   70c405c707102fd0041ea716090753be47d68d238b111d542846bd0d84ba907c
-
-B.4.4.  AuthPSK Setup Information
-
-   mode: 3
-   kem_id: 16
-   kdf_id: 3
-   aead_id: 1
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   37ae06a521cd555648c928d7af58ad2aa4a85e34b8cabd069e94ad55ab872cc8
-   pkEm: 04801740f4b1b35823f7fb2930eac2efc8c4893f34ba111c0bb976e3c7d5dc
-   0aef5a7ef0bf4057949a140285f774f1efc53b3860936b92279a11b68395d898d138
-   skEm:
-   778f2254ae5d661d5c7fca8c4a7495a25bd13f26258e459159f3899df0de76c1
-   ikmR:
-   7466024b7e2d2366c3914d7833718f13afb9e3e45bcfbb510594d614ddd9b4e7
-   pkRm: 04a4ca7af2fc2cce48edbf2f1700983e927743a4e85bb5035ad562043e25d9
-   a111cbf6f7385fac55edc5c9d2ca6ed351a5643de95c36748e11dbec98730f4d43e9
-   skRm:
-   00510a70fde67af487c093234fc4215c1cdec09579c4b30cc8e48cb530414d0e
-   ikmS:
-   ee27aaf99bf5cd8398e9de88ac09a82ac22cdb8d0905ab05c0f5fa12ba1709f3
-   pkSm: 04b59a4157a9720eb749c95f842a5e3e8acdccbe834426d405509ac3191e23
-   f2165b5bb1f07a6240dd567703ae75e13182ee0f69fc102145cdb5abf681ff126d60
-   skSm:
-   d743b20821e6326f7a26684a4beed7088b35e392114480ca9f6c325079dcf10b
-   psk:
-   0247fd33b913760fa1fa51e1892d9f307fbe65eb171e8132c2af18555a738b82
-   psk_id: 456e6e796e20447572696e206172616e204d6f726961
-   enc: 04801740f4b1b35823f7fb2930eac2efc8c4893f34ba111c0bb976e3c7d5dc0
-   aef5a7ef0bf4057949a140285f774f1efc53b3860936b92279a11b68395d898d138
-   shared_secret:
-   02bee8be0dda755846115db45071c0cf59c25722e015bde1c124de849c0fea52
-   key_schedule_context: 03713f73042575cebfd132f0cc4338523f8eae95c80a74
-   9f7cf3eb9436ff1c612ca62c37df27ca46d2cc162445a92c5f5fdc57bcde129ca7b1
-   f284b0c12297c037ca221d77e229a9d11b654de7942d685069c633b2362ce3b3d8ea
-   4891c9a2a87a4eb7cdb289ba5e2ecbf8cd2c8498bb4a383dc021454d70d46fcbbad1
-   252ef4f9
-   secret: 0f9df08908a6a3d06c8e934cd3f5313f9ebccd0986e316c0198bb48bed30
-   dc3db2f3baab94fd40c2c285c7288c77e2255401ee2d5884306addf4296b93c238b3
-   key: b68bb0e2fbf7431cedb46cc3b6f1fe9e
-   base_nonce: 76af62719d33d39a1cb6be9f
-   exporter_secret: 7f72308ae68c9a2b3862e686cb547b16d33d00fe482c770c471
-   7d8b54e9b1e547244c3602bdd86d5a788a8443befea0a7658002b23f1c96a62a6498
-   6fffc511a
-
-B.4.4.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: 76af62719d33d39a1cb6be9f
-   ct: 840669634db51e28df54f189329c1b727fd303ae413f003020aff5e26276aaa9
-   10fc4296828cb9d862c2fd7d16
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: 76af62719d33d39a1cb6be9e
-   ct: d4680a48158d9a75fd09355878d6e33997a36ee01d4a8f22032b22373b795a94
-   1b7b9c5205ff99e0ff284beef4
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: 76af62719d33d39a1cb6be9d
-   ct: c45eb6597de2bac929a0f5d404ba9d2dc1ea031880930f1fd7a283f0a0cbebb3
-   5eac1a9ee0d1225f5e0f181571
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: 76af62719d33d39a1cb6be9b
-   ct: 4ee2482ad8d7d1e9b7e651c78b6ca26d3c5314d0711710ca62c2fd8bb8996d7d
-   8727c157538d5493da696b61f8
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: 76af62719d33d39a1cb6be60
-   ct: 65596b731df010c76a915c6271a438056ce65696459432eeafdae7b4cadb6290
-   dd61e68edd4e40b659d2a8cbcc
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: 76af62719d33d39a1cb6bf9f
-   ct: 9f659482ebc52f8303f9eac75656d807ec38ce2e50c72e3078cd13d86b30e3f8
-   90690a873277620f8a6a42d836
-
-B.4.4.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   c8c917e137a616d3d4e4c9fcd9c50202f366cb0d37862376bc79f9b72e8a8db9
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   33a5d4df232777008a06d0684f23bb891cfaef702f653c8601b6ad4d08dddddf
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   bed80f2e54f1285895c4a3f3b3625e6206f78f1ed329a0cfb5864f7c139b3c6a
-
 B.5.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
 
 B.5.1.  Base Setup Information
@@ -4055,211 +2940,6 @@ B.5.2.2.  Exported Values
    L: 32
    exported_value:
    6f6fbd0d1c7733f796461b3235a856cc34f676fe61ed509dfc18fa16efe6be78
-
-B.5.3.  Auth Setup Information
-
-   mode: 2
-   kem_id: 16
-   kdf_id: 1
-   aead_id: 3
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   0ecd212019008138a31f9104d5dba76b9f8e34d5b996041fff9e3df221dd0d5d
-   pkEm: 040d5176aedba55bc41709261e9195c5146bb62d783031280775f32e507d79
-   b5cbc5748b6be6359760c73cfe10ca19521af704ca6d91ff32fc0739527b9385d415
-   skEm:
-   085fd5d5e6ce6497c79df960cac93710006b76217d8bcfafbd2bb2c20ea03c42
-   ikmR:
-   d32236d8378b9563840653789eb7bc33c3c720e537391727bf1c812d0eac110f
-   pkRm: 0444f6ee41818d9fe0f8265bffd016b7e2dd3964d610d0f7514244a60dbb7a
-   11ece876bb110a97a2ac6a9542d7344bf7d2bd59345e3e75e497f7416cf38d296233
-   skRm:
-   3cb2c125b8c5a81d165a333048f5dcae29a2ab2072625adad66dbb0f48689af9
-   ikmS:
-   0e6be0851283f9327295fd49858a8c8908ea9783212945eef6c598ee0a3cedbb
-   pkSm: 04265529a04d4f46ab6fa3af4943774a9f1127821656a75a35fade898a9a1b
-   014f64d874e88cddb24c1c3d79004d3a587db67670ca357ff4fba7e8b56ec013b98b
-   skSm:
-   39b19402e742d48d319d24d68e494daa4492817342e593285944830320912519
-   enc: 040d5176aedba55bc41709261e9195c5146bb62d783031280775f32e507d79b
-   5cbc5748b6be6359760c73cfe10ca19521af704ca6d91ff32fc0739527b9385d415
-   shared_secret:
-   1a45aa4792f4b166bfee7eeab0096c1a6e497480e2261b2a59aad12f2768d469
-   key_schedule_context: 02b738cd703db7b4106e93b4621e9a19c89c838e559642
-   40e5d3f331aaf8b0d58b2e986ea1c671b61cf45eec134dac0bae58ec6f63e790b140
-   0b47c33038b0269c
-   secret:
-   9193210815b87a4c5496c9d73e609a6c92665b5ea0d760866294906d089ebb57
-   key:
-   cf292f8a4313280a462ce55cde05b5aa5744fe4ca89a5d81b0146a5eaca8092d
-   base_nonce: 7e45c21e20e869ae00492123
-   exporter_secret:
-   dba6e307f71769ba11e2c687cc19592f9d436da0c81e772d7a8a9fd28e54355f
-
-B.5.3.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: 7e45c21e20e869ae00492123
-   ct: 25881f219935eec5ba70d7b421f13c35005734f3e4d959680270f55d71e2f5cb
-   3bd2daced2770bf3d9d4916872
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: 7e45c21e20e869ae00492122
-   ct: 653f0036e52a376f5d2dd85b3204b55455b7835c231255ae098d09ed138719b9
-   7185129786338ab6543f753193
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: 7e45c21e20e869ae00492121
-   ct: 60878706117f22180c788e62df6a595bc41906096a11a9513e84f0141e43239e
-   81a98d7a235abc64112fcb8ddd
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: 7e45c21e20e869ae00492127
-   ct: 0f9094dd08240b5fa7a388b824d19d5b4b1e126cebfd67a062c32f9ba9f1f386
-   6cc38de7df2702626e2ab65c0f
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: 7e45c21e20e869ae004921dc
-   ct: dd29319e08135c5f8401d6537a364e92172c0e3f095f3fd18923881d11c0a683
-   9345dd0b54acd0edd8f8344792
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: 7e45c21e20e869ae00492023
-   ct: e2276ec5047bc4b6ed57d6da7da2fb47a77502f0a30f17d040247c73da336d72
-   2bc6c89adf68396a0912c6d152
-
-B.5.3.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   56c4d6c1d3a46c70fd8f4ecda5d27c70886e348efb51bd5edeaa39ff6ce34389
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   d2d3e48ed76832b6b3f28fa84be5f11f09533c0e3c71825a34fb0f1320891b51
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   eb0d312b6263995b4c7761e64b688c215ffd6043ff3bad2368c862784cbe6eff
-
-B.5.4.  AuthPSK Setup Information
-
-   mode: 3
-   kem_id: 16
-   kdf_id: 1
-   aead_id: 3
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   f3a07f194703e321ef1f753a1b9fe27a498dfdfa309151d70bedd896c239c499
-   pkEm: 043539917ee26f8ae0aa5f784a387981b13de33124a3cde88b946720301831
-   10f331400115855808244ff0c5b6ca6104483ac95724481d41bdcd9f15b430ad16f6
-   skEm:
-   11b7e4de2d919240616a31ab14944cced79bc2372108bb98f6792e3b645fe546
-   ikmR:
-   1240e55a0a03548d7f963ef783b6a7362cb505e6b31dfd04c81d9b294543bfbd
-   pkRm: 04d383fd920c42d018b9d57fd73a01f1eee480008923f67d35169478e55d2e
-   8817068daf62a06b10e0aad4a9e429fa7f904481be96b79a9c231a33e956c20b81b6
-   skRm:
-   c29fc577b7e74d525c0043f1c27540a1248e4f2c8d297298e99010a92e94865c
-   ikmS:
-   ce2a0387a2eb8870a3a92c34a2975f0f3f271af4384d446c7dc1524a6c6c515a
-   pkSm: 0492cf8c9b144b742fe5a63d9a181a19d416f3ec8705f24308ad316564823c
-   344e018bd7c03a33c926bb271b28ef5bf28c0ca00abff249fee5ef7f33315ff34fdb
-   skSm:
-   53541bd995f874a67f8bfd8038afa67fd68876801f42ff47d0dc2a4deea067ae
-   psk:
-   0247fd33b913760fa1fa51e1892d9f307fbe65eb171e8132c2af18555a738b82
-   psk_id: 456e6e796e20447572696e206172616e204d6f726961
-   enc: 043539917ee26f8ae0aa5f784a387981b13de33124a3cde88b9467203018311
-   0f331400115855808244ff0c5b6ca6104483ac95724481d41bdcd9f15b430ad16f6
-   shared_secret:
-   87584311791036a3019bc36803cdd42e9a8931a98b13c88835f2f8a9036a4fd6
-   key_schedule_context: 03622b72afcc3795841596c67ea74400ca3b029374d7d5
-   640bda367c5d67b3fbeb2e986ea1c671b61cf45eec134dac0bae58ec6f63e790b140
-   0b47c33038b0269c
-   secret:
-   fe52b4412590e825ea2603fa88e145b2ee014b942a774b55fab4f081301f16f4
-   key:
-   31e140c8856941315d4067239fdc4ebe077fbf45a6fc78a61e7a6c8b3bacb10a
-   base_nonce: 75838a8010d2e4760254dd56
-   exporter_secret:
-   600895965755db9c5027f25f039a6e3e506c35b3b7084ce33c4a48d59ee1f0e3
-
-B.5.4.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: 75838a8010d2e4760254dd56
-   ct: 9eadfa0f954835e7e920ffe56dec6b31a046271cf71fdda55db72926e1d8fae9
-   4cc6280fcfabd8db71eaa65c05
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: 75838a8010d2e4760254dd57
-   ct: e357ad10d75240224d4095c9f6150a2ed2179c0f878e4f2db8ca95d365d174d0
-   59ff8c3eb38ea9a65cfc8eaeb8
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: 75838a8010d2e4760254dd54
-   ct: 2fa56d00f8dd479d67a2ec3308325cf3bbccaf102a64ffccdb006bd7dcb93268
-   5b9a7b49cdc094a85fec1da5ef
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: 75838a8010d2e4760254dd52
-   ct: 1fe9d6db14965003ed81a39abf240f9cd7c5a454bca0d69ef9a2de16d537364f
-   bbf110b9ef11fa4a7a0172f0ce
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: 75838a8010d2e4760254dda9
-   ct: eaf4041a5c9122b22d1f8d698eeffe45d64b4ae33d0ddca3a4cdf4a5f595acc9
-   5a1a9334d06cc4d000df6aaad6
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: 75838a8010d2e4760254dc56
-   ct: fb857f4185ce5286c1a52431867537204963ea66a3eee8d2a74419fd8751faee
-   066d08277ac7880473aa4143ba
-
-B.5.4.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   c52b4592cd33dd38b2a3613108ddda28dcf7f03d30f2a09703f758bfa8029c9a
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   2f03bebc577e5729e148554991787222b5c2a02b77e9b1ac380541f710e5a318
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   e01dd49e8bfc3d9216abc1be832f0418adf8b47a7b5a330a7436c31e33d765d7
 
 B.6.  DHKEM(P-521, HKDF-SHA512), HKDF-SHA512, AES-256-GCM
 
@@ -4484,247 +3164,6 @@ B.6.2.2.  Exported Values
    exported_value:
    0c7cfc0976e25ae7680cf909ae2de1859cd9b679610a14bec40d69b91785b2f6
 
-B.6.3.  Auth Setup Information
-
-   mode: 2
-   kem_id: 18
-   kdf_id: 3
-   aead_id: 2
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE: fe1c589c2a05893895a537f38c7cb4300b5a7e8fef3d6ccb8f07a498029c61
-   e90262e009dc254c7f6235f9c6b2fd6aeff0a714db131b09258c16e217b7bd2aa619
-   b0
-   pkEm: 04017de12ede7f72cb101dab36a111265c97b3654816dcd6183f809d4b3d11
-   1fe759497f8aefdc5dbb40d3e6d21db15bdc60f15f2a420761bcaeef73b891c2b117
-   e9cf01e29320b799bbc86afdc5ea97d941ea1c5bd5ebeeac7a784b3bab524746f3e6
-   40ec26ee1bd91255f9330d974f845084637ee0e6fe9f505c5b87c86a4e1a6c3096dd
-   skEm: 0185f03560de87bb2c543ef03607f3c33ac09980000de25eabe3b224312946
-   330d2e65d192d3b4aa46ca92fc5ca50736b624402d95f6a80dc04d1f10ae95171372
-   61
-   ikmR: 8feea0438481fc0ecd470d6adfcda334a759c6b8650452c5a5dd9b2dd2cc9b
-   e33d2bb7ee64605fc07ab4664a58bb9a8de80defe510b6c97d2daf85b92cd4bb0a66
-   bf
-   pkRm: 04007d419b8834e7513d0e7cc66424a136ec5e11395ab353da324e3586673e
-   e73d53ab34f30a0b42a92d054d0db321b80f6217e655e304f72793767c4231785c4a
-   4a6e008f31b93b7a4f2b8cd12e5fe5a0523dc71353c66cbdad51c86b9e0bdfcd9a45
-   698f2dab1809ab1b0f88f54227232c858accc44d9a8d41775ac026341564a2d749f4
-   skRm: 013ef326940998544a899e15e1726548ff43bbdb23a8587aa3bef9d1b85733
-   8d87287df5667037b519d6a14661e9503cfc95a154d93566d8c84e95ce93ad05293a
-   0b
-   ikmS: 2f66a68b85ef04822b054ef521838c00c64f8b6226935593b69e13a1a2461a
-   4f1a74c10c836e87eed150c0db85d4e4f506cbb746149befac6f5c07dc48a615ef92
-   db
-   pkSm: 04015cc3636632ea9a3879e43240beae5d15a44fba819282fac26a19c989fa
-   fdd0f330b8521dff7dc393101b018c1e65b07be9f5fc9a28a1f450d6a541ee0d7622
-   1133001e8f0f6a05ab79f9b9bb9ccce142a453d59c5abebb5674839d935a3ca1a3fb
-   c328539a60b3bc3c05fed22838584a726b9c176796cad0169ba4093332cbd2dc3a9f
-   skSm: 001018584599625ff9953b9305849850d5e34bd789d4b81101139662fbea8b
-   6508ddb9d019b0d692e737f66beae3f1f783e744202aaf6fea01506c27287e359fe7
-   76
-   enc: 04017de12ede7f72cb101dab36a111265c97b3654816dcd6183f809d4b3d111
-   fe759497f8aefdc5dbb40d3e6d21db15bdc60f15f2a420761bcaeef73b891c2b117e
-   9cf01e29320b799bbc86afdc5ea97d941ea1c5bd5ebeeac7a784b3bab524746f3e64
-   0ec26ee1bd91255f9330d974f845084637ee0e6fe9f505c5b87c86a4e1a6c3096dd
-   shared_secret: 26648fa2a2deb0bfc56349a590fd4cb7108a51797b634694fc020
-   61e8d91b3576ac736a68bf848fe2a58dfb1956d266e68209a4d631e513badf8f4dcf
-   c00f30a
-   key_schedule_context: 0283a27c5b2358ab4dae1b2f5d8f57f10ccccc822a4733
-   26f543f239a70aee46347324e84e02d7651a10d08fb3dda739d22d50c53fbfa8122b
-   aacd0f9ae5913072ef45baa1f3a4b169e141feb957e48d03f28c837d8904c3d67753
-   08c3d3faa75dd64adfa44e1a1141edf9349959b8f8e5291cbdc56f62b0ed6527d692
-   e85b09a4
-   secret: 56b7acb7355d080922d2ddc227829c2276a0b456087654b3ac4b53828bd3
-   4af8cf54626f85af858a15a86eba73011665cc922bc59fd07d2975f356d2674db554
-   key:
-   01fced239845e53f0ec616e71777883a1f9fcab22a50f701bdeee17ad040e44d
-   base_nonce: 9752b85fe8c73eda183f9e80
-   exporter_secret: 80466a9d9cc5112ddad297e817e038801e15fa18152bc4dc010
-   a35d7f534089c87c98b4bacd7bbc6276c4002a74085adcd9019fca6139826b529256
-   9cfb7fe47
-
-B.6.3.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: 9752b85fe8c73eda183f9e80
-   ct: 0116aeb3a1c405c61b1ce47600b7ecd11d89b9c08c408b7e2d1e00a4d64696d1
-   2e6881dc61688209a8207427f9
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: 9752b85fe8c73eda183f9e81
-   ct: 37ece0cf6741f443e9d73b9966dc0b228499bb21fbf313948327231e70a18380
-   e080529c0267f399ba7c539cc6
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: 9752b85fe8c73eda183f9e82
-   ct: d17b045cac963e45d55fd3692ec17f100df66ac06d91f3b6af8efa7ed3c88955
-   50eb753bc801fe4bd27005b4bd
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: 9752b85fe8c73eda183f9e84
-   ct: 50c523ae7c64cada96abea16ddf67a73d2914ec86a4cedb31a7e6257f7553ed2
-   44626ef79a57198192b2323384
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: 9752b85fe8c73eda183f9e7f
-   ct: 53d422295a6ce8fcc51e6f69e252e7195e64abf49252f347d8c25534f1865a6a
-   17d949c65ce618ddc7d816111f
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: 9752b85fe8c73eda183f9f80
-   ct: 0dfcfc22ea768880b4160fec27ab10c75fb27766c6bb97aed373a9b6eae35d31
-   afb08257401075cbb602ac5abb
-
-B.6.3.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   8d78748d632f95b8ce0c67d70f4ad1757e61e872b5941e146986804b3990154b
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   80a4753230900ea785b6c80775092801fe91183746479f9b04c305e1db9d1f4d
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   620b176d737cf366bcc20d96adb54ec156978220879b67923689e6dca36210ed
-
-B.6.4.  AuthPSK Setup Information
-
-   mode: 3
-   kem_id: 18
-   kdf_id: 3
-   aead_id: 2
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE: 54272797b1fbc128a6967ff1fd606e0c67868f7762ce1421439cbc9e90ce1b
-   28d566e6c2acbce712e48eebf236696eb680849d6873e9959395b2931975d61d38bd
-   6c
-   pkEm: 04000a5096a6e6e002c83517b494bfc2e36bfb8632fae8068362852b70d0ff
-   71e560b15aff96741ecffb63d8ac3090c3769679009ac59a99a1feb4713c5f090fc0
-   dbed01ad73c45d29d369e36744e9ed37d12f80700c16d816485655169a5dd66e4ddf
-   27f2acffe0f56f7f77ea2b473b4bf0518b975d9527009a3d14e5a4957e3e8a9074f8
-   skEm: 003430af19716084efeced1241bb1a5625b6c826f11ef31649095eb2795261
-   9e36f62a79ea28001ac452fb20ddfbb66e62c6c0b1be03c0d28c97794a1fb638207a
-   83
-   ikmR: 3db434a8bc25b27eb0c590dc64997ab1378a99f52b2cb5a5a5b2fa540888f6
-   c0f09794c654f4468524e040e6b4eca2c9dcf229f908b9d318f960cc9e9baa92c5ee
-   e6
-   pkRm: 0401655b5d3b7cfafaba30851d25edc44c6dd17d99410efbed8591303b4dbe
-   ea8cb1045d5255f9a60384c3bbd4a3386ae6e6fab341dc1f8db0eed5f0ab1aaac6d7
-   838e00dadf8a1c2c64b48f89c633721e88369e54104b31368f26e35d04a442b0b428
-   510fb23caada686add16492f333b0f7ba74c391d779b788df2c38d7a7f4778009d91
-   skRm: 0053c0bc8c1db4e9e5c3e3158bfdd7fc716aef12db13c8515adf821dd692ba
-   3ca53041029128ee19c8556e345c4bcb840bb7fd789f97fe10f17f0e2c6c25280728
-   43
-   ikmS: 65d523d9b37e1273eb25ad0527d3a7bd33f67208dd1666d9904c6bc04969ae
-   5831a8b849e7ff642581f2c3e56be84609600d3c6bbdaded3f6989c37d2892b1e978
-   d5
-   pkSm: 040013761e97007293d57de70962876b4926f69a52680b4714bee1d4236aa9
-   6c19b840c57e80b14e91258f0a350e3f7ba59f3f091633aede4c7ec4fa8918323aa4
-   5d5901076dec8eeb22899fda9ab9e1960003ff0535f53c02c40f2ae4cdc6070a3870
-   b85b4bdd0bb77f1f889e7ee51f465a308f08c666ad3407f75dc046b2ff5a24dbe2ed
-   skSm: 003f64675fc8914ec9e2b3ecf13585b26dbaf3d5d805042ba487a5070b8c5a
-   c1d39b17e2161771cc1b4d0a3ba6e866f4ea4808684b56af2a49b5e5111146d45d93
-   26
-   psk:
-   0247fd33b913760fa1fa51e1892d9f307fbe65eb171e8132c2af18555a738b82
-   psk_id: 456e6e796e20447572696e206172616e204d6f726961
-   enc: 04000a5096a6e6e002c83517b494bfc2e36bfb8632fae8068362852b70d0ff7
-   1e560b15aff96741ecffb63d8ac3090c3769679009ac59a99a1feb4713c5f090fc0d
-   bed01ad73c45d29d369e36744e9ed37d12f80700c16d816485655169a5dd66e4ddf2
-   7f2acffe0f56f7f77ea2b473b4bf0518b975d9527009a3d14e5a4957e3e8a9074f8
-   shared_secret: 9e1d5f62cb38229f57f68948a0fbc1264499910cce50ec62cb241
-   88c5b0a98868f3c1cfa8c5baa97b3f24db3cdd30df6e04eae83dc4347be8a981066c
-   3b5b945
-   key_schedule_context: 0324497637cf18d6fbcc16e9f652f00244c981726f293b
-   b7819861e85e50c94f0be30e022ab081e18e6f299fd3d3d976a4bc590f85bc7711bf
-   ce32ee1a7fb1c154ef45baa1f3a4b169e141feb957e48d03f28c837d8904c3d67753
-   08c3d3faa75dd64adfa44e1a1141edf9349959b8f8e5291cbdc56f62b0ed6527d692
-   e85b09a4
-   secret: 50a57775958037a04098e0054576cd3bc084d0d08d29548ba4befa5676b9
-   1eb4dcd0752813a052c9a930d0aba6ca10b89dd690b64032dc635dece35d1bf4645c
-   key:
-   1316ed34bd52374854ed0e5cb0394ca0a79b2d8ce7f15d5104f21acdfb594286
-   base_nonce: d9c64ec8deb8a0647fafe8ff
-   exporter_secret: 6cb00ff99aebb2e4a05042ce0d048326dd2c03acd61a601b103
-   8a65398406a96ab8b5da3187412b2324089ea16ba4ff7e6f4fe55d281fc8ae5f2049
-   032b69ebd
-
-B.6.4.1.  Encryptions
-
-   sequence number: 0
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d30
-   nonce: d9c64ec8deb8a0647fafe8ff
-   ct: 942a2a92e0817cf032ce61abccf4f3a7c5d21b794ed943227e07b7df2d6dd92c
-   9b8a9371949e65cca262448ab7
-
-   sequence number: 1
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d31
-   nonce: d9c64ec8deb8a0647fafe8fe
-   ct: c0a83b5ec3d7933a090f681717290337b4fede5bfaa0a40ec29f93acad742888
-   a1513c649104c391c78d1d7f29
-
-   sequence number: 2
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d32
-   nonce: d9c64ec8deb8a0647fafe8fd
-   ct: 2847b2e0ce0b9da8fca7b0e81ff389d1682ee1b388ed09579b145058b5af6a93
-   a85dd50d9f417dc88f2c785312
-
-   sequence number: 4
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d34
-   nonce: d9c64ec8deb8a0647fafe8fb
-   ct: fbd9948ab9ac4a9cb9e295c07273600e6a111a3a89241d3e2178f39d532a2ec5
-   c15b9b0c6937ac84c88e0ca76f
-
-   sequence number: 255
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323535
-   nonce: d9c64ec8deb8a0647fafe800
-   ct: 63113a870131b567db8f39a11b4541eafbd2d3cf3a9bf9e5c1cfcb41e52f9027
-   310b82a4868215959131694d15
-
-   sequence number: 256
-   pt: 4265617574792069732074727574682c20747275746820626561757479
-   aad: 436f756e742d323536
-   nonce: d9c64ec8deb8a0647fafe9ff
-   ct: 24f9d8dadd2107376ccd143f70f9bafcd2b21d8117d45ff327e9a78f603a3260
-   6e42a6a8bdb57a852591d20907
-
-B.6.4.2.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   a39502ef5ca116aa1317bd9583dd52f15b0502b71d900fc8a622d19623d0cb5d
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   749eda112c4cfdd6671d84595f12cd13198fc3ef93ed72369178f344fe6e09c3
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   f8b4e72cefbff4ca6c4eabb8c0383287082cfcbb953d900aed4959afd0017095
-
 B.7.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, Export-Only AEAD
 
 B.7.1.  Base Setup Information
@@ -4829,121 +3268,6 @@ B.7.2.1.  Exported Values
    L: 32
    exported_value:
    7c9d79876a288507b81a5a52365a7d39cc0fa3f07e34172984f96fec07c44cba
-
-B.7.3.  Auth Setup Information
-
-   mode: 2
-   kem_id: 32
-   kdf_id: 1
-   aead_id: 65535
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   43b078912a54b591a7b09b16ce89a1955a9dd60b29fb611e044260046e8b061b
-   pkEm:
-   5ac1671a55c5c3875a8afe74664aa8bc68830be9ded0c5f633cd96400e8b5c05
-   skEm:
-   83d3f217071bbf600ba6f081f6e4005d27b97c8001f55cb5ff6ea3bbea1d9295
-   ikmR:
-   fc9407ae72ed614901ebf44257fb540f617284b5361cfecd620bafc4aba36f73
-   pkRm:
-   ffd7ac24694cb17939d95feb7c4c6539bb31621deb9b96d715a64abdd9d14b10
-   skRm:
-   ed88cda0e91ca5da64b6ad7fc34a10f096fa92f0b9ceff9d2c55124304ed8b4a
-   ikmS:
-   2ff4c37a17b2e54046a076bf5fea9c3d59250d54d0dc8572bc5f7c046307040c
-   pkSm:
-   89eb1feae431159a5250c5186f72a15962c8d0debd20a8389d8b6e4996e14306
-   skSm:
-   c85f136e06d72d28314f0e34b10aadc8d297e9d71d45a5662c2b7c3b9f9f9405
-   enc:
-   5ac1671a55c5c3875a8afe74664aa8bc68830be9ded0c5f633cd96400e8b5c05
-   shared_secret:
-   e204156fd17fd65b132d53a0558cd67b7c0d7095ee494b00f47d686eb78f8fb3
-   key_schedule_context: 029bd09219212a8cf27c6bb5d54998c5240793a70ca0a8
-   92234bd5e082bc619b6a3f4c22aa6d9a0424c2b4292fdf43b8257df93c2f6adbf6dd
-   c9c64fee26bdd292
-   secret:
-   355e7ef17f438db43152b7fb45a0e2f49a8bf8956d5dddfec1758c0f0eb1b5d5
-   key:
-   base_nonce:
-   exporter_secret:
-   276d87e5cb0655c7d3dad95e76e6fc02746739eb9d968955ccf8a6346c97509e
-
-B.7.3.1.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   83c1bac00a45ed4cb6bd8a6007d2ce4ec501f55e485c5642bd01bf6b6d7d6f0a
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   08a1d1ad2af3ef5bc40232a64f920650eb9b1034fac3892f729f7949621bf06e
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   ff3b0e37a9954247fea53f251b799e2edd35aac7152c5795751a3da424feca73
-
-B.7.4.  AuthPSK Setup Information
-
-   mode: 3
-   kem_id: 32
-   kdf_id: 1
-   aead_id: 65535
-   info: 4f6465206f6e2061204772656369616e2055726e
-   ikmE:
-   94efae91e96811a3a49fd1b20eb0344d68ead6ac01922c2360779aa172487f40
-   pkEm:
-   81cbf4bd7eee97dd0b600252a1c964ea186846252abb340be47087cc78f3d87c
-   skEm:
-   a2b43f5c67d0d560ee04de0122c765ea5165e328410844db97f74595761bbb81
-   ikmR:
-   4dfde6fadfe5cb50fced4034e84e6d3a104aa4bf2971360032c1c0580e286663
-   pkRm:
-   f47cd9d6993d2e2234eb122b425accfb486ee80f89607b087094e9f413253c2d
-   skRm:
-   c4962a7f97d773a47bdf40db4b01dc6a56797c9e0deaab45f4ea3aa9b1d72904
-   ikmS:
-   26c12fef8d71d13bbbf08ce8157a283d5e67ecf0f345366b0e90341911110f1b
-   pkSm:
-   29a5bf3867a6128bbdf8e070abe7fe70ca5e07b629eba5819af73810ee20112f
-   skSm:
-   6175b2830c5743dff5b7568a7e20edb1fe477fb0487ca21d6433365be90234d0
-   psk:
-   0247fd33b913760fa1fa51e1892d9f307fbe65eb171e8132c2af18555a738b82
-   psk_id: 456e6e796e20447572696e206172616e204d6f726961
-   enc:
-   81cbf4bd7eee97dd0b600252a1c964ea186846252abb340be47087cc78f3d87c
-   shared_secret:
-   d69246bcd767e579b1eec80956d7e7dfbd2902dad920556f0de69bd54054a2d1
-   key_schedule_context: 03446fb1fe2632a0a338f0a85ed1f3a0ac475bdea2cd72
-   f8c713b3a46ee737379a3f4c22aa6d9a0424c2b4292fdf43b8257df93c2f6adbf6dd
-   c9c64fee26bdd292
-   secret:
-   c15c5bec374f2087c241d3533c6ec48e1c60a21dd00085619b2ffdd84a7918c3
-   key:
-   base_nonce:
-   exporter_secret:
-   695b1faa479c0e0518b6414c3b46e8ef5caea04c0a192246843765ae6a8a78e0
-
-B.7.4.1.  Exported Values
-
-   exporter_context:
-   L: 32
-   exported_value:
-   dafd8beb94c5802535c22ff4c1af8946c98df2c417e187c6ccafe45335810b58
-
-   exporter_context: 00
-   L: 32
-   exported_value:
-   7346bb0b56caf457bcc1aa63c1b97d9834644bdacac8f72dbbe3463e4e46b0dd
-
-   exporter_context: 54657374436f6e74657874
-   L: 32
-   exported_value:
-   84f3466bd5a03bde6444324e63d7560e7ac790da4e5bbab01e7c4d575728c34a
 
 Authors' Addresses
 
