@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-17T01:22:38.836109+00:00",
+  "timestamp": "2025-06-26T01:22:18.042986+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -55,15 +55,15 @@
       "id": "I_kwDOOLtax86u7cOn",
       "title": "Remove Auth and AuthPSK modes",
       "url": "https://github.com/hpkewg/hpke/issues/1",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "HPKE has four modes: Base, PSK, Auth, and AuthPSK.  Auth and AuthPSK are supported by DHKEM, but no other known KEM.  And there is no known application usage of them.  So we should remove them from this updated spec.",
       "createdAt": "2025-03-20T10:06:18Z",
-      "updatedAt": "2025-06-04T16:54:22Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-24T01:49:37Z",
+      "closedAt": "2025-06-24T01:49:37Z",
       "comments": [
         {
           "author": "cfm",
@@ -74,7 +74,7 @@
         },
         {
           "author": "martinthomson",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "@cfm we have an upcoming interim meeting if you want to make a case for these ahead of that.  (Your attendance at that meeting would be helpful; this is one of the issues we plan to discuss.)",
           "createdAt": "2025-06-04T04:48:24Z",
           "updatedAt": "2025-06-04T04:48:24Z"
@@ -232,15 +232,15 @@
       "id": "I_kwDOOLtax863HW-M",
       "title": "IANA: Recommended column?",
       "url": "https://github.com/hpkewg/hpke/issues/17",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "martinthomson",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "After #5, @sftcd asks the question about whether the group sees value in a Recommended column, like those in RFC 8447([bis](https://datatracker.ietf.org/doc/html/draft-ietf-tls-rfc8447bis-09)).\n\nAn argument for this is that we might split the difference between accepted and non-existent.  For those who feel like the pure PQ modes (like the existing codepoints 0x0040-0x0042) are unacceptable, this would provide some encouragement to use the PQ/T modes instead.",
       "createdAt": "2025-05-19T00:16:36Z",
-      "updatedAt": "2025-06-06T20:34:44Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-24T15:34:52Z",
+      "closedAt": "2025-06-24T15:34:52Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -360,6 +360,13 @@
           "body": "> Yes and no. This percieved wierdness is on one hand a result from the decision that was made against the same objections brought here. Saying that \"well we have decided that over there, so we are going to have to follow\" is basically what everybody fearing the risk of PQ-only KEMs in TLS ultimately has: Normalization of its use and silencing of voices through this act that raise the concerns using exactly this argument: \"We are going to use it because its in TLS, what can possibly go wrong, right?\"\n\nThis comment also seems to be responding to some point I am not making, which has nothing to do with doing something in HPKE purely because it's in TLS. What's at stake in *this* issue is merely whether there is a column in the IANA registry for HPKE about whether it's Recommended. The lack of such a column does not in any way preclude you from opposing the use of a particular algorithm in some other protocol that is used in TLS (or whatever).\n\n\n> Regarding the \"wierdness\" of having different requirements on the KEM for different things: TLS Key Agreement IS a completely different beast. It would not be odd at all if the primitives are different for the ECH. For example, having a secure generic combiner for the PQ and T KEMs is of less concern in TLS (not ECH) than HPKE because of the transcript hashes. But HPKE would be used for ECH. So there, it would not be odd at all if PQ and T is combined differently with different requirements for good reasons.\n\nThis too is not the question at hand. It does in fact seem likely that PQ and T will be defined differently in ECH and TLS. However, if TLS recommends the use of algorithm X in KEX *and* X is specified in HPKE, but there is some technical issue that means that X can't be safely used for ECH, that seems like it's a sign of something severely wrong with the X-for-HPKE binding.\n\n\n\n\n\n\n\n",
           "createdAt": "2025-06-06T20:34:43Z",
           "updatedAt": "2025-06-06T20:34:43Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Considering this resolved via https://mailarchive.ietf.org/arch/msg/hpke/o6FFVc9VcCWFNJZXUE9TrU3ob5o/",
+          "createdAt": "2025-06-24T15:34:52Z",
+          "updatedAt": "2025-06-24T15:34:52Z"
         }
       ]
     },
@@ -368,15 +375,15 @@
       "id": "I_kwDOOLtax866SKHS",
       "title": "Add a \"comments\" column to IANA registries",
       "url": "https://github.com/hpkewg/hpke/issues/20",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "richsalz",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-06-06T16:52:28Z",
-      "updatedAt": "2025-06-06T17:58:12Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-24T15:35:05Z",
+      "closedAt": "2025-06-24T15:35:05Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -412,8 +419,31 @@
           "body": "If there's WG consensus to add a comment to one or more algorithms, we can add the column.  But there's no point to adding it without a need.  It's not futureproofing, because whatever thing makes the comment can also add the column.",
           "createdAt": "2025-06-06T17:58:11Z",
           "updatedAt": "2025-06-06T17:58:11Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Considering this resolved via https://mailarchive.ietf.org/arch/msg/hpke/o6FFVc9VcCWFNJZXUE9TrU3ob5o/",
+          "createdAt": "2025-06-24T15:35:05Z",
+          "updatedAt": "2025-06-24T15:35:05Z"
         }
       ]
+    },
+    {
+      "number": 23,
+      "id": "I_kwDOOLtax869HAsL",
+      "title": "Suites vs. Independent Algs",
+      "url": "https://github.com/hpkewg/hpke/issues/23",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "https://mailarchive.ietf.org/arch/msg/hpke/Oio9iAVhSB0mka4r3aU7IcjhYNc/",
+      "createdAt": "2025-06-24T17:20:58Z",
+      "updatedAt": "2025-06-24T17:20:58Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -1597,24 +1627,26 @@
       "id": "PR_kwDOOLtax86Zaewq",
       "title": "Remove the Auth modes",
       "url": "https://github.com/hpkewg/hpke/pull/19",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #1 \r\n\r\nMarked as WIP because the test vectors for these modes still need removing.",
       "createdAt": "2025-06-06T15:58:37Z",
-      "updatedAt": "2025-06-09T20:08:38Z",
+      "updatedAt": "2025-06-24T01:49:36Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "860d9a8c4b37ea0e224bdb2a6b6a309de04f66cf",
       "headRepository": "hpkewg/hpke",
       "headRefName": "no-auth",
       "headRefOid": "415677c226e4156718388ee1c17814e86d1bc8a9",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-06-24T01:49:36Z",
+      "mergedAt": "2025-06-24T01:49:36Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "02c5ceb535bac6925e441af5f1972cafaf09545b"
+      },
       "comments": [],
       "reviews": [
         {
@@ -1631,6 +1663,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 24,
+      "id": "PR_kwDOOLtax86b6mQx",
+      "title": "Add operational considerations about configuration and API design",
+      "url": "https://github.com/hpkewg/hpke/pull/24",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #23 ",
+      "createdAt": "2025-06-24T18:23:02Z",
+      "updatedAt": "2025-06-24T18:29:42Z",
+      "baseRepository": "hpkewg/hpke",
+      "baseRefName": "main",
+      "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
+      "headRepository": "hpkewg/hpke",
+      "headRefName": "algs",
+      "headRefOid": "a73cd01c8233eb8ab08be2607c1007cff25729f1",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
