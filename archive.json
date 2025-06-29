@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-26T01:22:18.042986+00:00",
+  "timestamp": "2025-06-29T01:39:33.615403+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -1669,25 +1669,33 @@
       "id": "PR_kwDOOLtax86b6mQx",
       "title": "Add operational considerations about configuration and API design",
       "url": "https://github.com/hpkewg/hpke/pull/24",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #23 ",
       "createdAt": "2025-06-24T18:23:02Z",
-      "updatedAt": "2025-06-24T18:29:42Z",
+      "updatedAt": "2025-06-28T16:11:59Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
       "headRepository": "hpkewg/hpke",
       "headRefName": "algs",
       "headRefOid": "a73cd01c8233eb8ab08be2607c1007cff25729f1",
-      "closedAt": null,
+      "closedAt": "2025-06-28T16:11:59Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Turns out there's no issue here.\r\n\r\nhttps://mailarchive.ietf.org/arch/msg/hpke/BDKsmqSb9cDPUsb-VZlRu6FZMW0/",
+          "createdAt": "2025-06-28T16:11:59Z",
+          "updatedAt": "2025-06-28T16:11:59Z"
+        }
+      ],
       "reviews": []
     }
   ]
