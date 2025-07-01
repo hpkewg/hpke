@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-29T01:39:33.615403+00:00",
+  "timestamp": "2025-07-01T01:41:11.389855+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -434,16 +434,24 @@
       "id": "I_kwDOOLtax869HAsL",
       "title": "Suites vs. Independent Algs",
       "url": "https://github.com/hpkewg/hpke/issues/23",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://mailarchive.ietf.org/arch/msg/hpke/Oio9iAVhSB0mka4r3aU7IcjhYNc/",
       "createdAt": "2025-06-24T17:20:58Z",
-      "updatedAt": "2025-06-24T17:20:58Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-06-30T22:20:37Z",
+      "closedAt": "2025-06-30T22:20:37Z",
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "https://mailarchive.ietf.org/arch/msg/hpke/BDKsmqSb9cDPUsb-VZlRu6FZMW0/",
+          "createdAt": "2025-06-30T22:20:37Z",
+          "updatedAt": "2025-06-30T22:20:37Z"
+        }
+      ]
     }
   ],
   "pulls": [
