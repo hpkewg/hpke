@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-01T01:41:11.389855+00:00",
+  "timestamp": "2025-07-03T01:23:02.619221+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -452,6 +452,22 @@
           "updatedAt": "2025-06-30T22:20:37Z"
         }
       ]
+    },
+    {
+      "number": 25,
+      "id": "I_kwDOOLtax86-Sf7L",
+      "title": "Missing a section describing changes from RFC 9180",
+      "url": "https://github.com/hpkewg/hpke/issues/25",
+      "state": "OPEN",
+      "author": "rohanmahy",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-07-01T13:33:09Z",
+      "updatedAt": "2025-07-01T13:33:09Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
