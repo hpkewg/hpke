@@ -276,8 +276,6 @@ chosen ciphertext attacks (IND-CCA2-secure) under classical assumptions about
 the underlying primitives {{HPKEAnalysis}} {{ABHKLR20}}. A summary of
 these analyses is in {{sec-properties}}.
 
-This document represents the consensus of the Crypto Forum Research Group (CFRG).
-
 # Requirements Notation
 
 {::boilerplate bcp14}
