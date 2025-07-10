@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-03T01:23:02.619221+00:00",
+  "timestamp": "2025-07-10T01:24:29.573849+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -468,6 +468,46 @@
       "updatedAt": "2025-07-01T13:33:09Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 26,
+      "id": "I_kwDOOLtax86_mT8h",
+      "title": "Update MLS reference, reference OHTTP?",
+      "url": "https://github.com/hpkewg/hpke/issues/26",
+      "state": "OPEN",
+      "author": "tfpauly",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The intro still references a draft for MLS, which is already an RFC. \n\nSince the document lists examples of usage for HPKE, it might make sense to include OHTTP in the list, too. ",
+      "createdAt": "2025-07-09T04:55:12Z",
+      "updatedAt": "2025-07-09T04:55:12Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 27,
+      "id": "I_kwDOOLtax86_mU9z",
+      "title": "Should the document still be marked as the consensus of CFRG?",
+      "url": "https://github.com/hpkewg/hpke/issues/27",
+      "state": "OPEN",
+      "author": "tfpauly",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "\u201cThis document represents the consensus of the Crypto Forum Research Group (CFRG).\u201d\n\nIs this appropriate to keep in an IETF WG document? I suppose the original RFC was, but it seems a bit out of place here. At the very least, it should be contextualized a bit. \n",
+      "createdAt": "2025-07-09T04:57:55Z",
+      "updatedAt": "2025-07-09T05:25:49Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "The goal is IETF consensus, so we should probably cut that.  Not that the consensus of the CFRG doesn't have value, of course, but it's an IETF product now.",
+          "createdAt": "2025-07-09T05:24:32Z",
+          "updatedAt": "2025-07-09T05:24:32Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -1720,6 +1760,32 @@
           "updatedAt": "2025-06-28T16:11:59Z"
         }
       ],
+      "reviews": []
+    },
+    {
+      "number": 28,
+      "id": "PR_kwDOOLtax86eDVAJ",
+      "title": "Remove CFRG consensus statement",
+      "url": "https://github.com/hpkewg/hpke/pull/28",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #27.",
+      "createdAt": "2025-07-09T05:25:40Z",
+      "updatedAt": "2025-07-09T05:25:40Z",
+      "baseRepository": "hpkewg/hpke",
+      "baseRefName": "main",
+      "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
+      "headRepository": "hpkewg/hpke",
+      "headRefName": "no-cfrg",
+      "headRefOid": "94a4db92b03411c319321ec22f56d12ed2ad401e",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
       "reviews": []
     }
   ]
