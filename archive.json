@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-10T01:24:29.573849+00:00",
+  "timestamp": "2025-07-17T01:27:37.131832+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -1787,6 +1787,46 @@
       "mergeCommit": null,
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 29,
+      "id": "PR_kwDOOLtax86fPwsP",
+      "title": "Use the same label for one- and two-stage KDFs",
+      "url": "https://github.com/hpkewg/hpke/pull/29",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "ht @bwesterb for pointing out that these labels are inconsistent.",
+      "createdAt": "2025-07-16T19:12:24Z",
+      "updatedAt": "2025-07-16T19:34:24Z",
+      "baseRepository": "hpkewg/hpke",
+      "baseRefName": "main",
+      "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
+      "headRepository": "hpkewg/hpke",
+      "headRefName": "label",
+      "headRefOid": "b01255a508d132dec5d6f951d65a09cc6902f1d8",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOOLtax860ZVHz",
+          "commit": {
+            "abbreviatedOid": "b01255a"
+          },
+          "author": "bwesterb",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-16T19:34:24Z",
+          "updatedAt": "2025-07-16T19:34:24Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
