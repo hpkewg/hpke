@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-17T01:27:37.131832+00:00",
+  "timestamp": "2025-07-27T01:44:05.835251+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -508,6 +508,22 @@
           "updatedAt": "2025-07-09T05:24:32Z"
         }
       ]
+    },
+    {
+      "number": 30,
+      "id": "I_kwDOOLtax87CRxel",
+      "title": "Bidirectional encryption is broken",
+      "url": "https://github.com/hpkewg/hpke/issues/30",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "From @martinthomson on [the list](https://mailarchive.ietf.org/arch/msg/hpke/uP2aqwLaKEgrIAekoDKb25lLpU0/):\n\n> The [Bidirectional Encryption section](https://datatracker.ietf.org/doc/html/draft-ietf-hpke-hpke#section-9.8) describes a construction for bidirectional encryption.  That construction is fatally busted.\n> \n> Fundamentally, HPKE doesn't provide any protection against replay.  If a sealed message is replayed, then exporters from the duplicated context will be identical.\n>\n> This is a problem we identified and fixed in RFC 9458.  There, we add fresh entropy to the key derivation in order to ensure that duplicated contexts don't result in identical keys.\n>\n> Ideally, the draft would be very clear about this risk.  Minimally, Section 9.8 needs significant revision to address this footgun.\n>\n> Credit to David Benjamin and David Schinazi for helping to identify this problem.",
+      "createdAt": "2025-07-24T10:46:44Z",
+      "updatedAt": "2025-07-24T10:46:44Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
