@@ -28,7 +28,6 @@ author:
     email: ietf@benjaminlipp.de
  -  ins: C. Wood
     name: Christopher A. Wood
-    org: Apple
     email: caw@heapingbits.net
 
 informative:
