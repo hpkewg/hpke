@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-27T01:44:05.835251+00:00",
+  "timestamp": "2025-07-31T01:38:13.252522+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -522,6 +522,22 @@
       "body": "From @martinthomson on [the list](https://mailarchive.ietf.org/arch/msg/hpke/uP2aqwLaKEgrIAekoDKb25lLpU0/):\n\n> The [Bidirectional Encryption section](https://datatracker.ietf.org/doc/html/draft-ietf-hpke-hpke#section-9.8) describes a construction for bidirectional encryption.  That construction is fatally busted.\n> \n> Fundamentally, HPKE doesn't provide any protection against replay.  If a sealed message is replayed, then exporters from the duplicated context will be identical.\n>\n> This is a problem we identified and fixed in RFC 9458.  There, we add fresh entropy to the key derivation in order to ensure that duplicated contexts don't result in identical keys.\n>\n> Ideally, the draft would be very clear about this risk.  Minimally, Section 9.8 needs significant revision to address this footgun.\n>\n> Credit to David Benjamin and David Schinazi for helping to identify this problem.",
       "createdAt": "2025-07-24T10:46:44Z",
       "updatedAt": "2025-07-24T10:46:44Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 31,
+      "id": "I_kwDOOLtax87DA4vo",
+      "title": "Encapsulated what?",
+      "url": "https://github.com/hpkewg/hpke/issues/31",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> Specifically, encrypted messages convey an encryption **key** encapsulated with a public key scheme, along with one or more arbitrary-sized ciphertexts encrypted using that key.\n\n-- https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-1-1\n\n> its encapsulated **representation** enc\n\n-- https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-4-2.1.2.6.1\n\n> length in bytes of an encapsulated **key** \n\n--  https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-4-2.1.2.8.1\n\n> Since encapsulated **keys** are Diffie-Hellman public keys in this KEM algorithm\n\n-- https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-4.1-3\n\n> produce an encapsulated **key** enc \n\n-- https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-5-1\n\n> enc is an encapsulated **KEM shared secret**.\n\n-- https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-5.1.1-3\n\n> fail if the encapsulated **key** enc is invalid\n\n-- https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-8.2-1\n\n> the encapsulated **value** enc\n\n-- https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-10-1\n\n> length in bytes of an encoded encapsulated **key** \n\n-- https://hpkewg.github.io/hpke/draft-ietf-hpke-hpke.html#section-11.1-3.4.1\n\nIt seems like \"encapsulated key\" is the winner by volume.  But is it really a key or is it just a secret?  (I have to say, I don't know what distinguishes a key from a secret in practice.)",
+      "createdAt": "2025-07-29T02:48:58Z",
+      "updatedAt": "2025-07-29T02:48:58Z",
       "closedAt": null,
       "comments": []
     }
@@ -1843,6 +1859,103 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 32,
+      "id": "PR_kwDOOLtax86hQIo3",
+      "title": "Extend replay considerations to cover exported secrets",
+      "url": "https://github.com/hpkewg/hpke/pull/32",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "https://mailarchive.ietf.org/arch/msg/hpke/uP2aqwLaKEgrIAekoDKb25lLpU0/",
+      "createdAt": "2025-07-29T21:23:49Z",
+      "updatedAt": "2025-07-30T06:32:28Z",
+      "baseRepository": "hpkewg/hpke",
+      "baseRefName": "main",
+      "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
+      "headRepository": "hpkewg/hpke",
+      "headRefName": "replay",
+      "headRefOid": "632aacf7c45a7eb64440681d76f578a090848f0a",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOOLtax862_PMS",
+          "commit": {
+            "abbreviatedOid": "632aacf"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "Much more thorough than I had in mind, but good.",
+          "createdAt": "2025-07-30T06:19:15Z",
+          "updatedAt": "2025-07-30T06:32:28Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\r\nkey `enc` will produce an identical context, and thus the same exported\r\n```",
+              "createdAt": "2025-07-30T06:19:15Z",
+              "updatedAt": "2025-07-30T06:32:29Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\r\napplications MUST NOT use an exported secret to derive a (key, nonce) pair for\r\n```",
+              "createdAt": "2025-07-30T06:19:37Z",
+              "updatedAt": "2025-07-30T06:32:29Z"
+            },
+            {
+              "originalPosition": 80,
+              "body": "\"detrimental\" might be a bit mild.  \"that can completely break the authenticated encryption guarantees for several AEAD algorithms, including those defined in {{aead-ids}}\".",
+              "createdAt": "2025-07-30T06:24:08Z",
+              "updatedAt": "2025-07-30T06:32:29Z"
+            },
+            {
+              "originalPosition": 119,
+              "body": "```suggestion\r\nunder certain application circumstances.  Incorporating per-transaction\r\n```\r\n\r\nOr just delete that clause and use \"might have allowed an attacker\"",
+              "createdAt": "2025-07-30T06:25:18Z",
+              "updatedAt": "2025-07-30T06:32:29Z"
+            },
+            {
+              "originalPosition": 43,
+              "body": "It is worth saying something along the lines of:\r\n\r\n> While a sender can guarantee the uniqueness of HPKE ciphertexts,\r\na recipient might receive the same ciphertext multiple times.\r\nUnless the recipient takes particular care to guarantee that replay is impossible,\r\nsuch as tracking all `enc` values that are received,\r\nthis can result in multiple contexts that have the same shared secret.\r\nThis is particularly relevant for exported secrets.\r\n\r\nThen drop the first sentence of your new paragraph.",
+              "createdAt": "2025-07-30T06:32:13Z",
+              "updatedAt": "2025-07-30T06:32:29Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "id": "PR_kwDOOLtax86hYY5o",
+      "title": "Update affiliation",
+      "url": "https://github.com/hpkewg/hpke/pull/33",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-07-30T15:05:14Z",
+      "updatedAt": "2025-07-30T15:05:14Z",
+      "baseRepository": "hpkewg/hpke",
+      "baseRefName": "main",
+      "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
+      "headRepository": "chris-wood/hpke-1",
+      "headRefName": "patch-1",
+      "headRefOid": "e8a37395bc5cf9dc879eb4ba47575a16500bd05b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
