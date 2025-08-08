@@ -871,10 +871,10 @@ key schedule, as they are not used by the Export interface described above.
 Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of RFC8446}}),
 the HPKE export interface does not provide replay protection. While the resulting
 secret will only be known to the sender and recipient, a replayed encapsulated
-key `enc` will result in the same encryption context, and thus the same exported
+key `enc` will produce an identical context, and thus the same exported
 secrets. In particular, applications MUST NOT use exported secrets unless it is
 safe for the same exported values to be used multiple times.  For example,
-applicaitons MUST NOT use an exported secret to derive a (key, nonce) pair for
+applications MUST NOT use an exported secret to derive a (key, nonce) pair for
 AEAD encryption (as suggested in {{Section 9.8 of RFC9180}}), since reuse of a
 (key, nonce) pair harms security in most AEAD algorithms.  In such cases,
 applications SHOULD incorporate a fresh recipient-provided nonce when deriving
@@ -1639,7 +1639,7 @@ This example mechanism differs from the example mechanism in {{RFC9180}} by
 incorporating a per-transaction random value `response_nonce`.  Because HPKE
 does not provide replay protection, the mechanism in {{RFC9180}} enabled an
 attacker to trigger reuse of a (key, nonce) pair by replaying an HPKE message
-(under certain application circumstances).  Incorporating per-transaction
+under certain application circumstances.  Incorporating per-transaction
 entropy ensures that the key and nonce used in AEAD encryption will be distinct
 for every invocation of the mechanism.
 
