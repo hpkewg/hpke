@@ -183,9 +183,6 @@ Table of Contents
    assumptions about the underlying primitives [HPKEAnalysis]
    [ABHKLR20].  A summary of these analyses is in Section 9.1.
 
-   This document represents the consensus of the Crypto Forum Research
-   Group (CFRG).
-
 2.  Requirements Notation
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
