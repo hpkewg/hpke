@@ -394,7 +394,7 @@ KDF calls as well as context binding:
 def LabeledDerive(ikm, label, context, L):
   labeled_ikm = concat(
     ikm,
-    "HPKE_v1",
+    "HPKE-v1",
     suite_id,
     lengthPrefixed(label),
     I2OSP(L, 2)
