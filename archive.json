@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-31T01:38:13.252522+00:00",
+  "timestamp": "2025-08-10T01:42:45.116091+00:00",
   "repo": "hpkewg/hpke",
   "labels": [
     {
@@ -490,15 +490,15 @@
       "id": "I_kwDOOLtax86_mU9z",
       "title": "Should the document still be marked as the consensus of CFRG?",
       "url": "https://github.com/hpkewg/hpke/issues/27",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "tfpauly",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "\u201cThis document represents the consensus of the Crypto Forum Research Group (CFRG).\u201d\n\nIs this appropriate to keep in an IETF WG document? I suppose the original RFC was, but it seems a bit out of place here. At the very least, it should be contextualized a bit. \n",
       "createdAt": "2025-07-09T04:57:55Z",
-      "updatedAt": "2025-07-09T05:25:49Z",
-      "closedAt": null,
+      "updatedAt": "2025-08-08T01:43:43Z",
+      "closedAt": "2025-08-08T01:43:43Z",
       "comments": [
         {
           "author": "martinthomson",
@@ -1799,50 +1799,68 @@
       "id": "PR_kwDOOLtax86eDVAJ",
       "title": "Remove CFRG consensus statement",
       "url": "https://github.com/hpkewg/hpke/pull/28",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Closes #27.",
       "createdAt": "2025-07-09T05:25:40Z",
-      "updatedAt": "2025-07-09T05:25:40Z",
+      "updatedAt": "2025-08-08T01:43:47Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
       "headRepository": "hpkewg/hpke",
       "headRefName": "no-cfrg",
       "headRefOid": "94a4db92b03411c319321ec22f56d12ed2ad401e",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-08-08T01:43:42Z",
+      "mergedAt": "2025-08-08T01:43:42Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "da8c098f85c9b9bddececeeace634b788b824400"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOOLtax864uqKv",
+          "commit": {
+            "abbreviatedOid": "94a4db9"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-08-08T01:43:37Z",
+          "updatedAt": "2025-08-08T01:43:37Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 29,
       "id": "PR_kwDOOLtax86fPwsP",
       "title": "Use the same label for one- and two-stage KDFs",
       "url": "https://github.com/hpkewg/hpke/pull/29",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bifurcation",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "ht @bwesterb for pointing out that these labels are inconsistent.",
       "createdAt": "2025-07-16T19:12:24Z",
-      "updatedAt": "2025-07-16T19:34:24Z",
+      "updatedAt": "2025-08-08T01:44:21Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
       "headRepository": "hpkewg/hpke",
       "headRefName": "label",
       "headRefOid": "b01255a508d132dec5d6f951d65a09cc6902f1d8",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-08-08T01:44:21Z",
+      "mergedAt": "2025-08-08T01:44:21Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "2bd045f0548af378046593aace4041a98a6e7f05"
+      },
       "comments": [],
       "reviews": [
         {
@@ -1872,13 +1890,13 @@
       "labels": [],
       "body": "https://mailarchive.ietf.org/arch/msg/hpke/uP2aqwLaKEgrIAekoDKb25lLpU0/",
       "createdAt": "2025-07-29T21:23:49Z",
-      "updatedAt": "2025-07-30T06:32:28Z",
+      "updatedAt": "2025-08-08T01:45:41Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
       "headRepository": "hpkewg/hpke",
       "headRefName": "replay",
-      "headRefOid": "632aacf7c45a7eb64440681d76f578a090848f0a",
+      "headRefOid": "4f30b976527cfef17acfef96283df570a4e8c3aa",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1936,26 +1954,42 @@
       "id": "PR_kwDOOLtax86hYY5o",
       "title": "Update affiliation",
       "url": "https://github.com/hpkewg/hpke/pull/33",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-07-30T15:05:14Z",
-      "updatedAt": "2025-07-30T15:05:14Z",
+      "updatedAt": "2025-08-08T01:43:15Z",
       "baseRepository": "hpkewg/hpke",
       "baseRefName": "main",
       "baseRefOid": "02c5ceb535bac6925e441af5f1972cafaf09545b",
       "headRepository": "chris-wood/hpke-1",
       "headRefName": "patch-1",
       "headRefOid": "e8a37395bc5cf9dc879eb4ba47575a16500bd05b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-08-08T01:43:15Z",
+      "mergedAt": "2025-08-08T01:43:15Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "0e0582b2cca1409ac5f592d1f237df0a3b262c2a"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOOLtax864uqDI",
+          "commit": {
+            "abbreviatedOid": "e8a3739"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-08-08T01:43:09Z",
+          "updatedAt": "2025-08-08T01:43:09Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
