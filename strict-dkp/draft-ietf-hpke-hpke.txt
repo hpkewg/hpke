@@ -6,10 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 10 January 2026                                           Inria
+Expires: 2 May 2026                                                Inria
                                                                  C. Wood
-                                                                   Apple
-                                                             9 July 2025
+                                                         29 October 2025
 
 
                       Hybrid Public Key Encryption
@@ -50,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 January 2026.
+   This Internet-Draft will expire on 2 May 2026.
 
 Copyright Notice
 
@@ -243,8 +242,8 @@ Table of Contents
 
       -  DeriveKeyPair(ikm): Deterministic algorithm to derive a key
          pair (skX, pkX) from the byte string ikm, where ikm SHOULD have
-         at least Nsk bytes of entropy (see Section 7.1.3 for
-         discussion).
+         at least Nsk bytes of entropy.  KEMs MAY define additional
+         constraints on the size of the ikm input.
 
       -  SerializePublicKey(pkX): Produce a byte string of length Npk
          encoding the public key pkX.
@@ -346,7 +345,7 @@ Table of Contents
    def LabeledDerive(ikm, label, context, L):
      labeled_ikm = concat(
        ikm,
-       "HPKE_v1",
+       "HPKE-v1",
        suite_id,
        lengthPrefixed(label),
        I2OSP(L, 2)
@@ -3294,5 +3293,4 @@ Authors' Addresses
 
 
    Christopher A. Wood
-   Apple
    Email: caw@heapingbits.net
