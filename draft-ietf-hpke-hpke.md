@@ -314,7 +314,8 @@ HPKE variants rely on the following primitives:
   - `GenerateKeyPair()`: Randomized algorithm to generate a key pair `(skX, pkX)`.
   - `DeriveKeyPair(ikm)`: Deterministic algorithm to derive a key pair
     `(skX, pkX)` from the byte string `ikm`, where `ikm` SHOULD have at
-    least `Nsk` bytes of entropy (see {{derive-key-pair}} for discussion).
+    least `Nsk` bytes of entropy.  KEMs MAY define additional constraints on the
+    size of the `ikm` input.
   - `SerializePublicKey(pkX)`: Produce a byte string of length `Npk` encoding the
     public key `pkX`.
   - `DeserializePublicKey(pkXm)`: Parse a byte string of length `Npk` to recover a
