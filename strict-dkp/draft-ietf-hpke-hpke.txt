@@ -6,9 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 2 May 2026                                                Inria
+Expires: 5 May 2026                                                Inria
                                                                  C. Wood
-                                                         29 October 2025
+                                                         1 November 2025
 
 
                       Hybrid Public Key Encryption
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 May 2026.
+   This Internet-Draft will expire on 5 May 2026.
 
 Copyright Notice
 
@@ -241,9 +241,9 @@ Table of Contents
          (skX, pkX).
 
       -  DeriveKeyPair(ikm): Deterministic algorithm to derive a key
-         pair (skX, pkX) from the byte string ikm, where ikm SHOULD have
-         at least Nsk bytes of entropy.  KEMs MAY define additional
-         constraints on the size of the ikm input.
+         pair (skX, pkX) from the byte string ikm, where ikm is an
+         arbitrary-length byte string which SHOULD have at least Nsk
+         bytes of entropy.
 
       -  SerializePublicKey(pkX): Produce a byte string of length Npk
          encoding the public key pkX.
@@ -329,9 +329,6 @@ Table of Contents
    A set of algorithm identifiers for concrete instantiations of these
    primitives is provided in Section 7.  Algorithm identifier values are
    two bytes long.
-
-   Note that GenerateKeyPair can be implemented as
-   DeriveKeyPair(random(Nsk)).
 
    The notation pk(skX), depending on its use and the KEM and its
    implementation, is either the computation of the public key using the
