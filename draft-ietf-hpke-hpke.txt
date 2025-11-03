@@ -6,9 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 9 February 2026                                           Inria
+Expires: 7 May 2026                                                Inria
                                                                  C. Wood
-                                                           8 August 2025
+                                                         3 November 2025
 
 
                       Hybrid Public Key Encryption
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 February 2026.
+   This Internet-Draft will expire on 7 May 2026.
 
 Copyright Notice
 
@@ -796,8 +796,7 @@ Table of Contents
 5.3.  Secret Export
 
    HPKE provides an interface for exporting secrets from the encryption
-   context using a variable-length pseudorandom function (PRF), similar
-   to the TLS 1.3 exporter interface (see [RFC8446], Section 7.5).  This
+   context using a variable-length pseudorandom function (PRF).  This
    interface takes as input a context string exporter_context and a
    desired length L in bytes, and produces a secret derived from the
    internal exporter secret using the corresponding KDF Expand function.
@@ -825,6 +824,20 @@ Table of Contents
    Such applications can avoid computing the key and base_nonce values
    in the key schedule, as they are not used by the Export interface
    described above.
+
+   Unlike the similar TLS 1.3 exporter interface (see Section 7.5 of
+   [RFC8446]), the HPKE export interface does not provide replay
+   protection.  While the resulting secret will only be known to the
+   sender and recipient, a replayed encapsulated key enc will produce an
+   identical context, and thus the same exported secrets.  In
+   particular, applications MUST NOT use exported secrets unless it is
+   safe for the same exported values to be used multiple times.  For
+   example, applications MUST NOT use an exported secret to derive a
+   (key, nonce) pair for AEAD encryption (as suggested in Section 9.8 of
+   [RFC9180]), since reuse of a (key, nonce) pair harms security in most
+   AEAD algorithms.  In such cases, applications SHOULD incorporate a
+   fresh recipient-provided nonce when deriving values from an export
+   context, as discussed in Section 4.4 of [RFC9458] and Section 9.8.
 
 6.  Single-Shot APIs
 
@@ -877,6 +890,10 @@ Table of Contents
    As in Section 6.1, the MODE template parameter is either Base or PSK.
    The optional parameters indicated by "..." depend on MODE and may be
    empty.
+
+   Secrets exported using this single-shot API face the same replay
+   risks discussed in Section 5.3.  Usage of exported secrets needs to
+   be limited as described in that section.
 
 7.  Algorithm Identifiers
 
@@ -1540,6 +1557,55 @@ Table of Contents
    resulting from a given context.  HPKE provides no other replay
    protection.
 
+   While a sender can guarantee the uniqueness of HPKE ciphertexts, a
+   recipient might receive the same ciphertext multiple times.  Unless
+   the recipient takes particular care to guarantee that replay is
+   impossible, such as tracking all enc values that are received, this
+   can result in multiple contexts that have the same shared secret.
+   This is particularly relevant for exported secrets.
+
+   If an attacker can cause a recipient to re-use an enc value, any
+   exported secrets will be the same as in the initial transaction.
+   While the exported values are still known only to the sender and
+   recipient (not the replay attacker), such replay can allow the
+   attacker to cause the recipient to re-use the exported values.
+
+   Consider the following scenario, in which B is using the recipient-
+   to-sender encryption described as an example in Section 9.8 of
+   [RFC9180]:
+
+   B->A: pk
+
+   A:    enc1, ctx = SetupBaseS(pk)
+         ct1 = ctx.seal(aad, pt)
+   A->B: enc1, ct1
+
+   B:    ctx = SetupBaseR(sk, enc1)
+         key, nonce = ctx.export(...)
+         ct2 = AEAD.seal(key, nonce, aad2, pt2)
+   B->A: ct2
+
+   X->B: enc1, ct1 [replay of previously sent values]
+
+   B:    ctx = SetupBaseR(sk, enc)
+         key, nonce = ctx.export(...)
+         ct3 = AEAD.seal(key, nonce, aad3, pt3)
+   B->X: ct3
+
+            Figure 1: Attacker-triggered nonce reuse via replay
+
+   In this scenario, if aad2 is different from aad3 or pt2 is different
+   from pt3 (for example, due to the use of a timestamp in either
+   field), then the ciphertexts ct2 and ct3 will represent encryptions
+   of different values with the same (key, nonce) pair -- a nonce reuse
+   condition that can completely break the authenticated encryption
+   guarantees for several AEAD algorithms, including those defined in
+   Section 7.3.
+
+   In order to avoid such risks, applications SHOULD incorporate a fresh
+   recipient-provided nonce when deriving values from an export context,
+   as discussed in Section 4.4 of [RFC9458] and Section 9.8.
+
 9.7.4.  Forward Secrecy
 
    HPKE ciphertexts are not forward secret with respect to recipient
@@ -1592,14 +1658,27 @@ Table of Contents
    recipient to the sender, it can derive a key and nonce from the
    corresponding HPKE context as follows:
 
-   key = context.Export("response key", Nk)
-   nonce = context.Export("response nonce", Nn)
+   def EncryptResponse(context, enc, response_aad, response_pt):
+     secret = context.Export("[application] response", Nh)
+     response_nonce = random(Nh)
+     salt = concat(enc, response_nonce)
+     prk = Extract(salt, secret)
+     aead_key = Expand(prk, "key", Nk)
+     aead_nonce = Expand(prk, "nonce", Nn)
+     ct = Seal(aead_key, aead_nonce, response_aad, response_pt)
+     return (response_nonce, ct)
 
-   In this example, the length of each secret is based on the AEAD
-   algorithm used for the corresponding HPKE context.
+   This example mechanism differs from the example mechanism in
+   [RFC9180] by incorporating a per-transaction random value
+   response_nonce.  Because HPKE does not provide replay protection, the
+   mechanism in [RFC9180] enabled an attacker to trigger reuse of a
+   (key, nonce) pair by replaying an HPKE message under certain
+   application circumstances.  Incorporating per-transaction entropy
+   ensures that the key and nonce used in AEAD encryption will be
+   distinct for every invocation of the mechanism.
 
-   Note that HPKE's limitations with regard to sender authentication
-   become limits on recipient authentication in this context.  In
+   In this context, HPKE's limitations with regard to sender
+   authentication become limits on recipient authentication.  In
    particular, in the Base mode, there is no authentication of the
    remote party at all.
 
@@ -1767,6 +1846,10 @@ Table of Contents
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC9458]  Thomson, M. and C. A. Wood, "Oblivious HTTP", RFC 9458,
+              DOI 10.17487/RFC9458, January 2024,
+              <https://www.rfc-editor.org/rfc/rfc9458>.
 
 12.2.  Informative References
 
