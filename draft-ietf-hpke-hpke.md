@@ -28,7 +28,6 @@ author:
     email: ietf@benjaminlipp.de
  -  ins: C. Wood
     name: Christopher A. Wood
-    org: Apple
     email: caw@heapingbits.net
 
 informative:
@@ -276,8 +275,6 @@ chosen ciphertext attacks (IND-CCA2-secure) under classical assumptions about
 the underlying primitives {{HPKEAnalysis}} {{ABHKLR20}}. A summary of
 these analyses is in {{sec-properties}}.
 
-This document represents the consensus of the Crypto Forum Research Group (CFRG).
-
 # Requirements Notation
 
 {::boilerplate bcp14}
@@ -397,7 +394,7 @@ KDF calls as well as context binding:
 def LabeledDerive(ikm, label, context, L):
   labeled_ikm = concat(
     ikm,
-    "HPKE_v1",
+    "HPKE-v1",
     suite_id,
     lengthPrefixed(label),
     I2OSP(L, 2)
