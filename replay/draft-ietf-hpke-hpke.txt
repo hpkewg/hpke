@@ -1557,13 +1557,18 @@ Table of Contents
    resulting from a given context.  HPKE provides no other replay
    protection.
 
-   In addition to the possibility of AEAD ciphertexts being replayed,
-   there is a subtle risk of replay that arises when an application uses
-   exported secrets.  If an attacker can cause a recipient to re-use an
-   enc value, any exported secrets will be the same as in the initial
-   transaction.  While the exported values are still known only to the
-   sender and recipient (not the replay attacker), such replay can allow
-   the attacker to cause the recipient to re-use the exported values.
+   While a sender can guarantee the uniqueness of HPKE ciphertexts, a
+   recipient might receive the same ciphertext multiple times.  Unless
+   the recipient takes particular care to guarantee that replay is
+   impossible, such as tracking all enc values that are received, this
+   can result in multiple contexts that have the same shared secret.
+   This is particularly relevant for exported secrets.
+
+   If an attacker can cause a recipient to re-use an enc value, any
+   exported secrets will be the same as in the initial transaction.
+   While the exported values are still known only to the sender and
+   recipient (not the replay attacker), such replay can allow the
+   attacker to cause the recipient to re-use the exported values.
 
    Consider the following scenario, in which B is using the recipient-
    to-sender encryption described as an example in Section 9.8 of
@@ -1593,7 +1598,9 @@ Table of Contents
    from pt3 (for example, due to the use of a timestamp in either
    field), then the ciphertexts ct2 and ct3 will represent encryptions
    of different values with the same (key, nonce) pair -- a nonce reuse
-   condition that is detrimental to several AEAD algorithms.
+   condition that can completely break the authenticated encryption
+   guarantees for several AEAD algorithms, including those defined in
+   Section 7.3.
 
    In order to avoid such risks, applications SHOULD incorporate a fresh
    recipient-provided nonce when deriving values from an export context,
