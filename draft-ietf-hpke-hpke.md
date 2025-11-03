@@ -865,17 +865,17 @@ the export-only AEAD ID `0xFFFF` when computing the key schedule. Such
 applications can avoid computing the `key` and `base_nonce` values in the
 key schedule, as they are not used by the Export interface described above.
 
-Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of RFC8446}}),
+Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of ?RFC8446}}),
 the HPKE export interface does not provide replay protection. While the resulting
 secret will only be known to the sender and recipient, a replayed encapsulated
 key `enc` will produce an identical context, and thus the same exported
 secrets. In particular, applications MUST NOT use exported secrets unless it is
 safe for the same exported values to be used multiple times.  For example,
 applications MUST NOT use an exported secret to derive a (key, nonce) pair for
-AEAD encryption (as suggested in {{Section 9.8 of RFC9180}}), since reuse of a
+AEAD encryption (as suggested in {{Section 9.8 of ?RFC9180}}), since reuse of a
 (key, nonce) pair harms security in most AEAD algorithms.  In such cases,
 applications SHOULD incorporate a fresh recipient-provided nonce when deriving
-values from an export context, as discussed in {{Section 4.4 of RFC9458}} and
+values from an export context, as discussed in {{Section 4.4 of !RFC9458}} and
 {{bidirectional}}.
 
 # Single-Shot APIs {#single-shot-apis}
@@ -1568,7 +1568,7 @@ several AEAD algorithms.
 
 In order to avoid such risks, applications SHOULD incorporate a fresh
 recipient-provided nonce when deriving values from an export context, as
-discussed in {{Section 4.4 of RFC9458}} and {{bidirectional}}. 
+discussed in {{Section 4.4 of RFC9458}} and {{bidirectional}}.
 
 ### Forward Secrecy
 
