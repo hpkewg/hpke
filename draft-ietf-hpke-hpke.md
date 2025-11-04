@@ -1061,7 +1061,7 @@ See {{api-errors}} for information about dealing with such failures.
 
 For X25519 and X448, the `DeriveKeyPair()` function applies a KDF to the input:
 
-~~~
+~~~ pseudocode
 # For use with a one-stage KDF
 def DeriveKeyPair_OneStage(ikm):
   sk = LabeledDerive(ikm, "sk", "", Nsk)
@@ -1078,6 +1078,9 @@ The `suite_id` used implicitly in `LabeledExtract()` and `LabeledExpand()`
 for `DeriveKeyPair(ikm)` is derived from the KEM identifier of the
 DHKEM in use (see {{kem-ids}}), that is, based on the type of key
 pair been generated for that DHKEM type.
+
+For all of the above instances of DHKEM, the `GenerateKeyPair` can be
+implemented as `DeriveKeyPair(random(Nsk))`.
 
 ### Validation of Inputs and Outputs {#validation}
 
