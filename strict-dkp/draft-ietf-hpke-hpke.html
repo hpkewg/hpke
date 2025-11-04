@@ -1058,7 +1058,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 5 May 2026</td>
+<td class="center">Expires 8 May 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1074,12 +1074,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <a href="https://www.rfc-editor.org/rfc/rfc9180" class="eref">9180</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-11-01" class="published">1 November 2025</time>
+<time datetime="2025-11-04" class="published">4 November 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-05-05">5 May 2026</time></dd>
+<dd class="expires"><time datetime="2026-05-08">8 May 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1140,7 +1140,7 @@ and SHA2.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 5 May 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 8 May 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2206,8 +2206,7 @@ context's AEAD algorithm.<a href="#section-5.2-14" class="pilcrow">¶</a></p>
 <a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-secret-export" class="section-name selfRef">Secret Export</a>
         </h3>
 <p id="section-5.3-1">HPKE provides an interface for exporting secrets from the encryption context
-using a variable-length pseudorandom function (PRF), similar to the TLS 1.3 exporter interface
-(see <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, Section 7.5). This interface takes as input a context
+using a variable-length pseudorandom function (PRF). This interface takes as input a context
 string <code>exporter_context</code> and a desired length <code>L</code> in bytes, and produces
 a secret derived from the internal exporter secret using the corresponding
 KDF Expand function. For the KDFs defined in this specification, <code>L</code> has
@@ -2234,6 +2233,18 @@ def Context.Export_TwoStage(exporter_context, L):
 the export-only AEAD ID <code>0xFFFF</code> when computing the key schedule. Such
 applications can avoid computing the <code>key</code> and <code>base_nonce</code> values in the
 key schedule, as they are not used by the Export interface described above.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.3-5">Unlike the similar TLS 1.3 exporter interface (see <span><a href="https://rfc-editor.org/rfc/rfc8446#section-7.5" class="relref">Section 7.5</a> of [<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>),
+the HPKE export interface does not provide replay protection. While the resulting
+secret will only be known to the sender and recipient, a replayed encapsulated
+key <code>enc</code> will produce an identical context, and thus the same exported
+secrets. In particular, applications MUST NOT use exported secrets unless it is
+safe for the same exported values to be used multiple times.  For example,
+applications MUST NOT use an exported secret to derive a (key, nonce) pair for
+AEAD encryption (as suggested in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-9.8" class="relref">Section 9.8</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>), since reuse of a
+(key, nonce) pair harms security in most AEAD algorithms.  In such cases,
+applications SHOULD incorporate a fresh recipient-provided nonce when deriving
+values from an export context, as discussed in <span><a href="https://rfc-editor.org/rfc/rfc9458#section-4.4" class="relref">Section 4.4</a> of [<a href="#RFC9458" class="cite xref">RFC9458</a>]</span> and
+<a href="#bidirectional" class="auto internal xref">Section 9.8</a>.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2303,6 +2314,9 @@ def ReceiveExport&lt;MODE&gt;(enc, skR, info, exporter_context, L, ...):
 </div>
 <p id="section-6.2-3">As in <a href="#single-shot-encryption" class="auto internal xref">Section 6.1</a>, the <code>MODE</code> template parameter is either Base or PSK.
 The optional parameters indicated by "..." depend on <code>MODE</code> and may be empty.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.2-4">Secrets exported using this single-shot API face the same replay risks discussed
+in <a href="#hpke-export" class="auto internal xref">Section 5.3</a>.  Usage of exported secrets needs to be limited as described
+in that section.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2521,7 +2535,7 @@ The precise likelihood of <code>DeriveKeyPair()</code> failing with DeriveKeyPai
 depends on the group being used, but it is negligibly small in all cases.
 See <a href="#api-errors" class="auto internal xref">Section 8.2</a> for information about dealing with such failures.<a href="#section-7.1.3-7" class="pilcrow">¶</a></p>
 <p id="section-7.1.3-8">For X25519 and X448, the <code>DeriveKeyPair()</code> function applies a KDF to the input:<a href="#section-7.1.3-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.1.3-9">
+<div class="lang-pseudocode sourcecode" id="section-7.1.3-9">
 <pre>
 # For use with a one-stage KDF
 def DeriveKeyPair_OneStage(ikm):
@@ -2539,6 +2553,8 @@ def DeriveKeyPair_TwoStage(ikm):
 for <code>DeriveKeyPair(ikm)</code> is derived from the KEM identifier of the
 DHKEM in use (see <a href="#kem-ids" class="auto internal xref">Section 7.1</a>), that is, based on the type of key
 pair been generated for that DHKEM type.<a href="#section-7.1.3-10" class="pilcrow">¶</a></p>
+<p id="section-7.1.3-11">For all of the above instances of DHKEM, the <code>GenerateKeyPair</code> can be
+implemented as <code>DeriveKeyPair(random(Nsk))</code>.<a href="#section-7.1.3-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="validation">
@@ -3238,6 +3254,54 @@ intermediary to force the two parties to use suboptimal algorithms.<a href="#sec
 in the same order they were generated by <code>ContextS.Seal()</code> provides a degree of
 replay protection within a stream of ciphertexts resulting from a given context.
 HPKE provides no other replay protection.<a href="#section-9.7.3-1" class="pilcrow">¶</a></p>
+<p id="section-9.7.3-2">While a sender can guarantee the uniqueness of HPKE ciphertexts, a recipient
+might receive the same ciphertext multiple times.  Unless the recipient takes
+particular care to guarantee that replay is impossible, such as tracking all enc
+values that are received, this can result in multiple contexts that have the
+same shared secret.  This is particularly relevant for exported secrets.<a href="#section-9.7.3-2" class="pilcrow">¶</a></p>
+<p id="section-9.7.3-3">If an attacker can cause a recipient to re-use an <code>enc</code> value, any exported
+secrets will be the same as in the initial transaction.  While the exported
+values are still known only to the sender and recipient (not the replay
+attacker), such replay can allow the attacker to cause the recipient to re-use
+the exported values.<a href="#section-9.7.3-3" class="pilcrow">¶</a></p>
+<p id="section-9.7.3-4">Consider the following scenario, in which B is using the recipient-to-sender
+encryption described as an example in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-9.8" class="relref">Section 9.8</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>:<a href="#section-9.7.3-4" class="pilcrow">¶</a></p>
+<span id="name-attacker-triggered-nonce-re"></span><div id="replay-attack">
+<figure id="figure-1">
+            <div class="alignLeft art-text artwork" id="section-9.7.3-5.1">
+<pre>
+B-&gt;A: pk
+
+A:    enc1, ctx = SetupBaseS(pk)
+      ct1 = ctx.seal(aad, pt)
+A-&gt;B: enc1, ct1
+
+B:    ctx = SetupBaseR(sk, enc1)
+      key, nonce = ctx.export(...)
+      ct2 = AEAD.seal(key, nonce, aad2, pt2)
+B-&gt;A: ct2
+
+X-&gt;B: enc1, ct1 [replay of previously sent values]
+
+B:    ctx = SetupBaseR(sk, enc)
+      key, nonce = ctx.export(...)
+      ct3 = AEAD.seal(key, nonce, aad3, pt3)
+B-&gt;X: ct3
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-attacker-triggered-nonce-re" class="selfRef">Attacker-triggered nonce reuse via replay</a>
+            </figcaption></figure>
+</div>
+<p id="section-9.7.3-6">In this scenario, if <code>aad2</code> is different from <code>aad3</code> or <code>pt2</code> is different from
+<code>pt3</code> (for example, due to the use of a timestamp in either field), then the
+ciphertexts <code>ct2</code> and <code>ct3</code> will represent encryptions of different values with
+the same (key, nonce) pair -- a nonce reuse condition that can completely break
+the authenticated encryption guarantees for several AEAD algorithms, including
+those defined in <a href="#aead-ids" class="auto internal xref">Section 7.3</a>.<a href="#section-9.7.3-6" class="pilcrow">¶</a></p>
+<p id="section-9.7.3-7">In order to avoid such risks, applications SHOULD incorporate a fresh
+recipient-provided nonce when deriving values from an export context, as
+discussed in <span><a href="https://rfc-editor.org/rfc/rfc9458#section-4.4" class="relref">Section 4.4</a> of [<a href="#RFC9458" class="cite xref">RFC9458</a>]</span> and <a href="#bidirectional" class="auto internal xref">Section 9.8</a>.<a href="#section-9.7.3-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="forward-secrecy">
@@ -3304,15 +3368,27 @@ the sender, it can derive a key and nonce from the corresponding HPKE context
 as follows:<a href="#section-9.8-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-9.8-3">
 <pre>
-key = context.Export("response key", Nk)
-nonce = context.Export("response nonce", Nn)
+def EncryptResponse(context, enc, response_aad, response_pt):
+  secret = context.Export("[application] response", Nh)
+  response_nonce = random(Nh)
+  salt = concat(enc, response_nonce)
+  prk = Extract(salt, secret)
+  aead_key = Expand(prk, "key", Nk)
+  aead_nonce = Expand(prk, "nonce", Nn)
+  ct = Seal(aead_key, aead_nonce, response_aad, response_pt)
+  return (response_nonce, ct)
 </pre><a href="#section-9.8-3" class="pilcrow">¶</a>
 </div>
-<p id="section-9.8-4">In this example, the length of each secret is based on the AEAD algorithm
-used for the corresponding HPKE context.<a href="#section-9.8-4" class="pilcrow">¶</a></p>
-<p id="section-9.8-5">Note that HPKE's limitations with regard to sender authentication become limits
-on recipient authentication in this context. In particular, in the Base mode,
-there is no authentication of the remote party at all.<a href="#section-9.8-5" class="pilcrow">¶</a></p>
+<p id="section-9.8-4">This example mechanism differs from the example mechanism in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> by
+incorporating a per-transaction random value <code>response_nonce</code>.  Because HPKE
+does not provide replay protection, the mechanism in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> enabled an
+attacker to trigger reuse of a (key, nonce) pair by replaying an HPKE message
+under certain application circumstances.  Incorporating per-transaction
+entropy ensures that the key and nonce used in AEAD encryption will be distinct
+for every invocation of the mechanism.<a href="#section-9.8-4" class="pilcrow">¶</a></p>
+<p id="section-9.8-5">In this context, HPKE's limitations with regard to sender authentication become
+limits on recipient authentication. In particular, in the Base mode, there is no
+authentication of the remote party at all.<a href="#section-9.8-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="metadata-protection">
@@ -3511,8 +3587,12 @@ These identifiers are two-byte values, so the maximum possible value is
 <span class="refAuthor">Cotton, M.</span>, <span class="refAuthor">Leiba, B.</span>, and <span class="refAuthor">T. Narten</span>, <span class="refTitle">"Guidelines for Writing an IANA Considerations Section in RFCs"</span>, <span class="seriesInfo">BCP 26</span>, <span class="seriesInfo">RFC 8126</span>, <span class="seriesInfo">DOI 10.17487/RFC8126</span>, <time datetime="2017-06" class="refDate">June 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8126">https://www.rfc-editor.org/rfc/rfc8126</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9458">[RFC9458]</dt>
+      <dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious HTTP"</span>, <span class="seriesInfo">RFC 9458</span>, <span class="seriesInfo">DOI 10.17487/RFC9458</span>, <time datetime="2024-01" class="refDate">January 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9458">https://www.rfc-editor.org/rfc/rfc9458</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
