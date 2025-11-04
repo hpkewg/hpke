@@ -312,9 +312,10 @@ HPKE variants rely on the following primitives:
 
 * A key encapsulation mechanism (KEM):
   - `GenerateKeyPair()`: Randomized algorithm to generate a key pair `(skX, pkX)`.
-  - `DeriveKeyPair(ikm)`: Deterministic algorithm to derive a key pair
-    `(skX, pkX)` from the byte string `ikm`, where `ikm` SHOULD have at
-    least `Nsk` bytes of entropy (see {{derive-key-pair}} for discussion).
+  - `DeriveKeyPair(ikm)`: Deterministic algorithm to derive a key pair `(skX,
+    pkX)` from the byte string `ikm`, where `ikm` is an arbitrary-length byte
+    string (within the bounds in {{input-limits}}).  The `ikm` input SHOULD have
+    at least `Nsk` bytes of entropy.
   - `SerializePublicKey(pkX)`: Produce a byte string of length `Npk` encoding the
     public key `pkX`.
   - `DeserializePublicKey(pkXm)`: Parse a byte string of length `Npk` to recover a
@@ -377,8 +378,6 @@ for each primitive.
 A set of algorithm identifiers for concrete instantiations of these
 primitives is provided in {{ciphersuites}}.  Algorithm identifier
 values are two bytes long.
-
-Note that `GenerateKeyPair` can be implemented as `DeriveKeyPair(random(Nsk))`.
 
 The notation `pk(skX)`, depending on its use and the KEM and its
 implementation, is either the
@@ -1063,7 +1062,7 @@ See {{api-errors}} for information about dealing with such failures.
 
 For X25519 and X448, the `DeriveKeyPair()` function applies a KDF to the input:
 
-~~~
+~~~ pseudocode
 # For use with a one-stage KDF
 def DeriveKeyPair_OneStage(ikm):
   sk = LabeledDerive(ikm, "sk", "", Nsk)
@@ -1080,6 +1079,9 @@ The `suite_id` used implicitly in `LabeledExtract()` and `LabeledExpand()`
 for `DeriveKeyPair(ikm)` is derived from the KEM identifier of the
 DHKEM in use (see {{kem-ids}}), that is, based on the type of key
 pair been generated for that DHKEM type.
+
+For all of the above instances of DHKEM, the `GenerateKeyPair` can be
+implemented as `DeriveKeyPair(random(Nsk))`.
 
 ### Validation of Inputs and Outputs {#validation}
 
