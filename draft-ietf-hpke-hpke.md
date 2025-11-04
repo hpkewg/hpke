@@ -257,8 +257,8 @@ public key encryption (HPKE) schemes, specified here, take a different approach:
 Specifically, encrypted messages convey an encryption key encapsulated with a
 public key scheme, along with one or more arbitrary-sized ciphertexts encrypted
 using that key. This type of public key encryption has many applications in
-practice, including Messaging Layer Security {{?I-D.ietf-mls-protocol}} and
-TLS Encrypted ClientHello {{?I-D.ietf-tls-esni}}.
+practice, including Messaging Layer Security {{?RFC9420}}, TLS Encrypted
+ClientHello {{?I-D.ietf-tls-esni}}, and Oblivious HTTP {{?RFC9458}}.
 
 Currently, there are numerous competing and non-interoperable standards and
 variants for hybrid encryption, mostly variants on the Elliptic Curve Integrated Encryption Scheme (ECIES), including ANSI X9.63
