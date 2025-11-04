@@ -312,9 +312,10 @@ HPKE variants rely on the following primitives:
 
 * A key encapsulation mechanism (KEM):
   - `GenerateKeyPair()`: Randomized algorithm to generate a key pair `(skX, pkX)`.
-  - `DeriveKeyPair(ikm)`: Deterministic algorithm to derive a key pair
-    `(skX, pkX)` from the byte string `ikm`, where `ikm` is an arbitrary-length
-    byte string which SHOULD have at least `Nsk` bytes of entropy.
+  - `DeriveKeyPair(ikm)`: Deterministic algorithm to derive a key pair `(skX,
+    pkX)` from the byte string `ikm`, where `ikm` is an arbitrary-length byte
+    string (within the bounds in {{input-limits}}).  The `ikm` input SHOULD have
+    at least `Nsk` bytes of entropy.
   - `SerializePublicKey(pkX)`: Produce a byte string of length `Npk` encoding the
     public key `pkX`.
   - `DeserializePublicKey(pkXm)`: Parse a byte string of length `Npk` to recover a
