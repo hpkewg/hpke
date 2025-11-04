@@ -123,29 +123,30 @@ Table of Contents
    12. References
      12.1.  Normative References
      12.2.  Informative References
-   Appendix A.  Acknowledgements
-   Appendix B.  Test Vectors
-     B.1.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
-       B.1.1.  Base Setup Information
-       B.1.2.  PSK Setup Information
-     B.2.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
-       B.2.1.  Base Setup Information
-       B.2.2.  PSK Setup Information
-     B.3.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
-       B.3.1.  Base Setup Information
-       B.3.2.  PSK Setup Information
-     B.4.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA512, AES-128-GCM
-       B.4.1.  Base Setup Information
-       B.4.2.  PSK Setup Information
-     B.5.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
-       B.5.1.  Base Setup Information
-       B.5.2.  PSK Setup Information
-     B.6.  DHKEM(P-521, HKDF-SHA512), HKDF-SHA512, AES-256-GCM
-       B.6.1.  Base Setup Information
-       B.6.2.  PSK Setup Information
-     B.7.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, Export-Only AEAD
-       B.7.1.  Base Setup Information
-       B.7.2.  PSK Setup Information
+   Appendix A.  Differences from RFC 9180
+   Appendix B.  Acknowledgements
+   Appendix C.  Test Vectors
+     C.1.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
+       C.1.1.  Base Setup Information
+       C.1.2.  PSK Setup Information
+     C.2.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
+       C.2.1.  Base Setup Information
+       C.2.2.  PSK Setup Information
+     C.3.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
+       C.3.1.  Base Setup Information
+       C.3.2.  PSK Setup Information
+     C.4.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA512, AES-128-GCM
+       C.4.1.  Base Setup Information
+       C.4.2.  PSK Setup Information
+     C.5.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
+       C.5.1.  Base Setup Information
+       C.5.2.  PSK Setup Information
+     C.6.  DHKEM(P-521, HKDF-SHA512), HKDF-SHA512, AES-256-GCM
+       C.6.1.  Base Setup Information
+       C.6.2.  PSK Setup Information
+     C.7.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, Export-Only AEAD
+       C.7.1.  Base Setup Information
+       C.7.2.  PSK Setup Information
    Authors' Addresses
 
 1.  Introduction
@@ -158,12 +159,12 @@ Table of Contents
    been "encrypt the symmetric key with the public key."  "Hybrid"
    public key encryption (HPKE) schemes, specified here, take a
    different approach: "generate the symmetric key and its encapsulation
-   with the public key."  Specifically, encrypted messages convey an
-   encryption key encapsulated with a public key scheme, along with one
+   with the public key."  Specifically, encrypted messages convey a
+   shared secret encapsulated with a public key scheme, along with one
    or more arbitrary-sized ciphertexts encrypted using that key.  This
    type of public key encryption has many applications in practice,
-   including Messaging Layer Security [I-D.ietf-mls-protocol] and TLS
-   Encrypted ClientHello [I-D.ietf-tls-esni].
+   including Messaging Layer Security [RFC9420], TLS Encrypted
+   ClientHello [I-D.ietf-tls-esni], and Oblivious HTTP [RFC9458].
 
    Currently, there are numerous competing and non-interoperable
    standards and variants for hybrid encryption, mostly variants on the
@@ -253,20 +254,21 @@ Table of Contents
          DeserializeError error upon pkXm deserialization failure.
 
       -  Encap(pkR): Randomized algorithm to generate an ephemeral,
-         fixed-length symmetric key (the KEM shared secret) and a fixed-
-         length encapsulation of that key that can be decapsulated by
-         the holder of the private key corresponding to pkR.  This
-         function can raise an EncapError on encapsulation failure.
+         fixed-length shared secret and a fixed-length encapsulation of
+         that secret (also known as the KEM ciphertext) that can be
+         decapsulated by the holder of the private key corresponding to
+         pkR.  This function can raise an EncapError on encapsulation
+         failure.
 
       -  Decap(enc, skR): Deterministic algorithm using the private key
-         skR to recover the ephemeral symmetric key (the KEM shared
-         secret) from its encapsulated representation enc.  This
-         function can raise a DecapError on decapsulation failure.
+         skR to recover the shared secret) from the encapsulated secret
+         enc.  This function can raise a DecapError on decapsulation
+         failure.
 
       -  Nsecret: The length in bytes of a KEM shared secret produced by
          this KEM.
 
-      -  Nenc: The length in bytes of an encapsulated key produced by
+      -  Nenc: The length in bytes of an encapsulated secret produced by
          this KEM.
 
       -  Npk: The length in bytes of an encoded public key for this KEM.
@@ -395,8 +397,8 @@ Table of Contents
    Section 4 called DHKEM(Group, KDF) in the following way, where Group
    denotes the Diffie-Hellman group and KDF denotes the KDF.  The
    function parameters pkR and pkS are deserialized public keys, and enc
-   is a serialized public key.  Since encapsulated keys are Diffie-
-   Hellman public keys in this KEM algorithm, we use
+   is a serialized public key.  Since encapsulated shared secrets are
+   Diffie-Hellman public keys in this KEM algorithm, we use
    SerializePublicKey() and DeserializePublicKey() to encode and decode
    them, respectively.  Npk equals Nenc.  GenerateKeyPair() produces a
    key pair for the Diffie-Hellman group in use.  Section 7.1.3 contains
@@ -464,13 +466,13 @@ Table of Contents
 
    In this section, we define a few HPKE variants.  All variants take a
    recipient public key and a sequence of plaintexts pt and produce an
-   encapsulated key enc and a sequence of ciphertexts ct.  These outputs
-   are constructed so that only the holder of skR can decapsulate the
-   key from enc and decrypt the ciphertexts.  All the algorithms also
-   take an info parameter that can be used to influence the generation
-   of keys (e.g., to fold in identity information) and an aad parameter
-   that provides additional authenticated data to the AEAD algorithm in
-   use.
+   encapsulated secret enc and a sequence of ciphertexts ct.  These
+   outputs are constructed so that only the holder of skR can
+   decapsulate the key from enc and decrypt the ciphertexts.  All the
+   algorithms also take an info parameter that can be used to influence
+   the generation of keys (e.g., to fold in identity information) and an
+   aad parameter that provides additional authenticated data to the AEAD
+   algorithm in use.
 
    In addition to the base case of encrypting to a public key, we
    include a variant that authenticates possession of a pre-shared key.
@@ -825,8 +827,8 @@ Table of Contents
    Unlike the similar TLS 1.3 exporter interface (see Section 7.5 of
    [RFC8446]), the HPKE export interface does not provide replay
    protection.  While the resulting secret will only be known to the
-   sender and recipient, a replayed encapsulated key enc will produce an
-   identical context, and thus the same exported secrets.  In
+   sender and recipient, a replayed encapsulated secret enc will produce
+   an identical context, and thus the same exported secrets.  In
    particular, applications MUST NOT use exported secrets unless it is
    safe for the same exported values to be used multiple times.  For
    example, applications MUST NOT use an exported secret to derive a
@@ -1224,7 +1226,7 @@ Table of Contents
    The high-level, public HPKE APIs specified in this document are all
    fallible.  These include the Setup functions and all encryption
    context functions.  For example, Decap() can fail if the encapsulated
-   key enc is invalid, and Open() may fail if ciphertext decryption
+   secret enc is invalid, and Open() may fail if ciphertext decryption
    fails.  The explicit errors generated throughout this specification,
    along with the conditions that lead to each error, are as follows:
 
@@ -1709,7 +1711,7 @@ Table of Contents
    This document does not specify a wire format encoding for HPKE
    messages.  Applications that adopt HPKE must therefore specify an
    unambiguous encoding mechanism that includes, minimally: the
-   encapsulated value enc, ciphertext value(s) (and order if there are
+   encapsulated secret enc, ciphertext value(s) (and order if there are
    multiple), and any info values that are not implicit.  One example of
    a non-implicit value is the recipient public key used for
    encapsulation, which may be needed if a recipient has more than one
@@ -1762,8 +1764,8 @@ Table of Contents
    *  Nsecret: The length in bytes of a KEM shared secret produced by
       the algorithm
 
-   *  Nenc: The length in bytes of an encoded encapsulated key produced
-      by the algorithm
+   *  Nenc: The length in bytes of an encoded encapsulated secret
+      produced by the algorithm
 
    *  Npk: The length in bytes of an encoded public key for the
       algorithm
@@ -1901,14 +1903,6 @@ Table of Contents
               Lipp, B., "An Analysis of Hybrid Public Key Encryption",
               2020, <https://eprint.iacr.org/2020/243>.
 
-   [I-D.ietf-mls-protocol]
-              Barnes, R., Beurdouche, B., Robert, R., Millican, J.,
-              Omara, E., and K. Cohn-Gordon, "The Messaging Layer
-              Security (MLS) Protocol", Work in Progress, Internet-
-              Draft, draft-ietf-mls-protocol-20, 27 March 2023,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-mls-
-              protocol-20>.
-
    [I-D.ietf-tls-esni]
               Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
               Encrypted Client Hello", Work in Progress, Internet-Draft,
@@ -1991,6 +1985,11 @@ Table of Contents
               Public Key Encryption", RFC 9180, DOI 10.17487/RFC9180,
               February 2022, <https://www.rfc-editor.org/rfc/rfc9180>.
 
+   [RFC9420]  Barnes, R., Beurdouche, B., Robert, R., Millican, J.,
+              Omara, E., and K. Cohn-Gordon, "The Messaging Layer
+              Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
+              July 2023, <https://www.rfc-editor.org/rfc/rfc9420>.
+
    [SECG]     "Elliptic Curve Cryptography, Standards for Efficient
               Cryptography Group, ver. 2", 2009,
               <https://secg.org/sec1-v2.pdf>.
@@ -2008,7 +2007,28 @@ Table of Contents
               hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-
               vectors.json>.
 
-Appendix A.  Acknowledgements
+Appendix A.  Differences from RFC 9180
+
+   This specification is intended to be backwards-compatible with RFC
+   9180, in the sense that any behavior specified in both this document
+   and RFC 9180 should specify identical behavior for any functionality
+   that they both specify.
+
+   Within that constraint, the following list summarizes the major
+   changes from RFC 9180:
+
+   *  Incorporated fixes for all valid errata on RFC 9180.
+
+   *  Updated the IANA considerations refer to existing registries.
+
+   *  Added a framework for single-stage KDFs.
+
+   *  Removed the Auth and AuthPSK modes.
+
+   *  Extended the discussion of replay to conver considerations related
+      to exported secrets.
+
+Appendix B.  Acknowledgements
 
    The authors would like to thank Joël Alwen, Jean-Philippe Aumasson,
    David Benjamin, Benjamin Beurdouche, Bruno Blanchet, Frank Denis,
@@ -2019,7 +2039,7 @@ Appendix A.  Acknowledgements
    contributors in the CFRG for helpful feedback that greatly improved
    this document.
 
-Appendix B.  Test Vectors
+Appendix C.  Test Vectors
 
    Each section below contains test vectors for a single HPKE
    ciphersuite and contains the following values:
@@ -2055,9 +2075,9 @@ Appendix B.  Test Vectors
    These test vectors are also available in JSON format at
    [TestVectors].
 
-B.1.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
+C.1.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
 
-B.1.1.  Base Setup Information
+C.1.1.  Base Setup Information
 
    mode: 0
    kem_id: 32
@@ -2090,7 +2110,7 @@ B.1.1.  Base Setup Information
    exporter_secret:
    45ff1c2e220db587171952c0592d5f5ebe103f1561a2614e38f2ffd47e99e3f8
 
-B.1.1.1.  Encryptions
+C.1.1.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2134,7 +2154,7 @@ B.1.1.1.  Encryptions
    ct: 957f9800542b0b8891badb026d79cc54597cb2d225b54c00c5238c25d05c30e3
    fbeda97d2e0e1aba483a2df9f2
 
-B.1.1.2.  Exported Values
+C.1.1.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2151,7 +2171,7 @@ B.1.1.2.  Exported Values
    exported_value:
    e9e43065102c3836401bed8c3c3c75ae46be1639869391d62c61f1ec7af54931
 
-B.1.2.  PSK Setup Information
+C.1.2.  PSK Setup Information
 
    mode: 1
    kem_id: 32
@@ -2187,7 +2207,7 @@ B.1.2.  PSK Setup Information
    exporter_secret:
    3d76025dbbedc49448ec3f9080a1abab6b06e91c0b11ad23c912f043a0ee7655
 
-B.1.2.1.  Encryptions
+C.1.2.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2231,7 +2251,7 @@ B.1.2.1.  Encryptions
    ct: c5bf246d4a790a12dcc9eed5eae525081e6fb541d5849e9ce8abd92a3bc15517
    76bea16b4a518f23e237c14b59
 
-B.1.2.2.  Exported Values
+C.1.2.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2248,9 +2268,9 @@ B.1.2.2.  Exported Values
    exported_value:
    8aff52b45a1be3a734bc7a41e20b4e055ad4c4d22104b0c20285a7c4302401cd
 
-B.2.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
+C.2.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
 
-B.2.1.  Base Setup Information
+C.2.1.  Base Setup Information
 
    mode: 0
    kem_id: 32
@@ -2284,7 +2304,7 @@ B.2.1.  Base Setup Information
    exporter_secret:
    a3b010d4994890e2c6968a36f64470d3c824c8f5029942feb11e7a74b2921922
 
-B.2.1.1.  Encryptions
+C.2.1.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2328,7 +2348,7 @@ B.2.1.1.  Encryptions
    ct: 7a4a13e9ef23978e2c520fd4d2e757514ae160cd0cd05e556ef692370ca53076
    214c0c40d4c728d6ed9e727a5b
 
-B.2.1.2.  Exported Values
+C.2.1.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2345,7 +2365,7 @@ B.2.1.2.  Exported Values
    exported_value:
    5acb09211139c43b3090489a9da433e8a30ee7188ba8b0a9a1ccf0c229283e53
 
-B.2.2.  PSK Setup Information
+C.2.2.  PSK Setup Information
 
    mode: 1
    kem_id: 32
@@ -2382,7 +2402,7 @@ B.2.2.  PSK Setup Information
    exporter_secret:
    73b506dc8b6b4269027f80b0362def5cbb57ee50eed0c2873dac9181f453c5ac
 
-B.2.2.1.  Encryptions
+C.2.2.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2426,7 +2446,7 @@ B.2.2.1.  Encryptions
    ct: c567ae1c3f0f75abe1dd9e4532b422600ed4a6e5b9484dafb1e43ab9f5fd662b
    28c00e2e81d3cde955dae7e218
 
-B.2.2.2.  Exported Values
+C.2.2.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2443,9 +2463,9 @@ B.2.2.2.  Exported Values
    exported_value:
    ad40e3ae14f21c99bfdebc20ae14ab86f4ca2dc9a4799d200f43a25f99fa78ae
 
-B.3.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
+C.3.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
 
-B.3.1.  Base Setup Information
+C.3.1.  Base Setup Information
 
    mode: 0
    kem_id: 16
@@ -2478,7 +2498,7 @@ B.3.1.  Base Setup Information
    exporter_secret:
    14ad94af484a7ad3ef40e9f3be99ecc6fa9036df9d4920548424df127ee0d99f
 
-B.3.1.1.  Encryptions
+C.3.1.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2522,7 +2542,7 @@ B.3.1.1.  Encryptions
    ct: 10f179686aa2caec1758c8e554513f16472bd0a11e2a907dde0b212cbe87d74f
    367f8ffe5e41cd3e9962a6afb2
 
-B.3.1.2.  Exported Values
+C.3.1.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2539,7 +2559,7 @@ B.3.1.2.  Exported Values
    exported_value:
    d8f1ea7942adbba7412c6d431c62d01371ea476b823eb697e1f6e6cae1dab85a
 
-B.3.2.  PSK Setup Information
+C.3.2.  PSK Setup Information
 
    mode: 1
    kem_id: 16
@@ -2575,7 +2595,7 @@ B.3.2.  PSK Setup Information
    exporter_secret:
    895a723a1eab809804973a53c0ee18ece29b25a7555a4808277ad2651d66d705
 
-B.3.2.1.  Encryptions
+C.3.2.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2619,7 +2639,7 @@ B.3.2.1.  Encryptions
    ct: faf985208858b1253b97b60aecd28bc18737b58d1242370e7703ec33b73a4c31
    a1afee300e349adef9015bbbfd
 
-B.3.2.2.  Exported Values
+C.3.2.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2636,9 +2656,9 @@ B.3.2.2.  Exported Values
    exported_value:
    164e02144d44b607a7722e58b0f4156e67c0c2874d74cf71da6ca48a4cbdc5e0
 
-B.4.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA512, AES-128-GCM
+C.4.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA512, AES-128-GCM
 
-B.4.1.  Base Setup Information
+C.4.1.  Base Setup Information
 
    mode: 0
    kem_id: 16
@@ -2674,7 +2694,7 @@ B.4.1.  Base Setup Information
    ca61e26d494f4855dff0d0165f27ce57756f7f16baca006539bb8e4518987ba61048
    0ac03efa8
 
-B.4.1.1.  Encryptions
+C.4.1.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2718,7 +2738,7 @@ B.4.1.1.  Encryptions
    ct: 62092672f5328a0dde095e57435edf7457ace60b26ee44c9291110ec135cb0e1
    4b85594e4fea11247d937deb62
 
-B.4.1.2.  Exported Values
+C.4.1.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2735,7 +2755,7 @@ B.4.1.2.  Exported Values
    exported_value:
    93fb9411430b2cfa2cf0bed448c46922a5be9beff20e2e621df7e4655852edbc
 
-B.4.2.  PSK Setup Information
+C.4.2.  PSK Setup Information
 
    mode: 1
    kem_id: 16
@@ -2774,7 +2794,7 @@ B.4.2.  PSK Setup Information
    fe4d4352790171ed2b2c4756ad7f5a730ba336c8f1edd0089d8331192058c385bae3
    9c7cc8b57
 
-B.4.2.1.  Encryptions
+C.4.2.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2818,7 +2838,7 @@ B.4.2.1.  Encryptions
    ct: cc161f5a179831d456d119d2f2c19a6817289c75d1c61cd37ac8a450acd9efba
    02e0ac00d128c17855931ff69a
 
-B.4.2.2.  Exported Values
+C.4.2.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2835,9 +2855,9 @@ B.4.2.2.  Exported Values
    exported_value:
    2f6d4f7a18ec48de1ef4469f596aada4afdf6d79b037ed3c07e0118f8723bffc
 
-B.5.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
+C.5.  DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305
 
-B.5.1.  Base Setup Information
+C.5.1.  Base Setup Information
 
    mode: 0
    kem_id: 16
@@ -2871,7 +2891,7 @@ B.5.1.  Base Setup Information
    exporter_secret:
    4f9bd9b3a8db7d7c3a5b9d44fdc1f6e37d5d77689ade5ec44a7242016e6aa205
 
-B.5.1.1.  Encryptions
+C.5.1.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -2915,7 +2935,7 @@ B.5.1.1.  Encryptions
    ct: b45b69d419a9be7219d8c94365b89ad6951caf4576ea4774ea40e9b7047a09d6
    537d1aa2f7c12d6ae4b729b4d0
 
-B.5.1.2.  Exported Values
+C.5.1.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -2932,7 +2952,7 @@ B.5.1.2.  Exported Values
    exported_value:
    477a50d804c7c51941f69b8e32fe8288386ee1a84905fe4938d58972f24ac938
 
-B.5.2.  PSK Setup Information
+C.5.2.  PSK Setup Information
 
    mode: 1
    kem_id: 16
@@ -2969,7 +2989,7 @@ B.5.2.  PSK Setup Information
    exporter_secret:
    754ca00235b245e72d1f722a7718e7145bd113050a2aa3d89586d4cb7514bfdb
 
-B.5.2.1.  Encryptions
+C.5.2.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -3013,7 +3033,7 @@ B.5.2.1.  Encryptions
    ct: 1ea6326c8098ed0437a553c466550114fb2ca1412cca7de98709b9ccdf19206e
    52c3d39180e2cf62b3e9f4baf4
 
-B.5.2.2.  Exported Values
+C.5.2.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -3030,9 +3050,9 @@ B.5.2.2.  Exported Values
    exported_value:
    6f6fbd0d1c7733f796461b3235a856cc34f676fe61ed509dfc18fa16efe6be78
 
-B.6.  DHKEM(P-521, HKDF-SHA512), HKDF-SHA512, AES-256-GCM
+C.6.  DHKEM(P-521, HKDF-SHA512), HKDF-SHA512, AES-256-GCM
 
-B.6.1.  Base Setup Information
+C.6.1.  Base Setup Information
 
    mode: 0
    kem_id: 18
@@ -3080,7 +3100,7 @@ B.6.1.  Base Setup Information
    81252d0ee3215388a4455e69086b50b87eb28c169a52f42e71de4ca61c920e7bd24c
    95cc3f992
 
-B.6.1.1.  Encryptions
+C.6.1.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -3124,7 +3144,7 @@ B.6.1.1.  Encryptions
    ct: dbbfc44ae037864e75f136e8b4b4123351d480e6619ae0e0ae437f036f2f8f1e
    f677686323977a1ccbb4b4f16a
 
-B.6.1.2.  Exported Values
+C.6.1.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -3141,7 +3161,7 @@ B.6.1.2.  Exported Values
    exported_value:
    f389beaac6fcf6c0d9376e20f97e364f0609a88f1bc76d7328e9104df8477013
 
-B.6.2.  PSK Setup Information
+C.6.2.  PSK Setup Information
 
    mode: 1
    kem_id: 18
@@ -3192,7 +3212,7 @@ B.6.2.  PSK Setup Information
    63665c705bb140ecba6ce9256be3fad35b4378d41643867454612adfd0542a684b61
    799bf293f
 
-B.6.2.1.  Encryptions
+C.6.2.1.  Encryptions
 
    sequence number: 0
    pt: 4265617574792069732074727574682c20747275746820626561757479
@@ -3236,7 +3256,7 @@ B.6.2.1.  Encryptions
    ct: eecc2173ce1ac14b27ee67041e90ed50b7809926e55861a579949c07f6d26137
    bf9cf0d097f60b5fd2fbf348ec
 
-B.6.2.2.  Exported Values
+C.6.2.2.  Exported Values
 
    exporter_context:
    L: 32
@@ -3253,9 +3273,9 @@ B.6.2.2.  Exported Values
    exported_value:
    0c7cfc0976e25ae7680cf909ae2de1859cd9b679610a14bec40d69b91785b2f6
 
-B.7.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, Export-Only AEAD
+C.7.  DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, Export-Only AEAD
 
-B.7.1.  Base Setup Information
+C.7.1.  Base Setup Information
 
    mode: 0
    kem_id: 32
@@ -3288,7 +3308,7 @@ B.7.1.  Base Setup Information
    exporter_secret:
    79dc8e0509cf4a3364ca027e5a0138235281611ca910e435e8ed58167c72f79b
 
-B.7.1.1.  Exported Values
+C.7.1.1.  Exported Values
 
    exporter_context:
    L: 32
@@ -3305,7 +3325,7 @@ B.7.1.1.  Exported Values
    exported_value:
    ffaabc85a776136ca0c378e5d084c9140ab552b78f039d2e8775f26efff4c70e
 
-B.7.2.  PSK Setup Information
+C.7.2.  PSK Setup Information
 
    mode: 1
    kem_id: 32
@@ -3341,7 +3361,7 @@ B.7.2.  PSK Setup Information
    exporter_secret:
    04261818aeae99d6aba5101bd35ddf3271d909a756adcef0d41389d9ed9ab153
 
-B.7.2.1.  Exported Values
+C.7.2.1.  Exported Values
 
    exporter_context:
    L: 32
