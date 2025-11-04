@@ -254,11 +254,11 @@ cryptography and the performance benefits of symmetric cryptography. The traditi
 combination has been "encrypt the symmetric key with the public key." "Hybrid"
 public key encryption (HPKE) schemes, specified here, take a different approach:
 "generate the symmetric key and its encapsulation with the public key."
-Specifically, encrypted messages convey an encryption key encapsulated with a
+Specifically, encrypted messages convey a shared secret encapsulated with a
 public key scheme, along with one or more arbitrary-sized ciphertexts encrypted
 using that key. This type of public key encryption has many applications in
-practice, including Messaging Layer Security {{?I-D.ietf-mls-protocol}} and
-TLS Encrypted ClientHello {{?I-D.ietf-tls-esni}}.
+practice, including Messaging Layer Security {{?RFC9420}}, TLS Encrypted
+ClientHello {{?I-D.ietf-tls-esni}}, and Oblivious HTTP {{?RFC9458}}.
 
 Currently, there are numerous competing and non-interoperable standards and
 variants for hybrid encryption, mostly variants on the Elliptic Curve Integrated Encryption Scheme (ECIES), including ANSI X9.63
@@ -321,17 +321,16 @@ HPKE variants rely on the following primitives:
   - `DeserializePublicKey(pkXm)`: Parse a byte string of length `Npk` to recover a
     public key. This function can raise a `DeserializeError` error upon `pkXm`
     deserialization failure.
-  - `Encap(pkR)`: Randomized algorithm to generate an ephemeral,
-    fixed-length symmetric key (the KEM shared secret) and
-    a fixed-length encapsulation of that key that can be decapsulated
-    by the holder of the private key corresponding to `pkR`. This function
-    can raise an `EncapError` on encapsulation failure.
-  - `Decap(enc, skR)`: Deterministic algorithm using the private key `skR`
-    to recover the ephemeral symmetric key (the KEM shared secret) from
-    its encapsulated representation `enc`. This function can raise a
-    `DecapError` on decapsulation failure.
+  - `Encap(pkR)`: Randomized algorithm to generate an ephemeral, fixed-length
+    shared secret and a fixed-length encapsulation of that secret (also known as
+    the KEM ciphertext) that can be decapsulated by the holder of the private
+    key corresponding to `pkR`. This function can raise an `EncapError` on
+    encapsulation failure.
+  - `Decap(enc, skR)`: Deterministic algorithm using the private key `skR` to
+    recover the shared secret) from the encapsulated secret `enc`. This function
+    can raise a `DecapError` on decapsulation failure.
   - `Nsecret`: The length in bytes of a KEM shared secret produced by this KEM.
-  - `Nenc`: The length in bytes of an encapsulated key produced by this KEM.
+  - `Nenc`: The length in bytes of an encapsulated secret produced by this KEM.
   - `Npk`: The length in bytes of an encoded public key for this KEM.
   - `Nsk`: The length in bytes of an encoded private key for this KEM.
 
@@ -446,7 +445,7 @@ Then we can construct a KEM that implements the interface defined in {{base-cryp
 called `DHKEM(Group, KDF)` in the following way, where `Group` denotes the
 Diffie-Hellman group and `KDF` denotes the KDF. The function parameters `pkR` and `pkS`
 are deserialized public keys, and `enc` is a serialized public key. Since
-encapsulated keys are Diffie-Hellman public keys in this KEM algorithm,
+encapsulated shared secrets are Diffie-Hellman public keys in this KEM algorithm,
 we use `SerializePublicKey()` and `DeserializePublicKey()` to encode and decode
 them, respectively. `Npk` equals `Nenc`. `GenerateKeyPair()` produces a key pair
 for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
@@ -516,7 +515,7 @@ in {{kem-ids}}.
 
 In this section, we define a few HPKE variants.  All variants take a
 recipient public key and a sequence of plaintexts `pt` and produce an
-encapsulated key `enc` and a sequence of ciphertexts `ct`.  These outputs are
+encapsulated secret `enc` and a sequence of ciphertexts `ct`.  These outputs are
 constructed so that only the holder of `skR` can decapsulate the key from
 `enc` and decrypt the ciphertexts.  All the algorithms also take an
 `info` parameter that can be used to influence the generation of keys
@@ -867,7 +866,7 @@ key schedule, as they are not used by the Export interface described above.
 Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of ?RFC8446}}),
 the HPKE export interface does not provide replay protection. While the resulting
 secret will only be known to the sender and recipient, a replayed encapsulated
-key `enc` will produce an identical context, and thus the same exported
+secret `enc` will produce an identical context, and thus the same exported
 secrets. In particular, applications MUST NOT use exported secrets unless it is
 safe for the same exported values to be used multiple times.  For example,
 applications MUST NOT use an exported secret to derive a (key, nonce) pair for
@@ -1226,7 +1225,7 @@ only expose single-shot APIs should not allow applications to use both Setup `in
 
 The high-level, public HPKE APIs specified in this document are all fallible.
 These include the Setup functions and all encryption context functions.
-For example, `Decap()` can fail if the encapsulated key `enc` is invalid,
+For example, `Decap()` can fail if the encapsulated secret `enc` is invalid,
 and `Open()` may fail if ciphertext decryption fails. The explicit errors
 generated throughout this specification, along with the conditions that
 lead to each error, are as follows:
@@ -1675,7 +1674,7 @@ require further analysis.
 
 This document does not specify a wire format encoding for HPKE messages. Applications
 that adopt HPKE must therefore specify an unambiguous encoding mechanism that includes,
-minimally: the encapsulated value `enc`, ciphertext value(s) (and order if there are
+minimally: the encapsulated secret `enc`, ciphertext value(s) (and order if there are
 multiple), and any info values that are not implicit. One example of a non-implicit
 value is the recipient public key used for encapsulation, which may be needed if a
 recipient has more than one public key.
@@ -1717,7 +1716,7 @@ Template:
 * Value: The two-byte identifier for the algorithm
 * KEM: The name of the algorithm
 * Nsecret: The length in bytes of a KEM shared secret produced by the algorithm
-* Nenc: The length in bytes of an encoded encapsulated key produced by the algorithm
+* Nenc: The length in bytes of an encoded encapsulated secret produced by the algorithm
 * Npk: The length in bytes of an encoded public key for the algorithm
 * Nsk: The length in bytes of an encoded private key for the algorithm
 * Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface
@@ -1759,6 +1758,26 @@ Template:
 Initial contents: Provided in {{aeadid-values}}
 
 --- back
+
+# Differences from RFC 9180
+
+This specification is intended to be backwards-compatible with RFC 9180, in the
+sense that any behavior specified in both this document and RFC 9180 should
+specify identical behavior for any functionality that they both specify.
+
+Within that constraint, the following list summarizes the major changes from RFC
+9180:
+
+* Incorporated fixes for all valid errata on RFC 9180.
+
+* Updated the IANA considerations refer to existing registries.
+
+* Added a framework for single-stage KDFs.
+
+* Removed the Auth and AuthPSK modes.
+
+* Extended the discussion of replay to conver considerations related to exported
+  secrets.
 
 # Acknowledgements
 
