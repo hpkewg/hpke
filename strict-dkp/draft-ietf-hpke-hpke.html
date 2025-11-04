@@ -1566,9 +1566,10 @@ length.<a href="#section-3-2.11.1" class="pilcrow">¶</a></p>
               <p id="section-4-2.1.2.1.1"><code>GenerateKeyPair()</code>: Randomized algorithm to generate a key pair <code>(skX, pkX)</code>.<a href="#section-4-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4-2.1.2.2">
-              <p id="section-4-2.1.2.2.1"><code>DeriveKeyPair(ikm)</code>: Deterministic algorithm to derive a key pair
-<code>(skX, pkX)</code> from the byte string <code>ikm</code>, where <code>ikm</code> is an arbitrary-length
-byte string which SHOULD have at least <code>Nsk</code> bytes of entropy.<a href="#section-4-2.1.2.2.1" class="pilcrow">¶</a></p>
+              <p id="section-4-2.1.2.2.1"><code>DeriveKeyPair(ikm)</code>: Deterministic algorithm to derive a key pair <code>(skX,
+pkX)</code> from the byte string <code>ikm</code>, where <code>ikm</code> is an arbitrary-length byte
+string (within the bounds in <a href="#input-limits" class="auto internal xref">Table 4</a>).  The <code>ikm</code> input SHOULD have
+at least <code>Nsk</code> bytes of entropy.<a href="#section-4-2.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4-2.1.2.3">
               <p id="section-4-2.1.2.3.1"><code>SerializePublicKey(pkX)</code>: Produce a byte string of length <code>Npk</code> encoding the

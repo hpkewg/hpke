@@ -242,8 +242,8 @@ Table of Contents
 
       -  DeriveKeyPair(ikm): Deterministic algorithm to derive a key
          pair (skX, pkX) from the byte string ikm, where ikm is an
-         arbitrary-length byte string which SHOULD have at least Nsk
-         bytes of entropy.
+         arbitrary-length byte string (within the bounds in Table 4).
+         The ikm input SHOULD have at least Nsk bytes of entropy.
 
       -  SerializePublicKey(pkX): Produce a byte string of length Npk
          encoding the public key pkX.
