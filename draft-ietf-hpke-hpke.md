@@ -237,7 +237,7 @@ This document describes a scheme for hybrid public key encryption (HPKE).  This
 scheme provides a variant of public key encryption of arbitrary-sized plaintexts
 for a recipient public key. It also includes a variant that authenticates
 possession of a pre-shared key. HPKE works for any combination of an
-asymmetric KEM, key derivation function (KDF), and authenticated encryption
+asymmetric Key Encapsulation Mechanism (KEM), key derivation function (KDF), and authenticated encryption
 with additional data (AEAD) encryption function. We provide instantiations of
 the scheme using widely used and efficient primitives, such as Elliptic Curve
 Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation function (HKDF),
@@ -678,7 +678,7 @@ The `ROLE` template parameter is either S or R, depending on the role
 of sender or recipient, respectively. The third parameter in the
 `Context<ROLE>` refers to the sequence number, that is initialised with
 a 0 value. See {{hpke-dem}} for a discussion of the key schedule output,
-including the role-specific Context structure and its API, and the
+including the role-specific Context structure and its Application Programming Interface (API), and the
 usage of the sequence number.
 
 Note that the `key_schedule_context` construction in `KeySchedule()` is
@@ -1089,7 +1089,7 @@ requires public key validation: the sender MUST validate the recipient's
 public key `pkR`; the recipient MUST validate the ephemeral public key
 `pkE`. Validation failure yields a `ValidationError`.
 
-For P-256, P-384 and P-521, senders and recipients MUST perform partial
+For P-256, P-384, and P-521, senders and recipients MUST perform partial
 public key validation on all public key inputs, as defined in Section 5.6.2.3.4
 of {{keyagreement}}. This includes checking that the coordinates are in the
 correct range, that the point is on the curve, and that the point is not the
@@ -1776,7 +1776,7 @@ Within that constraint, the following list summarizes the major changes from RFC
 
 * Removed the Auth and AuthPSK modes.
 
-* Extended the discussion of replay to conver considerations related to exported
+* Extended the discussion of replay to cover considerations related to exported
   secrets.
 
 # Acknowledgements
