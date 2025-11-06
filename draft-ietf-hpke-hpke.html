@@ -14,7 +14,7 @@
 scheme provides a variant of public key encryption of arbitrary-sized plaintexts
 for a recipient public key. It also includes a variant that authenticates
 possession of a pre-shared key. HPKE works for any combination of an
-asymmetric KEM, key derivation function (KDF), and authenticated encryption
+asymmetric Key Encapsulation Mechanism (KEM), key derivation function (KDF), and authenticated encryption
 with additional data (AEAD) encryption function. We provide instantiations of
 the scheme using widely used and efficient primitives, such as Elliptic Curve
 Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation function (HKDF),
@@ -1058,7 +1058,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 8 May 2026</td>
+<td class="center">Expires 10 May 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1074,12 +1074,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <a href="https://www.rfc-editor.org/rfc/rfc9180" class="eref">9180</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-11-04" class="published">4 November 2025</time>
+<time datetime="2025-11-06" class="published">6 November 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-05-08">8 May 2026</time></dd>
+<dd class="expires"><time datetime="2026-05-10">10 May 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1107,7 +1107,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 scheme provides a variant of public key encryption of arbitrary-sized plaintexts
 for a recipient public key. It also includes a variant that authenticates
 possession of a pre-shared key. HPKE works for any combination of an
-asymmetric KEM, key derivation function (KDF), and authenticated encryption
+asymmetric Key Encapsulation Mechanism (KEM), key derivation function (KDF), and authenticated encryption
 with additional data (AEAD) encryption function. We provide instantiations of
 the scheme using widely used and efficient primitives, such as Elliptic Curve
 Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation function (HKDF),
@@ -1140,7 +1140,7 @@ and SHA2.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 8 May 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 10 May 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2030,7 +2030,7 @@ def KeySchedule&lt;ROLE&gt;(mode, shared_secret, info, psk, psk_id):
 of sender or recipient, respectively. The third parameter in the
 <code>Context&lt;ROLE&gt;</code> refers to the sequence number, that is initialised with
 a 0 value. See <a href="#hpke-dem" class="auto internal xref">Section 5.2</a> for a discussion of the key schedule output,
-including the role-specific Context structure and its API, and the
+including the role-specific Context structure and its Application Programming Interface (API), and the
 usage of the sequence number.<a href="#section-5.1-11" class="pilcrow">¶</a></p>
 <p id="section-5.1-12">Note that the <code>key_schedule_context</code> construction in <code>KeySchedule()</code> is
 equivalent to serializing a structure of the following form in the TLS presentation
@@ -2569,7 +2569,7 @@ implemented as <code>DeriveKeyPair(random(Nsk))</code>.<a href="#section-7.1.3-1
 requires public key validation: the sender MUST validate the recipient's
 public key <code>pkR</code>; the recipient MUST validate the ephemeral public key
 <code>pkE</code>. Validation failure yields a <code>ValidationError</code>.<a href="#section-7.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-7.1.4-2">For P-256, P-384 and P-521, senders and recipients MUST perform partial
+<p id="section-7.1.4-2">For P-256, P-384, and P-521, senders and recipients MUST perform partial
 public key validation on all public key inputs, as defined in Section 5.6.2.3.4
 of <span>[<a href="#keyagreement" class="cite xref">keyagreement</a>]</span>. This includes checking that the coordinates are in the
 correct range, that the point is on the curve, and that the point is not the
@@ -3755,7 +3755,7 @@ specify identical behavior for any functionality that they both specify.<a href=
           <p id="appendix-A-3.4.1">Removed the Auth and AuthPSK modes.<a href="#appendix-A-3.4.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-A-3.5">
-          <p id="appendix-A-3.5.1">Extended the discussion of replay to conver considerations related to exported
+          <p id="appendix-A-3.5.1">Extended the discussion of replay to cover considerations related to exported
 secrets.<a href="#appendix-A-3.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
