@@ -395,7 +395,7 @@ def LabeledDerive(ikm, label, context, L):
     "HPKE-v1",
     suite_id,
     lengthPrefixed(label),
-    I2OSP(L, 2)
+    I2OSP(L, 2),
     context,
   )
   return Derive(labeled_ikm, L)
