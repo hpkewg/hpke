@@ -6,9 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 10 May 2026                                               Inria
+Expires: 17 May 2026                                               Inria
                                                                  C. Wood
-                                                         6 November 2025
+                                                        13 November 2025
 
 
                       Hybrid Public Key Encryption
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 May 2026.
+   This Internet-Draft will expire on 17 May 2026.
 
 Copyright Notice
 
@@ -347,7 +347,7 @@ Table of Contents
        "HPKE-v1",
        suite_id,
        lengthPrefixed(label),
-       I2OSP(L, 2)
+       I2OSP(L, 2),
        context,
      )
      return Derive(labeled_ikm, L)
