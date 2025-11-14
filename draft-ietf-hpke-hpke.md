@@ -831,6 +831,12 @@ which causes `ContextS.Seal()` and `ContextR.Open()` to fail accordingly.)
 Note that the internal `Seal()` and `Open()` calls inside correspond to the
 context's AEAD algorithm.
 
+In parallel or concurrent environments, the `ComputeNonce()`, `Seal()`, and
+`IncrementSeq()` operations MUST be done as an atomic unit, e.g., by holding
+a lock on `ContextS` for the duration of `ContextS.Seal()`. If other calls to
+`Seal()` are interleaved before `IncrementSeq()` completes, this will result
+in multiple encryptions with the same sequence number, and thus the same nonce.
+
 ## Secret Export {#hpke-export}
 
 HPKE provides an interface for exporting secrets from the encryption context
