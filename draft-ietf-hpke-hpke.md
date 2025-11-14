@@ -989,11 +989,10 @@ representative in `[0, order-1]` before being serialized.
 according to {{SECG}}.
 
 For X25519 and X448, private keys are identical to their byte string
-representation, so little processing has to be done. The
-`SerializePrivateKey()` function MUST clamp its output and the
-`DeserializePrivateKey()` function MUST clamp its input, where _clamping_ refers to the
-bitwise operations performed on `k` in the `decodeScalar25519()` and
-`decodeScalar448()` functions defined in Section 5 of {{?RFC7748}}.
+representation. The `DeserializePrivateKey()` function MUST clamp its input,
+where _clamping_ refers to the bitwise operations performed on `k` in the
+`decodeScalar25519()` and `decodeScalar448()` functions defined in Section 5 of
+{{?RFC7748}}.
 
 To catch invalid keys early on, implementors of DHKEMs SHOULD check that
 deserialized private keys are not equivalent to 0 (mod `order`), where `order`
