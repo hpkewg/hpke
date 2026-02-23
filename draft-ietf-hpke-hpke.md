@@ -504,14 +504,14 @@ following operations:
   secret of length `Ndh`. This function can raise a `ValidationError` as described
   in {{validation}}.
 
-A DH-based KEM is parameterized by:
+A DH-based KEM is parameterized by the constants (in bytes):
 
 `Ndh`:
-: The length in bytes of a Diffie-Hellman shared secret produced
-  by `DH()`.
+: The length of the shared secret produced by `DH()`.
 
 `Nsk`:
-: The length in bytes of a Diffie-Hellman private key.
+: The length of a Diffie-Hellman private key.
+{:compact}
 
 Then we can construct a KEM that implements the interface defined in {{crypto-kem}}
 called `DHKEM(Group, KDF)` in the following way, where `Group` denotes the
