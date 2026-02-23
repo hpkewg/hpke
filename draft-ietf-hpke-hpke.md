@@ -310,66 +310,9 @@ operations, roles, and behaviors of HPKE:
 
 HPKE variants rely on the following primitives:
 
-* A key encapsulation mechanism (KEM):
-  - `GenerateKeyPair()`: Randomized algorithm to generate a key pair `(skX, pkX)`.
-  - `DeriveKeyPair(ikm)`: Deterministic algorithm to derive a key pair `(skX,
-    pkX)` from the byte string `ikm`, where `ikm` is an arbitrary-length byte
-    string (within the bounds in {{input-limits}}).  The `ikm` input SHOULD have
-    at least `Nsk` bytes of entropy.
-  - `SerializePublicKey(pkX)`: Produce a byte string of length `Npk` encoding the
-    public key `pkX`.
-  - `DeserializePublicKey(pkXm)`: Parse a byte string of length `Npk` to recover a
-    public key. This function can raise a `DeserializeError` error upon `pkXm`
-    deserialization failure.
-  - `Encap(pkR)`: Randomized algorithm to generate an ephemeral, fixed-length
-    shared secret and a fixed-length encapsulation of that secret (also known as
-    the KEM ciphertext) that can be decapsulated by the holder of the private
-    key corresponding to `pkR`. This function can raise an `EncapError` on
-    encapsulation failure.
-  - `Decap(enc, skR)`: Deterministic algorithm using the private key `skR` to
-    recover the shared secret) from the encapsulated secret `enc`. This function
-    can raise a `DecapError` on decapsulation failure.
-  - `Nsecret`: The length in bytes of a KEM shared secret produced by this KEM.
-  - `Nenc`: The length in bytes of an encapsulated secret produced by this KEM.
-  - `Npk`: The length in bytes of an encoded public key for this KEM.
-  - `Nsk`: The length in bytes of an encoded private key for this KEM.
-
-* A key derivation function (KDF) of one of the two following forms:
-
-  * A one-stage KDF:
-    - `Derive(ikm, L)`: Derive an `L`-byte value from the input keying material
-      `ikm`.
-    - `Nh` The security strength of the KDF, in bytes.
-
-  * A two-stage KDF:
-    - `Extract(salt, ikm)`: Extract a pseudorandom key of fixed length `Nh` bytes
-      from input keying material `ikm` and an optional byte string
-      `salt`.
-    - `Expand(prk, info, L)`: Expand a pseudorandom key `prk` using
-      optional string `info` into `L` bytes of output keying material.
-    - `Nh`: The output size of the `Extract()` function in bytes.
-
-* An AEAD encryption algorithm {{!RFC5116}}:
-  - `Seal(key, nonce, aad, pt)`: Encrypt and authenticate plaintext
-    `pt` with associated data `aad` using symmetric key `key` and nonce
-    `nonce`, yielding ciphertext and tag `ct`. This function
-     can raise a `MessageLimitReachedError` upon failure.
-  - `Open(key, nonce, aad, ct)`: Decrypt ciphertext and tag `ct` using
-    associated data `aad` with symmetric key `key` and nonce `nonce`,
-    returning plaintext message `pt`. This function can raise an
-    `OpenError` or `MessageLimitReachedError` upon failure.
-  - `Nk`: The length in bytes of a key for this algorithm.
-  - `Nn`: The length in bytes of a nonce for this algorithm.
-  - `Nt`: The length in bytes of the authentication tag for this algorithm.
-
-Beyond the above, a KEM MAY also expose the following functions, whose behavior
-is detailed in {{serializeprivatekey}}:
-
-- `SerializePrivateKey(skX)`: Produce a byte string of length `Nsk` encoding the private
-  key `skX`.
-- `DeserializePrivateKey(skXm)`: Parse a byte string of length `Nsk` to recover a
-  private key. This function can raise a `DeserializeError` error upon `skXm`
-  deserialization failure.
+* A Key Encapsulation Mechanism (KEM); see {{crypto-kem}}
+* A Key Derivation Function (KDF); see {{crypto-kdf}}
+* An Authenticated Encryption with Associated Data (AEAD); see {{crypto-aead}}
 
 A _ciphersuite_ is a triple (KEM, KDF, AEAD) containing a choice of algorithm
 for each primitive.
@@ -378,11 +321,141 @@ A set of algorithm identifiers for concrete instantiations of these
 primitives is provided in {{ciphersuites}}.  Algorithm identifier
 values are two bytes long.
 
+
+
+## Key Encapsulation Mechanisms {#crypto-kem}
+
+A key encapsulation mechanism (KEM) provides the following functions:
+
+`GenerateKeyPair()`:
+: Randomized algorithm to generate a key pair `(skX, pkX)`.
+
+`DeriveKeyPair(ikm)`:
+: Deterministic algorithm to derive a key pair `(skX,
+  pkX)` from the byte string `ikm`, where `ikm` is an arbitrary-length byte
+  string (within the bounds in {{input-limits}}).  The `ikm` input SHOULD have
+  at least `Nsk` bytes of entropy.
+
+`SerializePublicKey(pkX)`:
+: Produce a byte string of length `Npk` encoding the
+  public key `pkX`.
+
+`DeserializePublicKey(pkXm)`:
+: Parse a byte string of length `Npk` to recover a
+  public key. This function can raise a `DeserializeError` error upon `pkXm`
+  deserialization failure.
+
+`Encap(pkR)`:
+: Randomized algorithm to generate an ephemeral, fixed-length
+  shared secret and a fixed-length encapsulation of that secret (also known as
+  the KEM ciphertext) that can be decapsulated by the holder of the private
+  key corresponding to `pkR`. This function can raise an `EncapError` on
+  encapsulation failure.
+
+`Decap(enc, skR)`:
+: Deterministic algorithm using the private key `skR` to
+  recover the shared secret) from the encapsulated secret `enc`. This function
+  can raise a `DecapError` on decapsulation failure.
+
 The notation `pk(skX)`, depending on its use and the KEM and its
 implementation, is either the
 computation of the public key using the private key, or just syntax
 expressing the retrieval of the public key, assuming it is stored along
 with the private key object.
+
+Each KEM is parameterized by the following constants (all measured in bytes):
+
+`Nsecret`:
+: The length of a KEM shared secret produced by this KEM.
+
+`Nenc`:
+: The length of an encapsulated secret produced by this KEM.
+
+`Npk`:
+: The length of an encoded public key for this KEM.
+
+`Nsk`:
+: The length of an encoded private key for this KEM.
+{:compact}
+
+Beyond the above, a KEM MAY also expose the following functions, whose behavior
+is detailed in {{serializeprivatekey}}:
+
+`SerializePrivateKey(skX)`:
+: Produce a byte string of length `Nsk` encoding the private
+  key `skX`.
+
+`DeserializePrivateKey(skXm)`:
+: Parse a byte string of length `Nsk` to recover a
+  private key. This function can raise a `DeserializeError` error upon `skXm`
+  deserialization failure.
+
+Senders and recipients MUST validate KEM inputs and outputs as described
+in {{kem-ids}}.
+
+## Key Derivation Functions {#crypto-kdf}
+
+A key derivation function (KDF) is either
+a one-stage KDF, with a single `Derive` function,
+or a two-stage KDF, with `Extract` and `Expand` functions.
+
+A one-stage KDF provides the function:
+
+`Derive(ikm, L)`:
+: Derive an `L`-byte value from the input keying material
+  `ikm`.
+
+A two-stage KDF provides the functions:
+
+`Extract(salt, ikm)`:
+: Extract a pseudorandom key of fixed length `Nh` bytes
+  from input keying material `ikm` and an optional byte string
+  `salt`.
+
+`Expand(prk, info, L)`:
+: Expand a pseudorandom key `prk` using
+  optional string `info` into `L` bytes of output keying material.
+
+The `Nh` parameter indicates security strength of KDF, in bytes.
+For a two-stage KDF, `Nh` is the output size of the `Extract()` function.
+
+Certain functions have a different structure depending on whether a one-stage or
+two-stage KDF is being used.  For clarity, such functions will be described
+twice in this document, once with the suffix `_OneStage` and once with the
+suffix `_TwoStage`, representing the versions of the function to be used with a
+one-stage or two-stage KDF, respectively.  For example, the `Foo` function would
+be invoked by calling `Foo_OneStage` when using a one-stage KDF, and by calling
+`Foo_TwoStage` when using a two-stage KDF.
+
+## AEAD Encryption Algorithm {#crypto-aead}
+
+An AEAD encryption algorithm {{!RFC5116}} provides the functions:
+
+`Seal(key, nonce, aad, pt)`:
+: Encrypt and authenticate plaintext
+  `pt` with associated data `aad` using symmetric key `key` and nonce
+  `nonce`, yielding ciphertext and tag `ct`. This function
+   can raise a `MessageLimitReachedError` upon failure.
+
+`Open(key, nonce, aad, ct)`:
+: Decrypt ciphertext and tag `ct` using
+  associated data `aad` with symmetric key `key` and nonce `nonce`,
+  returning plaintext message `pt`. This function can raise an
+  `OpenError` or `MessageLimitReachedError` upon failure.
+
+AEAD functions have the following parameters (all measured in bytes):
+
+`Nk`:
+: The length a key for this algorithm.
+
+`Nn`:
+: The length of a nonce for this algorithm.
+
+`Nt`:
+: The length of the authentication tag for this algorithm.
+{:compact}
+
+## Labeled Derivation Functions {#crypto-domain}
 
 The following functions are defined to facilitate domain separation of
 KDF calls as well as context binding:
@@ -420,34 +493,33 @@ this KEM algorithm; if used in the remainder of HPKE, it MUST start with
 "HPKE" and identify the entire ciphersuite in use. See sections {{dhkem}}
 and {{encryption-context}} for details.
 
-Certain functions have a different structure depending on whether a one-stage or
-two-stage KDF is being used.  For clarity, such functions will be described
-twice in this document, once with the suffix `_OneStage` and once with the
-suffix `_TwoStage`, representing the versions of the function to be used with a
-one-stage or two-stage KDF, respectively.  For example, the `Foo` function would
-be invoked by calling `Foo_OneStage` when using a one-stage KDF, and by calling
-`Foo_TwoStage` when using a two-stage KDF.
-
 ## DH-Based KEM (DHKEM) {#dhkem}
 
 Suppose we are given a KDF, and a Diffie-Hellman (DH) group providing the
 following operations:
 
-- `DH(skX, pkY)`: Perform a non-interactive Diffie-Hellman exchange using
+`DH(skX, pkY)`:
+: Perform a non-interactive Diffie-Hellman exchange using
   the private key `skX` and public key `pkY` to produce a Diffie-Hellman shared
   secret of length `Ndh`. This function can raise a `ValidationError` as described
   in {{validation}}.
-- `Ndh`: The length in bytes of a Diffie-Hellman shared secret produced
-  by `DH()`.
-- `Nsk`: The length in bytes of a Diffie-Hellman private key.
 
-Then we can construct a KEM that implements the interface defined in {{base-crypto}}
+A DH-based KEM is parameterized by:
+
+`Ndh`:
+: The length in bytes of a Diffie-Hellman shared secret produced
+  by `DH()`.
+
+`Nsk`:
+: The length in bytes of a Diffie-Hellman private key.
+
+Then we can construct a KEM that implements the interface defined in {{crypto-kem}}
 called `DHKEM(Group, KDF)` in the following way, where `Group` denotes the
 Diffie-Hellman group and `KDF` denotes the KDF. The function parameters `pkR` and `pkS`
 are deserialized public keys, and `enc` is a serialized public key. Since
 encapsulated shared secrets are Diffie-Hellman public keys in this KEM algorithm,
 we use `SerializePublicKey()` and `DeserializePublicKey()` to encode and decode
-them, respectively. `Npk` equals `Nenc`. `GenerateKeyPair()` produces a key pair
+them, respectively. `Npk` and `Nenc` are both equal to `Ndh`. `GenerateKeyPair()` produces a key pair
 for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
 `DeriveKeyPair()` function specification for DHKEMs defined in this document.
 
@@ -506,10 +578,7 @@ underlying the KDF. For P-256, P-384, and P-521, the size `Ndh` of the
 Diffie-Hellman shared secret is equal to 32, 48, and 66, respectively,
 corresponding to the x-coordinate of the resulting elliptic curve point {{IEEE1363}}.
 For X25519 and X448, the size `Ndh` is equal to 32 and 56, respectively
-(see {{?RFC7748}}, Section 5).
-
-Senders and recipients MUST validate KEM inputs and outputs as described
-in {{kem-ids}}.
+(see {{Section 5 of ?RFC7748}}).
 
 # Hybrid Public Key Encryption {#hpke}
 
