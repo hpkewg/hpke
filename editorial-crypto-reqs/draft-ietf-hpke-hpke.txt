@@ -405,12 +405,10 @@ Table of Contents
       Hellman shared secret of length Ndh. This function can raise a
       ValidationError as described in Section 7.1.4.
 
-   A DH-based KEM is parameterized by:
+   A DH-based KEM is parameterized by the constants (in bytes):
 
-   Ndh:  The length in bytes of a Diffie-Hellman shared secret produced
-      by DH().
-
-   Nsk:  The length in bytes of a Diffie-Hellman private key.
+   Ndh:  The length of the shared secret produced by DH().
+   Nsk:  The length of a Diffie-Hellman private key.
 
    Then we can construct a KEM that implements the interface defined in
    Section 4.1 called DHKEM(Group, KDF) in the following way, where
