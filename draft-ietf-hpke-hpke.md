@@ -337,9 +337,12 @@ HPKE variants rely on the following primitives:
 * A key derivation function (KDF) of one of the two following forms:
 
   * A one-stage KDF:
-    - `Derive(ikm, L)`: Derive an `L`-byte value from the input keying material
-      `ikm`.
-    - `Nh` The security strength of the KDF, in bytes.
+    - `Derive(ikm, L)`: Derive an `L`-byte value from the input keying
+      material `ikm`.  In the pseudocode in this document, `ikm` is
+      sometimes expressed as an ordered list of octet strings; it is up
+      to the KDF definition how list elements are combined.
+    - `Nh`: The security strength of the KDF in bytes, as defined for
+      each KDF identifier.
 
   * A two-stage KDF:
     - `Extract(salt, ikm)`: Extract a pseudorandom key of fixed length `Nh` bytes
@@ -390,15 +393,14 @@ KDF calls as well as context binding:
 ~~~
 # For use with one-stage KDFs
 def LabeledDerive(ikm, label, context, L):
-  labeled_ikm = concat(
+  return Derive([
     ikm,
     "HPKE-v1",
     suite_id,
     lengthPrefixed(label),
     I2OSP(L, 2),
     context,
-  )
-  return Derive(labeled_ikm, L)
+  ], L)
 ~~~
 
 ~~~
@@ -412,6 +414,12 @@ def LabeledExpand(prk, label, info, L):
                         label, info)
   return Expand(prk, labeled_info, L)
 ~~~
+
+This document defines the transcript framing for all HPKE labeled KDF
+operations (LabeledDerive, LabeledExtract, LabeledExpand).  Documents
+that register new KDF identifiers define only the underlying primitive
+(Derive for one-stage, or Extract and Expand for two-stage); the labeled
+framing in this document applies to all KDFs used with HPKE.
 
 The value of `suite_id` depends on where the KDF is used; it is assumed
 implicit from the implementation and not passed as a parameter. If used
@@ -631,15 +639,15 @@ def VerifyPSKInputs(mode, psk, psk_id):
 
 # For use with a one-stage KDF
 def CombineSecrets_OneStage(mode, shared_secret, info, psk, psk_id):
-  secrets = concat(
+  secrets = [
     lengthPrefixed(psk),
     lengthPrefixed(shared_secret),
-  )
-  context = concat(
+  ]
+  context = [
     mode,
     lengthPrefixed(psk_id),
     lengthPrefixed(info),
-  )
+  ]
 
   secret = LabeledDerive(secrets, "secret", context, Nk + Nn + Nh)
 
@@ -1734,7 +1742,13 @@ Template:
 
 * Value: The two-byte identifier for the algorithm
 * KDF: The name of the algorithm
-* Nh: The output size of the Extract function in bytes
+* Nh: For two-stage KDFs, the output size of the Extract function in
+  bytes.  For one-stage KDFs, the security strength in bytes, as
+  defined for the KDF identifier.
+* Two-Stage: Y or N.  Two-stage KDFs MUST define `Extract(salt, ikm)`
+  and `Expand(prk, info, L)`.  One-stage KDFs MUST define
+  `Derive(ikm, L)` and specify how list-valued `ikm` inputs are
+  combined.
 * Reference: Where this algorithm is defined
 
 Initial contents: Provided in {{kdfid-values}}
