@@ -337,17 +337,27 @@ HPKE variants rely on the following primitives:
 * A key derivation function (KDF) of one of the two following forms:
 
   * A one-stage KDF:
-    - `Derive(ikm, L)`: Derive an `L`-byte value from the input keying material
-      `ikm`.
-    - `Nh` The security strength of the KDF, in bytes.
+    - `Derive(ikm, L)`: Derive an `L`-byte value from
+      the input keying material `ikm`.  In the
+      pseudocode in this document, `ikm` is sometimes
+      expressed as a list of octet strings; the
+      effective input to the KDF is the concatenation
+      of the list elements in the order given.
+    - `Nh`: The security strength of the KDF in bytes,
+      as defined for each KDF identifier.  For
+      example, SHAKE128 and TurboSHAKE128 use Nh = 32;
+      SHAKE256 and TurboSHAKE256 use Nh = 64.
 
   * A two-stage KDF:
-    - `Extract(salt, ikm)`: Extract a pseudorandom key of fixed length `Nh` bytes
-      from input keying material `ikm` and an optional byte string
+    - `Extract(salt, ikm)`: Extract a pseudorandom key
+      of fixed length `Nh` bytes from input keying
+      material `ikm` and an optional byte string
       `salt`.
-    - `Expand(prk, info, L)`: Expand a pseudorandom key `prk` using
-      optional string `info` into `L` bytes of output keying material.
-    - `Nh`: The output size of the `Extract()` function in bytes.
+    - `Expand(prk, info, L)`: Expand a pseudorandom
+      key `prk` using optional string `info` into `L`
+      bytes of output keying material.
+    - `Nh`: The output size of the `Extract()` function
+      in bytes.
 
 * An AEAD encryption algorithm {{!RFC5116}}:
   - `Seal(key, nonce, aad, pt)`: Encrypt and authenticate plaintext
@@ -390,16 +400,22 @@ KDF calls as well as context binding:
 ~~~
 # For use with one-stage KDFs
 def LabeledDerive(ikm, label, context, L):
-  labeled_ikm = concat(
+  return Derive([
     ikm,
     "HPKE-v1",
     suite_id,
     lengthPrefixed(label),
     I2OSP(L, 2),
     context,
-  )
-  return Derive(labeled_ikm, L)
+  ], L)
 ~~~
+
+Note: Implementations of one-stage KDFs MAY also use
+incremental input interfaces where the message is
+provided in pieces, and incremental output interfaces
+where output is requested in pieces, as long as the
+result matches the one-shot definition for the
+concatenated input.
 
 ~~~
 # For use with two-stage KDFs
@@ -631,15 +647,15 @@ def VerifyPSKInputs(mode, psk, psk_id):
 
 # For use with a one-stage KDF
 def CombineSecrets_OneStage(mode, shared_secret, info, psk, psk_id):
-  secrets = concat(
+  secrets = [
     lengthPrefixed(psk),
     lengthPrefixed(shared_secret),
-  )
-  context = concat(
+  ]
+  context = [
     mode,
     lengthPrefixed(psk_id),
     lengthPrefixed(info),
-  )
+  ]
 
   secret = LabeledDerive(secrets, "secret", context, Nk + Nn + Nh)
 
@@ -1734,7 +1750,9 @@ Template:
 
 * Value: The two-byte identifier for the algorithm
 * KDF: The name of the algorithm
-* Nh: The output size of the Extract function in bytes
+* Nh: For two-stage KDFs, the output size of the Extract
+  function in bytes.  For one-stage KDFs, the security
+  strength in bytes, as defined for the KDF identifier.
 * Reference: Where this algorithm is defined
 
 Initial contents: Provided in {{kdfid-values}}
