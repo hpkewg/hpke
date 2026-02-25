@@ -337,27 +337,21 @@ HPKE variants rely on the following primitives:
 * A key derivation function (KDF) of one of the two following forms:
 
   * A one-stage KDF:
-    - `Derive(ikm, L)`: Derive an `L`-byte value from
-      the input keying material `ikm`.  In the
-      pseudocode in this document, `ikm` is sometimes
-      expressed as a list of octet strings; the
-      effective input to the KDF is the concatenation
-      of the list elements in the order given.
-    - `Nh`: The security strength of the KDF in bytes,
-      as defined for each KDF identifier.  For
-      example, SHAKE128 and TurboSHAKE128 use Nh = 32;
+    - `Derive(ikm, L)`: Derive an `L`-byte value from the input keying material
+      `ikm`.  In the pseudocode in this document, `ikm` is sometimes expressed
+      as an ordered list of octet strings; it is up to the KDF definition how
+      list elements are combined.
+    - `Nh`: The security strength of the KDF in bytes, as defined for each KDF
+      identifier.  For example, SHAKE128 and TurboSHAKE128 use Nh = 32;
       SHAKE256 and TurboSHAKE256 use Nh = 64.
 
   * A two-stage KDF:
-    - `Extract(salt, ikm)`: Extract a pseudorandom key
-      of fixed length `Nh` bytes from input keying
-      material `ikm` and an optional byte string
+    - `Extract(salt, ikm)`: Extract a pseudorandom key of fixed length `Nh` bytes
+      from input keying material `ikm` and an optional byte string
       `salt`.
-    - `Expand(prk, info, L)`: Expand a pseudorandom
-      key `prk` using optional string `info` into `L`
-      bytes of output keying material.
-    - `Nh`: The output size of the `Extract()` function
-      in bytes.
+    - `Expand(prk, info, L)`: Expand a pseudorandom key `prk` using
+      optional string `info` into `L` bytes of output keying material.
+    - `Nh`: The output size of the `Extract()` function in bytes.
 
 * An AEAD encryption algorithm {{!RFC5116}}:
   - `Seal(key, nonce, aad, pt)`: Encrypt and authenticate plaintext
@@ -399,23 +393,17 @@ KDF calls as well as context binding:
 
 ~~~
 # For use with one-stage KDFs
-def LabeledDerive(ikm, label, context, L):
+def LabeledDerive(salt, label, ikm, info, L):
   return Derive([
+    salt,
     ikm,
     "HPKE-v1",
     suite_id,
-    lengthPrefixed(label),
+    label,
     I2OSP(L, 2),
-    context,
+    info,
   ], L)
 ~~~
-
-Note: Implementations of one-stage KDFs MAY also use
-incremental input interfaces where the message is
-provided in pieces, and incremental output interfaces
-where output is requested in pieces, as long as the
-result matches the one-shot definition for the
-concatenated input.
 
 ~~~
 # For use with two-stage KDFs
@@ -470,7 +458,8 @@ for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
 ~~~
 # For use with one-stage KDFs
 def ExtractAndExpand_OneStage(dh, kem_context):
-  return LabeledDerive(dh, "shared_secret", kem_context, Nsecret)
+  return LabeledDerive("", "shared_secret", dh,
+                       kem_context, Nsecret)
 
 # For use with two-stage KDFs
 def ExtractAndExpand_TwoStage(dh, kem_context):
@@ -646,18 +635,15 @@ def VerifyPSKInputs(mode, psk, psk_id):
     raise Exception("Missing required PSK input")
 
 # For use with a one-stage KDF
-def CombineSecrets_OneStage(mode, shared_secret, info, psk, psk_id):
-  secrets = [
-    lengthPrefixed(psk),
-    lengthPrefixed(shared_secret),
-  ]
-  context = [
-    mode,
-    lengthPrefixed(psk_id),
-    lengthPrefixed(info),
-  ]
-
-  secret = LabeledDerive(secrets, "secret", context, Nk + Nn + Nh)
+def CombineSecrets_OneStage(mode, shared_secret, info,
+                            psk, psk_id):
+  secret = LabeledDerive(
+    "",
+    "secret",
+    [psk, shared_secret],
+    [mode, psk_id, info],
+    Nk + Nn + Nh,
+  )
 
   key = secret[:Nk]
   base_nonce = secret[Nk:(Nk + Nn)]
@@ -865,7 +851,7 @@ length.
 ~~~~~
 # For use with a one-stage KDF
 def Context.Export_OneStage(exporter_context, L):
-  return LabeledDerive(self.exporter_secret, "sec",
+  return LabeledDerive("", "sec", self.exporter_secret,
                        exporter_context, L)
 
 # For use with a two-stage KDF
@@ -1032,7 +1018,8 @@ rejection sampling over field elements:
 ~~~
 # For use with a one-stage KDF
 def DeriveCandidate_OneStage(ikm, counter):
-  return LabeledDerive(ikm, "candidate", I2OSP(counter, 1), Nsk)
+  return LabeledDerive("", "candidate", ikm,
+                       I2OSP(counter, 1), Nsk)
 
 # For use with a two-stage KDF
 def DeriveCandidate_TwoStage(ikm, counter):
@@ -1080,7 +1067,7 @@ For X25519 and X448, the `DeriveKeyPair()` function applies a KDF to the input:
 ~~~ pseudocode
 # For use with a one-stage KDF
 def DeriveKeyPair_OneStage(ikm):
-  sk = LabeledDerive(ikm, "sk", "", Nsk)
+  sk = LabeledDerive("", "sk", ikm, "", Nsk)
   return (sk, pk(sk))
 
 # For use with a two-stage KDF
@@ -1750,9 +1737,10 @@ Template:
 
 * Value: The two-byte identifier for the algorithm
 * KDF: The name of the algorithm
-* Nh: For two-stage KDFs, the output size of the Extract
-  function in bytes.  For one-stage KDFs, the security
-  strength in bytes, as defined for the KDF identifier.
+* Nh: For two-stage KDFs, the output size of the Extract function in
+  bytes.  For one-stage KDFs, the security strength in bytes, as defined
+  for the KDF identifier (e.g., 32 for SHAKE128/TurboSHAKE128, 64 for
+  SHAKE256/TurboSHAKE256).
 * Reference: Where this algorithm is defined
 
 Initial contents: Provided in {{kdfid-values}}
