@@ -1805,7 +1805,12 @@ Template:
 
 * Value: The two-byte identifier for the algorithm
 * KDF: The name of the algorithm
-* Nh: The output size of the Extract function in bytes
+* Nh: For two-stage KDFs, the output size of the Extract function in
+  bytes.  For one-stage KDFs, the security strength in bytes, as
+  defined for the KDF identifier.
+* Two-Stage: Whether the KDF provides Extract and Expand functions (Y)
+  or only a single-stage Derive function (N).  N/A for reserved
+  entries.
 * Reference: Where this algorithm is defined
 
 Initial contents: Provided in {{kdfid-values}}
