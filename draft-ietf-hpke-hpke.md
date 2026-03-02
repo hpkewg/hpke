@@ -849,7 +849,7 @@ Nt = 16 for AEAD algorithms defined in this document.
 
 Additionally, each AEAD algorithm has a maximum plaintext length (P_MAX)
 as specified in {{!RFC5116}}. For AES-128-GCM and AES-256-GCM, P_MAX is
-2<exp>36</exp> - 31 bytes. For ChaCha20Poly1305, P_MAX is 2<exp>38</exp> - 64 bytes.
+2^36 - 31 bytes. For ChaCha20Poly1305, P_MAX is 2^38 - 64 bytes.
 Implementations MUST NOT encrypt plaintexts larger than P_MAX. Exceeding
 either the sequence number limit or P_MAX for the AEAD in use results in
 loss of confidentiality and integrity guarantees.
