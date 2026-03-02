@@ -2581,11 +2581,7 @@ representative in <code>[0, order-1]</code> before being serialized.
 <code>DeserializePrivateKey()</code> performs the Octet-String-to-Field-Element conversion
 according to <span>[<a href="#SECG" class="cite xref">SECG</a>]</span>.<a href="#section-7.1.2-2" class="pilcrow">¶</a></p>
 <p id="section-7.1.2-3">For X25519 and X448, private keys are identical to their byte string
-representation, so little processing has to be done. The
-<code>SerializePrivateKey()</code> function MUST clamp its output and the
-<code>DeserializePrivateKey()</code> function MUST clamp its input, where <em>clamping</em> refers to the
-bitwise operations performed on <code>k</code> in the <code>decodeScalar25519()</code> and
-<code>decodeScalar448()</code> functions defined in Section 5 of <span>[<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>.<a href="#section-7.1.2-3" class="pilcrow">¶</a></p>
+representation.<a href="#section-7.1.2-3" class="pilcrow">¶</a></p>
 <p id="section-7.1.2-4">To catch invalid keys early on, implementors of DHKEMs SHOULD check that
 deserialized private keys are not equivalent to 0 (mod <code>order</code>), where <code>order</code>
 is the order of the DH group. Note that this property is trivially true for X25519
