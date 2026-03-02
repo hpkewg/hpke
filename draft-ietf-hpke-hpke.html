@@ -28,14 +28,14 @@ and SHA2.
     Python 3.12.12
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
-    intervaltree 3.1.0
+    intervaltree 3.2.1
     Jinja2 3.1.6
-    lxml 5.3.1
-    platformdirs 4.5.0
+    lxml 6.0.2
+    platformdirs 4.5.1
     pycountry 24.6.1
-    PyYAML 6.0.2
+    PyYAML 6.0.3
     requests 2.32.5
-    wcwidth 0.2.14
+    wcwidth 0.3.0
 -->
 <link href="draft-ietf-hpke-hpke.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -176,7 +176,7 @@ and SHA2.
   font-weight: 400;
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
   font-family: 'Oxygen Mono';
@@ -184,7 +184,8 @@ and SHA2.
   font-weight: 400;
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 }
 
 @font-face {
@@ -576,6 +577,7 @@ aside, blockquote {
 }
 blockquote {
   margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
 }
 cite {
   display: block;
@@ -646,7 +648,7 @@ a.pilcrow {
   }
 }
 @media not print {
-  :hover > a.pilcrow {
+  :hover > a.pilcrow, a.pilcrow:focus {
     opacity: 1;
   }
   a.pilcrow[href]:hover {
@@ -1054,11 +1056,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">HPKE</td>
-<td class="right">November 2025</td>
+<td class="right">March 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 17 May 2026</td>
+<td class="center">Expires 3 September 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1074,12 +1076,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <a href="https://www.rfc-editor.org/rfc/rfc9180" class="eref">9180</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-11-13" class="published">13 November 2025</time>
+<time datetime="2026-03-02" class="published">2 March 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-05-17">17 May 2026</time></dd>
+<dd class="expires"><time datetime="2026-09-03">3 September 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1140,7 +1142,7 @@ and SHA2.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 17 May 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 3 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1149,7 +1151,7 @@ and SHA2.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
         </h2>
 <p id="section-boilerplate.2-1">
-            Copyright (c) 2025 IETF Trust and the persons identified as the
+            Copyright (c) 2026 IETF Trust and the persons identified as the
             document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.2-2">
             This document is subject to BCP 78 and the IETF Trust's Legal
@@ -1182,7 +1184,19 @@ and SHA2.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-cryptographic-dependencies" class="internal xref">Cryptographic Dependencies</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-dh-based-kem-dhkem" class="internal xref">DH-Based KEM (DHKEM)</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-key-encapsulation-mechanism" class="internal xref">Key Encapsulation Mechanisms</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-key-derivation-functions" class="internal xref">Key Derivation Functions</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-aead-encryption-algorithm" class="internal xref">AEAD Encryption Algorithm</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-labeled-derivation-function" class="internal xref">Labeled Derivation Functions</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
+                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-dh-based-kem-dhkem" class="internal xref">DH-Based KEM (DHKEM)</a></p>
 </li>
             </ul>
 </li>
@@ -1223,7 +1237,7 @@ and SHA2.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
             <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-algorithm-identifiers" class="internal xref">Algorithm Identifiers</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-key-encapsulation-mechanism" class="internal xref">Key Encapsulation Mechanisms (KEMs)</a></p>
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-key-encapsulation-mechanisms" class="internal xref">Key Encapsulation Mechanisms (KEMs)</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.1">
                     <p id="section-toc.1-1.7.2.1.2.1.1"><a href="#section-7.1.1" class="auto internal xref">7.1.1</a>.  <a href="#name-serializepublickey-and-dese" class="internal xref">SerializePublicKey and DeserializePublicKey</a></p>
@@ -1563,139 +1577,235 @@ length.<a href="#section-3-2.11.1" class="pilcrow">¶</a></p>
 <p id="section-4-1">HPKE variants rely on the following primitives:<a href="#section-4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4-2.1">
-          <p id="section-4-2.1.1">A key encapsulation mechanism (KEM):<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-2.1.2.1">
-              <p id="section-4-2.1.2.1.1"><code>GenerateKeyPair()</code>: Randomized algorithm to generate a key pair <code>(skX, pkX)</code>.<a href="#section-4-2.1.2.1.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.1.1">A Key Encapsulation Mechanism (KEM); see <a href="#crypto-kem" class="auto internal xref">Section 4.1</a><a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4-2.1.2.2">
-              <p id="section-4-2.1.2.2.1"><code>DeriveKeyPair(ikm)</code>: Deterministic algorithm to derive a key pair <code>(skX,
+        <li class="normal" id="section-4-2.2">
+          <p id="section-4-2.2.1">A Key Derivation Function (KDF); see <a href="#crypto-kdf" class="auto internal xref">Section 4.2</a><a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-4-2.3">
+          <p id="section-4-2.3.1">An Authenticated Encryption with Associated Data (AEAD); see <a href="#crypto-aead" class="auto internal xref">Section 4.3</a><a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-4-3">A <em>ciphersuite</em> is a triple (KEM, KDF, AEAD) containing a choice of algorithm
+for each primitive.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">A set of algorithm identifiers for concrete instantiations of these
+primitives is provided in <a href="#ciphersuites" class="auto internal xref">Section 7</a>.  Algorithm identifier
+values are two bytes long.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<div id="crypto-kem">
+<section id="section-4.1">
+        <h3 id="name-key-encapsulation-mechanism">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-key-encapsulation-mechanism" class="section-name selfRef">Key Encapsulation Mechanisms</a>
+        </h3>
+<p id="section-4.1-1">A key encapsulation mechanism (KEM) provides the following functions:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.1-2">
+          <dt id="section-4.1-2.1">
+<code>GenerateKeyPair()</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-2.2">
+            <p id="section-4.1-2.2.1">Randomized algorithm to generate a key pair <code>(skX, pkX)</code>.<a href="#section-4.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-2.3">
+<code>DeriveKeyPair(ikm)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-2.4">
+            <p id="section-4.1-2.4.1">Deterministic algorithm to derive a key pair <code>(skX,
 pkX)</code> from the byte string <code>ikm</code>, where <code>ikm</code> is an arbitrary-length byte
 string (within the bounds in <a href="#input-limits" class="auto internal xref">Table 4</a>).  The <code>ikm</code> input SHOULD have
-at least <code>Nsk</code> bytes of entropy.<a href="#section-4-2.1.2.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.1.2.3">
-              <p id="section-4-2.1.2.3.1"><code>SerializePublicKey(pkX)</code>: Produce a byte string of length <code>Npk</code> encoding the
-public key <code>pkX</code>.<a href="#section-4-2.1.2.3.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.1.2.4">
-              <p id="section-4-2.1.2.4.1"><code>DeserializePublicKey(pkXm)</code>: Parse a byte string of length <code>Npk</code> to recover a
+at least <code>Nsk</code> bytes of entropy.<a href="#section-4.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-2.5">
+<code>SerializePublicKey(pkX)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-2.6">
+            <p id="section-4.1-2.6.1">Produce a byte string of length <code>Npk</code> encoding the
+public key <code>pkX</code>.<a href="#section-4.1-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-2.7">
+<code>DeserializePublicKey(pkXm)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-2.8">
+            <p id="section-4.1-2.8.1">Parse a byte string of length <code>Npk</code> to recover a
 public key. This function can raise a <code>DeserializeError</code> error upon <code>pkXm</code>
-deserialization failure.<a href="#section-4-2.1.2.4.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.1.2.5">
-              <p id="section-4-2.1.2.5.1"><code>Encap(pkR)</code>: Randomized algorithm to generate an ephemeral, fixed-length
+deserialization failure.<a href="#section-4.1-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-2.9">
+<code>Encap(pkR)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-2.10">
+            <p id="section-4.1-2.10.1">Randomized algorithm to generate an ephemeral, fixed-length
 shared secret and a fixed-length encapsulation of that secret (also known as
 the KEM ciphertext) that can be decapsulated by the holder of the private
 key corresponding to <code>pkR</code>. This function can raise an <code>EncapError</code> on
-encapsulation failure.<a href="#section-4-2.1.2.5.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.1.2.6">
-              <p id="section-4-2.1.2.6.1"><code>Decap(enc, skR)</code>: Deterministic algorithm using the private key <code>skR</code> to
+encapsulation failure.<a href="#section-4.1-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-2.11">
+<code>Decap(enc, skR)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-2.12">
+            <p id="section-4.1-2.12.1">Deterministic algorithm using the private key <code>skR</code> to
 recover the shared secret) from the encapsulated secret <code>enc</code>. This function
-can raise a <code>DecapError</code> on decapsulation failure.<a href="#section-4-2.1.2.6.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.1.2.7">
-              <p id="section-4-2.1.2.7.1"><code>Nsecret</code>: The length in bytes of a KEM shared secret produced by this KEM.<a href="#section-4-2.1.2.7.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.1.2.8">
-              <p id="section-4-2.1.2.8.1"><code>Nenc</code>: The length in bytes of an encapsulated secret produced by this KEM.<a href="#section-4-2.1.2.8.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.1.2.9">
-              <p id="section-4-2.1.2.9.1"><code>Npk</code>: The length in bytes of an encoded public key for this KEM.<a href="#section-4-2.1.2.9.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.1.2.10">
-              <p id="section-4-2.1.2.10.1"><code>Nsk</code>: The length in bytes of an encoded private key for this KEM.<a href="#section-4-2.1.2.10.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
-</li>
-        <li class="normal" id="section-4-2.2">
-          <p id="section-4-2.2.1">A key derivation function (KDF) of one of the two following forms:<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-2.2.2.1">
-              <p id="section-4-2.2.2.1.1">A one-stage KDF:<a href="#section-4-2.2.2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-2.2.2.1.2.1">
-                  <p id="section-4-2.2.2.1.2.1.1"><code>Derive(ikm, L)</code>: Derive an <code>L</code>-byte value from the input keying material
-<code>ikm</code>.<a href="#section-4-2.2.2.1.2.1.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-4-2.2.2.1.2.2">
-                  <p id="section-4-2.2.2.1.2.2.1"><code>Nh</code> The security strength of the KDF, in bytes.<a href="#section-4-2.2.2.1.2.2.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-4-2.2.2.2">
-              <p id="section-4-2.2.2.2.1">A two-stage KDF:<a href="#section-4-2.2.2.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-2.2.2.2.2.1">
-                  <p id="section-4-2.2.2.2.2.1.1"><code>Extract(salt, ikm)</code>: Extract a pseudorandom key of fixed length <code>Nh</code> bytes
-from input keying material <code>ikm</code> and an optional byte string
-<code>salt</code>.<a href="#section-4-2.2.2.2.2.1.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-4-2.2.2.2.2.2">
-                  <p id="section-4-2.2.2.2.2.2.1"><code>Expand(prk, info, L)</code>: Expand a pseudorandom key <code>prk</code> using
-optional string <code>info</code> into <code>L</code> bytes of output keying material.<a href="#section-4-2.2.2.2.2.2.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-4-2.2.2.2.2.3">
-                  <p id="section-4-2.2.2.2.2.3.1"><code>Nh</code>: The output size of the <code>Extract()</code> function in bytes.<a href="#section-4-2.2.2.2.2.3.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-          </ul>
-</li>
-        <li class="normal" id="section-4-2.3">
-          <p id="section-4-2.3.1">An AEAD encryption algorithm <span>[<a href="#RFC5116" class="cite xref">RFC5116</a>]</span>:<a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-2.3.2.1">
-              <p id="section-4-2.3.2.1.1"><code>Seal(key, nonce, aad, pt)</code>: Encrypt and authenticate plaintext
-<code>pt</code> with associated data <code>aad</code> using symmetric key <code>key</code> and nonce
-<code>nonce</code>, yielding ciphertext and tag <code>ct</code>. This function
- can raise a <code>MessageLimitReachedError</code> upon failure.<a href="#section-4-2.3.2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.3.2.2">
-              <p id="section-4-2.3.2.2.1"><code>Open(key, nonce, aad, ct)</code>: Decrypt ciphertext and tag <code>ct</code> using
-associated data <code>aad</code> with symmetric key <code>key</code> and nonce <code>nonce</code>,
-returning plaintext message <code>pt</code>. This function can raise an
-<code>OpenError</code> or <code>MessageLimitReachedError</code> upon failure.<a href="#section-4-2.3.2.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.3.2.3">
-              <p id="section-4-2.3.2.3.1"><code>Nk</code>: The length in bytes of a key for this algorithm.<a href="#section-4-2.3.2.3.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.3.2.4">
-              <p id="section-4-2.3.2.4.1"><code>Nn</code>: The length in bytes of a nonce for this algorithm.<a href="#section-4-2.3.2.4.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-4-2.3.2.5">
-              <p id="section-4-2.3.2.5.1"><code>Nt</code>: The length in bytes of the authentication tag for this algorithm.<a href="#section-4-2.3.2.5.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
-</li>
-      </ul>
-<p id="section-4-3">Beyond the above, a KEM MAY also expose the following functions, whose behavior
-is detailed in <a href="#serializeprivatekey" class="auto internal xref">Section 7.1.2</a>:<a href="#section-4-3" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-4.1">
-          <p id="section-4-4.1.1"><code>SerializePrivateKey(skX)</code>: Produce a byte string of length <code>Nsk</code> encoding the private
-key <code>skX</code>.<a href="#section-4-4.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-4-4.2">
-          <p id="section-4-4.2.1"><code>DeserializePrivateKey(skXm)</code>: Parse a byte string of length <code>Nsk</code> to recover a
-private key. This function can raise a <code>DeserializeError</code> error upon <code>skXm</code>
-deserialization failure.<a href="#section-4-4.2.1" class="pilcrow">¶</a></p>
-</li>
-      </ul>
-<p id="section-4-5">A <em>ciphersuite</em> is a triple (KEM, KDF, AEAD) containing a choice of algorithm
-for each primitive.<a href="#section-4-5" class="pilcrow">¶</a></p>
-<p id="section-4-6">A set of algorithm identifiers for concrete instantiations of these
-primitives is provided in <a href="#ciphersuites" class="auto internal xref">Section 7</a>.  Algorithm identifier
-values are two bytes long.<a href="#section-4-6" class="pilcrow">¶</a></p>
-<p id="section-4-7">The notation <code>pk(skX)</code>, depending on its use and the KEM and its
+can raise a <code>DecapError</code> on decapsulation failure.<a href="#section-4.1-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.1-3">The notation <code>pk(skX)</code>, depending on its use and the KEM and its
 implementation, is either the
 computation of the public key using the private key, or just syntax
 expressing the retrieval of the public key, assuming it is stored along
-with the private key object.<a href="#section-4-7" class="pilcrow">¶</a></p>
-<p id="section-4-8">The following functions are defined to facilitate domain separation of
-KDF calls as well as context binding:<a href="#section-4-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4-9">
+with the private key object.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.1-4">Each KEM is parameterized by the following constants (all measured in bytes):<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-4.1-5">
+          <dt id="section-4.1-5.1">
+<code>Nsecret</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-5.2">
+            <p id="section-4.1-5.2.1">The length of a KEM shared secret produced by this KEM.<a href="#section-4.1-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-5.3">
+<code>Nenc</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-5.4">
+            <p id="section-4.1-5.4.1">The length of an encapsulated secret produced by this KEM.<a href="#section-4.1-5.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-5.5">
+<code>Npk</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-5.6">
+            <p id="section-4.1-5.6.1">The length of an encoded public key for this KEM.<a href="#section-4.1-5.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-5.7">
+<code>Nsk</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-5.8">
+            <p id="section-4.1-5.8.1">The length of an encoded private key for this KEM.<a href="#section-4.1-5.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.1-6">Beyond the above, a KEM MAY also expose the following functions, whose behavior
+is detailed in <a href="#serializeprivatekey" class="auto internal xref">Section 7.1.2</a>:<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.1-7">
+          <dt id="section-4.1-7.1">
+<code>SerializePrivateKey(skX)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-7.2">
+            <p id="section-4.1-7.2.1">Produce a byte string of length <code>Nsk</code> encoding the private
+key <code>skX</code>.<a href="#section-4.1-7.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-7.3">
+<code>DeserializePrivateKey(skXm)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-7.4">
+            <p id="section-4.1-7.4.1">Parse a byte string of length <code>Nsk</code> to recover a
+private key. This function can raise a <code>DeserializeError</code> error upon <code>skXm</code>
+deserialization failure.<a href="#section-4.1-7.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.1-8">Senders and recipients MUST validate KEM inputs and outputs as described
+in <a href="#kem-ids" class="auto internal xref">Section 7.1</a>.<a href="#section-4.1-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="crypto-kdf">
+<section id="section-4.2">
+        <h3 id="name-key-derivation-functions">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-key-derivation-functions" class="section-name selfRef">Key Derivation Functions</a>
+        </h3>
+<p id="section-4.2-1">A key derivation function (KDF) is either
+a one-stage KDF, with a single <code>Derive</code> function,
+or a two-stage KDF, with <code>Extract</code> and <code>Expand</code> functions.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">A one-stage KDF provides the function:<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.2-3">
+          <dt id="section-4.2-3.1">
+<code>Derive(ikm, L)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.2-3.2">
+            <p id="section-4.2-3.2.1">Derive an <code>L</code>-byte value from the input keying material
+<code>ikm</code>.<a href="#section-4.2-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.2-4">A two-stage KDF provides the functions:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.2-5">
+          <dt id="section-4.2-5.1">
+<code>Extract(salt, ikm)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.2-5.2">
+            <p id="section-4.2-5.2.1">Extract a pseudorandom key of fixed length <code>Nh</code> bytes
+from input keying material <code>ikm</code> and an optional byte string
+<code>salt</code>.<a href="#section-4.2-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.2-5.3">
+<code>Expand(prk, info, L)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.2-5.4">
+            <p id="section-4.2-5.4.1">Expand a pseudorandom key <code>prk</code> using
+optional string <code>info</code> into <code>L</code> bytes of output keying material.<a href="#section-4.2-5.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.2-6">The <code>Nh</code> parameter indicates security strength of KDF, in bytes.
+For a two-stage KDF, <code>Nh</code> is the output size of the <code>Extract()</code> function.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+<p id="section-4.2-7">Certain functions have a different structure depending on whether a one-stage or
+two-stage KDF is being used.  For clarity, such functions will be described
+twice in this document, once with the suffix <code>_OneStage</code> and once with the
+suffix <code>_TwoStage</code>, representing the versions of the function to be used with a
+one-stage or two-stage KDF, respectively.  For example, the <code>Foo</code> function would
+be invoked by calling <code>Foo_OneStage</code> when using a one-stage KDF, and by calling
+<code>Foo_TwoStage</code> when using a two-stage KDF.<a href="#section-4.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="crypto-aead">
+<section id="section-4.3">
+        <h3 id="name-aead-encryption-algorithm">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-aead-encryption-algorithm" class="section-name selfRef">AEAD Encryption Algorithm</a>
+        </h3>
+<p id="section-4.3-1">An AEAD encryption algorithm <span>[<a href="#RFC5116" class="cite xref">RFC5116</a>]</span> provides the functions:<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.3-2">
+          <dt id="section-4.3-2.1">
+<code>Seal(key, nonce, aad, pt)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.3-2.2">
+            <p id="section-4.3-2.2.1">Encrypt and authenticate plaintext
+<code>pt</code> with associated data <code>aad</code> using symmetric key <code>key</code> and nonce
+<code>nonce</code>, yielding ciphertext and tag <code>ct</code>. This function
+ can raise a <code>MessageLimitReachedError</code> upon failure.<a href="#section-4.3-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.3-2.3">
+<code>Open(key, nonce, aad, ct)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.3-2.4">
+            <p id="section-4.3-2.4.1">Decrypt ciphertext and tag <code>ct</code> using
+associated data <code>aad</code> with symmetric key <code>key</code> and nonce <code>nonce</code>,
+returning plaintext message <code>pt</code>. This function can raise an
+<code>OpenError</code> or <code>MessageLimitReachedError</code> upon failure.<a href="#section-4.3-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.3-3">AEAD functions have the following parameters (all measured in bytes):<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-4.3-4">
+          <dt id="section-4.3-4.1">
+<code>Nk</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.3-4.2">
+            <p id="section-4.3-4.2.1">The length a key for this algorithm.<a href="#section-4.3-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.3-4.3">
+<code>Nn</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.3-4.4">
+            <p id="section-4.3-4.4.1">The length of a nonce for this algorithm.<a href="#section-4.3-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.3-4.5">
+<code>Nt</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.3-4.6">
+            <p id="section-4.3-4.6.1">The length of the authentication tag for this algorithm.<a href="#section-4.3-4.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="crypto-domain">
+<section id="section-4.4">
+        <h3 id="name-labeled-derivation-function">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-labeled-derivation-function" class="section-name selfRef">Labeled Derivation Functions</a>
+        </h3>
+<p id="section-4.4-1">The following functions are defined to facilitate domain separation of
+KDF calls as well as context binding:<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.4-2">
 <pre>
 # For use with one-stage KDFs
 def LabeledDerive(ikm, label, context, L):
@@ -1708,9 +1818,9 @@ def LabeledDerive(ikm, label, context, L):
     context,
   )
   return Derive(labeled_ikm, L)
-</pre><a href="#section-4-9" class="pilcrow">¶</a>
+</pre><a href="#section-4.4-2" class="pilcrow">¶</a>
 </div>
-<div class="alignLeft art-text artwork" id="section-4-10">
+<div class="alignLeft art-text artwork" id="section-4.4-3">
 <pre>
 # For use with two-stage KDFs
 def LabeledExtract(salt, label, ikm):
@@ -1721,53 +1831,59 @@ def LabeledExpand(prk, label, info, L):
   labeled_info = concat(I2OSP(L, 2), "HPKE-v1", suite_id,
                         label, info)
   return Expand(prk, labeled_info, L)
-</pre><a href="#section-4-10" class="pilcrow">¶</a>
+</pre><a href="#section-4.4-3" class="pilcrow">¶</a>
 </div>
-<p id="section-4-11">The value of <code>suite_id</code> depends on where the KDF is used; it is assumed
+<p id="section-4.4-4">The value of <code>suite_id</code> depends on where the KDF is used; it is assumed
 implicit from the implementation and not passed as a parameter. If used
 inside a KEM algorithm, <code>suite_id</code> MUST start with "KEM" and identify
 this KEM algorithm; if used in the remainder of HPKE, it MUST start with
-"HPKE" and identify the entire ciphersuite in use. See sections <a href="#dhkem" class="auto internal xref">Section 4.1</a>
-and <a href="#encryption-context" class="auto internal xref">Section 5.1</a> for details.<a href="#section-4-11" class="pilcrow">¶</a></p>
-<p id="section-4-12">Certain functions have a different structure depending on whether a one-stage or
-two-stage KDF is being used.  For clarity, such functions will be described
-twice in this document, once with the suffix <code>_OneStage</code> and once with the
-suffix <code>_TwoStage</code>, representing the versions of the function to be used with a
-one-stage or two-stage KDF, respectively.  For example, the <code>Foo</code> function would
-be invoked by calling <code>Foo_OneStage</code> when using a one-stage KDF, and by calling
-<code>Foo_TwoStage</code> when using a two-stage KDF.<a href="#section-4-12" class="pilcrow">¶</a></p>
+"HPKE" and identify the entire ciphersuite in use. See sections <a href="#dhkem" class="auto internal xref">Section 4.5</a>
+and <a href="#encryption-context" class="auto internal xref">Section 5.1</a> for details.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
 <div id="dhkem">
-<section id="section-4.1">
+<section id="section-4.5">
         <h3 id="name-dh-based-kem-dhkem">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-dh-based-kem-dhkem" class="section-name selfRef">DH-Based KEM (DHKEM)</a>
+<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-dh-based-kem-dhkem" class="section-name selfRef">DH-Based KEM (DHKEM)</a>
         </h3>
-<p id="section-4.1-1">Suppose we are given a KDF, and a Diffie-Hellman (DH) group providing the
-following operations:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.1-2.1">
-            <p id="section-4.1-2.1.1"><code>DH(skX, pkY)</code>: Perform a non-interactive Diffie-Hellman exchange using
+<p id="section-4.5-1">Suppose we are given a KDF, and a Diffie-Hellman (DH) group providing the
+following operations:<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.5-2">
+          <dt id="section-4.5-2.1">
+<code>DH(skX, pkY)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.5-2.2">
+            <p id="section-4.5-2.2.1">Perform a non-interactive Diffie-Hellman exchange using
 the private key <code>skX</code> and public key <code>pkY</code> to produce a Diffie-Hellman shared
 secret of length <code>Ndh</code>. This function can raise a <code>ValidationError</code> as described
-in <a href="#validation" class="auto internal xref">Section 7.1.4</a>.<a href="#section-4.1-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-4.1-2.2">
-            <p id="section-4.1-2.2.1"><code>Ndh</code>: The length in bytes of a Diffie-Hellman shared secret produced
-by <code>DH()</code>.<a href="#section-4.1-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-4.1-2.3">
-            <p id="section-4.1-2.3.1"><code>Nsk</code>: The length in bytes of a Diffie-Hellman private key.<a href="#section-4.1-2.3.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-4.1-3">Then we can construct a KEM that implements the interface defined in <a href="#base-crypto" class="auto internal xref">Section 4</a>
+in <a href="#validation" class="auto internal xref">Section 7.1.4</a>.<a href="#section-4.5-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.5-3">A DH-based KEM is parameterized by the constants (in bytes):<a href="#section-4.5-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-4.5-4">
+          <dt id="section-4.5-4.1">
+<code>Ndh</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.5-4.2">
+            <p id="section-4.5-4.2.1">The length of the shared secret produced by <code>DH()</code>.<a href="#section-4.5-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.5-4.3">
+<code>Nsk</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.5-4.4">
+            <p id="section-4.5-4.4.1">The length of a Diffie-Hellman private key.<a href="#section-4.5-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.5-5">Then we can construct a KEM that implements the interface defined in <a href="#crypto-kem" class="auto internal xref">Section 4.1</a>
 called <code>DHKEM(Group, KDF)</code> in the following way, where <code>Group</code> denotes the
 Diffie-Hellman group and <code>KDF</code> denotes the KDF. The function parameters <code>pkR</code> and <code>pkS</code>
 are deserialized public keys, and <code>enc</code> is a serialized public key. Since
 encapsulated shared secrets are Diffie-Hellman public keys in this KEM algorithm,
 we use <code>SerializePublicKey()</code> and <code>DeserializePublicKey()</code> to encode and decode
-them, respectively. <code>Npk</code> equals <code>Nenc</code>. <code>GenerateKeyPair()</code> produces a key pair
+them, respectively. <code>Npk</code> and <code>Nenc</code> are both equal to <code>Ndh</code>. <code>GenerateKeyPair()</code> produces a key pair
 for the Diffie-Hellman group in use. <a href="#derive-key-pair" class="auto internal xref">Section 7.1.3</a> contains the
-<code>DeriveKeyPair()</code> function specification for DHKEMs defined in this document.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4.1-4">
+<code>DeriveKeyPair()</code> function specification for DHKEMs defined in this document.<a href="#section-4.5-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.5-6">
 <pre>
 # For use with one-stage KDFs
 def ExtractAndExpand_OneStage(dh, kem_context):
@@ -1800,31 +1916,29 @@ def Decap(enc, skR):
 
   shared_secret = ExtractAndExpand(dh, kem_context)
   return shared_secret
-</pre><a href="#section-4.1-4" class="pilcrow">¶</a>
+</pre><a href="#section-4.5-6" class="pilcrow">¶</a>
 </div>
-<p id="section-4.1-5">The implicit <code>suite_id</code> value used within <code>LabeledExtract</code>, <code>LabeledExpand</code>, and
-<code>LabeledDerive</code> is defined as follows, where <code>kem_id</code> is defined in <a href="#kem-ids" class="auto internal xref">Section 7.1</a>:<a href="#section-4.1-5" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4.1-6">
+<p id="section-4.5-7">The implicit <code>suite_id</code> value used within <code>LabeledExtract</code>, <code>LabeledExpand</code>, and
+<code>LabeledDerive</code> is defined as follows, where <code>kem_id</code> is defined in <a href="#kem-ids" class="auto internal xref">Section 7.1</a>:<a href="#section-4.5-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.5-8">
 <pre>
 suite_id = concat("KEM", I2OSP(kem_id, 2))
-</pre><a href="#section-4.1-6" class="pilcrow">¶</a>
+</pre><a href="#section-4.5-8" class="pilcrow">¶</a>
 </div>
-<p id="section-4.1-7">The KDF used in DHKEM can be equal to or different from the KDF used
+<p id="section-4.5-9">The KDF used in DHKEM can be equal to or different from the KDF used
 in the remainder of HPKE, depending on the chosen variant.
 Implementations MUST make sure to use the constants (<code>Nh</code>) and function
 calls (<code>LabeledExtract</code>, <code>LabeledExpand</code>, and <code>LabeledDerive</code>) of the appropriate KDF when
 implementing DHKEM. See <a href="#kdf-choice" class="auto internal xref">Section 9.3</a> for a comment on the choice of
 a KDF for the remainder of HPKE, and <a href="#domain-separation" class="auto internal xref">Section 9.6</a> for the
-rationale of the labels.<a href="#section-4.1-7" class="pilcrow">¶</a></p>
-<p id="section-4.1-8">For the variants of DHKEM defined in this document, the size <code>Nsecret</code> of the
+rationale of the labels.<a href="#section-4.5-9" class="pilcrow">¶</a></p>
+<p id="section-4.5-10">For the variants of DHKEM defined in this document, the size <code>Nsecret</code> of the
 KEM shared secret is equal to the output length of the hash function
 underlying the KDF. For P-256, P-384, and P-521, the size <code>Ndh</code> of the
 Diffie-Hellman shared secret is equal to 32, 48, and 66, respectively,
 corresponding to the x-coordinate of the resulting elliptic curve point <span>[<a href="#IEEE1363" class="cite xref">IEEE1363</a>]</span>.
 For X25519 and X448, the size <code>Ndh</code> is equal to 32 and 56, respectively
-(see <span>[<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>, Section 5).<a href="#section-4.1-8" class="pilcrow">¶</a></p>
-<p id="section-4.1-9">Senders and recipients MUST validate KEM inputs and outputs as described
-in <a href="#kem-ids" class="auto internal xref">Section 7.1</a>.<a href="#section-4.1-9" class="pilcrow">¶</a></p>
+(see <span><a href="https://rfc-editor.org/rfc/rfc7748#section-5" class="relref">Section 5</a> of [<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>).<a href="#section-4.5-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2336,8 +2450,8 @@ to the security requirements in <a href="#kem-security" class="auto internal xre
 respectively.<a href="#section-7-1" class="pilcrow">¶</a></p>
 <div id="kem-ids">
 <section id="section-7.1">
-        <h3 id="name-key-encapsulation-mechanism">
-<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-key-encapsulation-mechanism" class="section-name selfRef">Key Encapsulation Mechanisms (KEMs)</a>
+        <h3 id="name-key-encapsulation-mechanisms">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-key-encapsulation-mechanisms" class="section-name selfRef">Key Encapsulation Mechanisms (KEMs)</a>
         </h3>
 <span id="name-kem-ids"></span><div id="kemid-values">
 <table class="center" id="table-2">
@@ -2876,7 +2990,7 @@ generated throughout this specification, along with the conditions that
 lead to each error, are as follows:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.2-2.1">
-            <p id="section-8.2-2.1.1"><code>ValidationError</code>: KEM input or output validation failure; <a href="#dhkem" class="auto internal xref">Section 4.1</a>.<a href="#section-8.2-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-8.2-2.1.1"><code>ValidationError</code>: KEM input or output validation failure; <a href="#dhkem" class="auto internal xref">Section 4.5</a>.<a href="#section-8.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-8.2-2.2">
             <p id="section-8.2-2.2.1"><code>DeserializeError</code>: Public or private key deserialization failure; <a href="#base-crypto" class="auto internal xref">Section 4</a>.<a href="#section-8.2-2.2.1" class="pilcrow">¶</a></p>
