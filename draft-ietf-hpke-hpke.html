@@ -2264,20 +2264,26 @@ sequence number that is shorter than the nonce length (padding on the left
 with zero), but MUST raise an error if the sequence number overflows. The AEAD
 algorithm produces ciphertext that is Nt bytes longer than the plaintext.
 Nt = 16 for AEAD algorithms defined in this document.<a href="#section-5.2-6" class="pilcrow">¶</a></p>
-<p id="section-5.2-7">Encryption is unidirectional from sender to recipient. The sender's
+<p id="section-5.2-7">Additionally, each AEAD algorithm has a maximum plaintext length (P_MAX)
+as specified in <span>[<a href="#RFC5116" class="cite xref">RFC5116</a>]</span>. For AES-128-GCM and AES-256-GCM, P_MAX is
+2^36 - 31 bytes. For ChaCha20Poly1305, P_MAX is 2^38 - 64 bytes.
+Implementations MUST NOT encrypt plaintexts larger than P_MAX. Exceeding
+either the sequence number limit or P_MAX for the AEAD in use results in
+loss of confidentiality and integrity guarantees.<a href="#section-5.2-7" class="pilcrow">¶</a></p>
+<p id="section-5.2-8">Encryption is unidirectional from sender to recipient. The sender's
 context can encrypt a plaintext <code>pt</code> with associated data <code>aad</code> as
-follows:<a href="#section-5.2-7" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-8">
+follows:<a href="#section-5.2-8" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-9">
 <pre>
 def ContextS.Seal(aad, pt):
   ct = Seal(self.key, self.ComputeNonce(self.seq), aad, pt)
   self.IncrementSeq()
   return ct
-</pre><a href="#section-5.2-8" class="pilcrow">¶</a>
+</pre><a href="#section-5.2-9" class="pilcrow">¶</a>
 </div>
-<p id="section-5.2-9">The recipient's context can decrypt a ciphertext <code>ct</code> with associated
-data <code>aad</code> as follows:<a href="#section-5.2-9" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-10">
+<p id="section-5.2-10">The recipient's context can decrypt a ciphertext <code>ct</code> with associated
+data <code>aad</code> as follows:<a href="#section-5.2-10" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-11">
 <pre>
 def ContextR.Open(aad, ct):
   pt = Open(self.key, self.ComputeNonce(self.seq), aad, ct)
@@ -2285,12 +2291,12 @@ def ContextR.Open(aad, ct):
     raise OpenError
   self.IncrementSeq()
   return pt
-</pre><a href="#section-5.2-10" class="pilcrow">¶</a>
+</pre><a href="#section-5.2-11" class="pilcrow">¶</a>
 </div>
-<p id="section-5.2-11">Each encryption or decryption operation increments the sequence number for
+<p id="section-5.2-12">Each encryption or decryption operation increments the sequence number for
 the context in use. The per-message nonce and sequence number increment
-details are as follows:<a href="#section-5.2-11" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.2-12">
+details are as follows:<a href="#section-5.2-12" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-13">
 <pre>
 def Context&lt;ROLE&gt;.ComputeNonce(seq):
   seq_bytes = I2OSP(seq, Nn)
@@ -2300,26 +2306,26 @@ def Context&lt;ROLE&gt;.IncrementSeq():
   if self.seq &gt;= (1 &lt;&lt; (8*Nn)) - 1:
     raise MessageLimitReachedError
   self.seq += 1
-</pre><a href="#section-5.2-12" class="pilcrow">¶</a>
+</pre><a href="#section-5.2-13" class="pilcrow">¶</a>
 </div>
-<p id="section-5.2-13">The sender's context MUST NOT be used for decryption. Similarly, the recipient's
+<p id="section-5.2-14">The sender's context MUST NOT be used for decryption. Similarly, the recipient's
 context MUST NOT be used for encryption. Higher-level protocols reusing the HPKE
 key exchange for more general purposes can derive separate keying material as
 needed using use the secret export interface; see <a href="#hpke-export" class="auto internal xref">Section 5.3</a> and <a href="#bidirectional" class="auto internal xref">Section 9.8</a>
-for more details.<a href="#section-5.2-13" class="pilcrow">¶</a></p>
-<p id="section-5.2-14">It is up to the application to ensure that encryptions and decryptions are
+for more details.<a href="#section-5.2-14" class="pilcrow">¶</a></p>
+<p id="section-5.2-15">It is up to the application to ensure that encryptions and decryptions are
 done in the proper sequence, so that encryption and decryption nonces align.
 If <code>ContextS.Seal()</code> or <code>ContextR.Open()</code> would cause the <code>seq</code> parameter to
 overflow, then the implementation MUST fail with an error. (In the pseudocode
 above, <code>Context&lt;ROLE&gt;.IncrementSeq()</code> fails with an error when <code>seq</code> overflows,
 which causes <code>ContextS.Seal()</code> and <code>ContextR.Open()</code> to fail accordingly.)
 Note that the internal <code>Seal()</code> and <code>Open()</code> calls inside correspond to the
-context's AEAD algorithm.<a href="#section-5.2-14" class="pilcrow">¶</a></p>
-<p id="section-5.2-15">In parallel or concurrent environments, the <code>ComputeNonce()</code>, <code>Seal()</code>, and
+context's AEAD algorithm.<a href="#section-5.2-15" class="pilcrow">¶</a></p>
+<p id="section-5.2-16">In parallel or concurrent environments, the <code>ComputeNonce()</code>, <code>Seal()</code>, and
 <code>IncrementSeq()</code> operations MUST be done as an atomic unit, e.g., by holding
 a lock on <code>ContextS</code> for the duration of <code>ContextS.Seal()</code>. If other calls to
 <code>Seal()</code> are interleaved before <code>IncrementSeq()</code> completes, this will result
-in multiple encryptions with the same sequence number, and thus the same nonce.<a href="#section-5.2-15" class="pilcrow">¶</a></p>
+in multiple encryptions with the same sequence number, and thus the same nonce.<a href="#section-5.2-16" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="hpke-export">
@@ -2841,11 +2847,13 @@ that define new KDFs MUST specify bounds for these variable-length
 parameters.<a href="#section-7.2.1-4" class="pilcrow">¶</a></p>
 <p id="section-7.2.1-5">Since the above bounds are larger than any values used in practice, it may be
 useful for implementations to impose a lower limit on the values they will
-accept (for example, to avoid dynamic allocations).  Implementations SHOULD set
-such a limit to be no less than maximum <code>Nsk</code> size for a KEM supported by the
-implementation.  For an implementation that supports all of the KEMs in this
-document, the limit would be 66 bytes, which is the <code>Nsk</code> value for DHKEM(P-521,
-HKDF-SHA512).<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
+accept (for example, to avoid dynamic allocations). Implementations MUST
+support <code>info</code> values of at least 64 bytes. Implementations SHOULD support
+<code>info</code> values of at least 16384 bytes to accommodate protocols such as
+Encrypted Client Hello <span>[<a href="#I-D.ietf-tls-esni" class="cite xref">I-D.ietf-tls-esni</a>]</span>. Applications seeking
+maximum interoperability with resource-constrained HPKE implementations
+SHOULD NOT provide <code>info</code> values exceeding 64 bytes without confirmation that an
+implementation supports larger <code>info</code> values.<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
 <p id="section-7.2.1-6">The values for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>ikm</code>, which are inputs to
 <code>LabeledExtract()</code>, were computed with the following expression:<a href="#section-7.2.1-6" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.2.1-7">
