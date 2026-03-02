@@ -1265,7 +1265,7 @@ across all labels in this document.
 | 0x0001 | AES-128-GCM      | 16  | 12  | 16  | {{GCM}}      |
 | 0x0002 | AES-256-GCM      | 32  | 12  | 16  | {{GCM}}      |
 | 0x0003 | ChaCha20Poly1305 | 32  | 12  | 16  | {{?RFC8439}} |
-| 0xFFFF | Export-only      | N/A | N/A | N/A | RFC 9180     |
+| 0xFFFF | Export-only      | 0   | 0   | N/A | RFC 9180     |
 {: #aeadid-values title="AEAD IDs"}
 
 The `0xFFFF` AEAD ID is reserved for applications that only use the Export
