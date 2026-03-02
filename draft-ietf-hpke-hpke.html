@@ -3633,10 +3633,17 @@ so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.2-1" class=
             <p id="section-11.2-3.2.1">KDF: The name of the algorithm<a href="#section-11.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.3">
-            <p id="section-11.2-3.3.1">Nh: The output size of the Extract function in bytes<a href="#section-11.2-3.3.1" class="pilcrow">¶</a></p>
+            <p id="section-11.2-3.3.1">Nh: For two-stage KDFs, the output size of the Extract function in
+bytes.  For one-stage KDFs, the security strength in bytes, as
+defined for the KDF identifier.<a href="#section-11.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.4">
-            <p id="section-11.2-3.4.1">Reference: Where this algorithm is defined<a href="#section-11.2-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-11.2-3.4.1">Two-Stage: Whether the KDF provides Extract and Expand functions (Y)
+or only a single-stage Derive function (N).  N/A for reserved
+entries.<a href="#section-11.2-3.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.2-3.5">
+            <p id="section-11.2-3.5.1">Reference: Where this algorithm is defined<a href="#section-11.2-3.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-11.2-4">Initial contents: Provided in <a href="#kdfid-values" class="auto internal xref">Table 3</a><a href="#section-11.2-4" class="pilcrow">¶</a></p>
