@@ -2315,6 +2315,11 @@ above, <code>Context&lt;ROLE&gt;.IncrementSeq()</code> fails with an error when 
 which causes <code>ContextS.Seal()</code> and <code>ContextR.Open()</code> to fail accordingly.)
 Note that the internal <code>Seal()</code> and <code>Open()</code> calls inside correspond to the
 context's AEAD algorithm.<a href="#section-5.2-14" class="pilcrow">¶</a></p>
+<p id="section-5.2-15">In parallel or concurrent environments, the <code>ComputeNonce()</code>, <code>Seal()</code>, and
+<code>IncrementSeq()</code> operations MUST be done as an atomic unit, e.g., by holding
+a lock on <code>ContextS</code> for the duration of <code>ContextS.Seal()</code>. If other calls to
+<code>Seal()</code> are interleaved before <code>IncrementSeq()</code> completes, this will result
+in multiple encryptions with the same sequence number, and thus the same nonce.<a href="#section-5.2-15" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="hpke-export">
