@@ -847,6 +847,13 @@ with zero), but MUST raise an error if the sequence number overflows. The AEAD
 algorithm produces ciphertext that is Nt bytes longer than the plaintext.
 Nt = 16 for AEAD algorithms defined in this document.
 
+Additionally, each AEAD algorithm has a maximum plaintext length (P_MAX)
+as specified in {{!RFC5116}}. For AES-128-GCM and AES-256-GCM, P_MAX is
+2<exp>36</exp> - 31 bytes. For ChaCha20Poly1305, P_MAX is 2<exp>38</exp> - 64 bytes.
+Implementations MUST NOT encrypt plaintexts larger than P_MAX. Exceeding
+either the sequence number limit or P_MAX for the AEAD in use results in
+loss of confidentiality and integrity guarantees.
+
 Encryption is unidirectional from sender to recipient. The sender's
 context can encrypt a plaintext `pt` with associated data `aad` as
 follows:
@@ -1225,11 +1232,13 @@ parameters.
 
 Since the above bounds are larger than any values used in practice, it may be
 useful for implementations to impose a lower limit on the values they will
-accept (for example, to avoid dynamic allocations).  Implementations SHOULD set
-such a limit to be no less than maximum `Nsk` size for a KEM supported by the
-implementation.  For an implementation that supports all of the KEMs in this
-document, the limit would be 66 bytes, which is the `Nsk` value for DHKEM(P-521,
-HKDF-SHA512).
+accept (for example, to avoid dynamic allocations). Implementations MUST
+support `info` values of at least 64 bytes. Implementations SHOULD support
+`info` values of at least 16384 bytes to accommodate protocols such as
+Encrypted Client Hello {{?I-D.ietf-tls-esni}}. Applications seeking
+maximum interoperability with resource-constrained HPKE implementations
+SHOULD NOT provide `info` values exceeding 64 bytes without confirmation that an
+implementation supports larger `info` values.
 
 The values for `psk`, `psk_id`, `info`, and `ikm`, which are inputs to
 `LabeledExtract()`, were computed with the following expression:
