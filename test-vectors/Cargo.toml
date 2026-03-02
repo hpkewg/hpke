@@ -1,0 +1,19 @@
+[package]
+name = "hpke-test-vectors"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+hpke-ref = { git = "https://github.com/hpkewg/hpke-pq.git" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+hex = { version = "0.4", features = ["serde"] }
+rand = "0.9"
+
+[[bin]]
+name = "generate"
+path = "src/bin/generate.rs"
+
+[[bin]]
+name = "json-to-markdown"
+path = "src/bin/json-to-markdown.rs"
