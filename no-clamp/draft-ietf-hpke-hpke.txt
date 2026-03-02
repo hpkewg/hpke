@@ -6,9 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 18 May 2026                                               Inria
+Expires: 3 September 2026                                          Inria
                                                                  C. Wood
-                                                        14 November 2025
+                                                            2 March 2026
 
 
                       Hybrid Public Key Encryption
@@ -49,11 +49,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 May 2026.
+   This Internet-Draft will expire on 3 September 2026.
 
 Copyright Notice
 
-   Copyright (c) 2025 IETF Trust and the persons identified as the
+   Copyright (c) 2026 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -963,10 +963,7 @@ Table of Contents
    String-to-Field-Element conversion according to [SECG].
 
    For X25519 and X448, private keys are identical to their byte string
-   representation.  The DeserializePrivateKey() function MUST clamp its
-   input, where _clamping_ refers to the bitwise operations performed on
-   k in the decodeScalar25519() and decodeScalar448() functions defined
-   in Section 5 of [RFC7748].
+   representation.
 
    To catch invalid keys early on, implementors of DHKEMs SHOULD check
    that deserialized private keys are not equivalent to 0 (mod order),
