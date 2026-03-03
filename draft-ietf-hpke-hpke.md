@@ -1152,7 +1152,7 @@ def DeriveKeyPair_TwoStage(ikm):
   return (sk, pk(sk))
 ~~~
 
-The `suite_id` used implicitly in `LabeledExtract()` and `LabeledExpand()`
+The `suite_id` used implicitly in `LabeledExtract()`, `LabeledExpand()`, and `LabeledDerive()`
 for `DeriveKeyPair(ikm)` is derived from the KEM identifier of the
 DHKEM in use (see {{kem-ids}}), that is, based on the type of key
 pair been generated for that DHKEM type.
