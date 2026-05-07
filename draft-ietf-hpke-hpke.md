@@ -511,6 +511,13 @@ A DH-based KEM is parameterized by the constants (in bytes):
 
 `Nsk`:
 : The length of a Diffie-Hellman private key.
+
+`Npk`:
+: The length of a serialized public key for the DH group.
+
+`Nenc`:
+: Equal to `Npk`. Encapsulated shared secrets are serialized
+  DH public keys in this KEM algorithm.
 {:compact}
 
 Then we can construct a KEM that implements the interface defined in {{crypto-kem}}
@@ -519,7 +526,7 @@ Diffie-Hellman group and `KDF` denotes the KDF. The function parameters `pkR` an
 are deserialized public keys, and `enc` is a serialized public key. Since
 encapsulated shared secrets are Diffie-Hellman public keys in this KEM algorithm,
 we use `SerializePublicKey()` and `DeserializePublicKey()` to encode and decode
-them, respectively. `Npk` and `Nenc` are both equal to `Ndh`. `GenerateKeyPair()` produces a key pair
+them, respectively. `GenerateKeyPair()` produces a key pair
 for the Diffie-Hellman group in use. {{derive-key-pair}} contains the
 `DeriveKeyPair()` function specification for DHKEMs defined in this document.
 
