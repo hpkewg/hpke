@@ -20,22 +20,22 @@ the scheme using widely used and efficient primitives, such as Elliptic Curve
 Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation function (HKDF),
 and SHA2. 
     " name="description">
-<meta content="xml2rfc 3.31.0" name="generator">
+<meta content="xml2rfc 3.33.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-ietf-hpke-hpke-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.31.0
-    Python 3.12.12
+  xml2rfc 3.33.0
+    Python 3.12.13
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.0.2
-    platformdirs 4.5.1
+    platformdirs 4.9.6
     pycountry 24.6.1
     PyYAML 6.0.3
-    requests 2.32.5
-    wcwidth 0.3.0
+    requests 2.33.1
+    wcwidth 0.7.0
 -->
 <link href="draft-ietf-hpke-hpke.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1056,11 +1056,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">HPKE</td>
-<td class="right">March 2026</td>
+<td class="right">May 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 3 September 2026</td>
+<td class="center">Expires 8 November 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1076,12 +1076,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <a href="https://www.rfc-editor.org/rfc/rfc9180" class="eref">9180</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-03-02" class="published">2 March 2026</time>
+<time datetime="2026-05-07" class="published">7 May 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-09-03">3 September 2026</time></dd>
+<dd class="expires"><time datetime="2026-11-08">8 November 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1142,7 +1142,7 @@ and SHA2.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 3 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 8 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1642,7 +1642,7 @@ encapsulation failure.<a href="#section-4.1-2.10.1" class="pilcrow">¶</a></p>
 <code>Decap(enc, skR)</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-2.12">
             <p id="section-4.1-2.12.1">Deterministic algorithm using the private key <code>skR</code> to
-recover the shared secret) from the encapsulated secret <code>enc</code>. This function
+recover the shared secret from the encapsulated secret <code>enc</code>. This function
 can raise a <code>DecapError</code> on decapsulation failure.<a href="#section-4.1-2.12.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
@@ -2673,7 +2673,7 @@ def DeriveKeyPair_TwoStage(ikm):
   return (sk, pk(sk))
 </pre><a href="#section-7.1.3-9" class="pilcrow">¶</a>
 </div>
-<p id="section-7.1.3-10">The <code>suite_id</code> used implicitly in <code>LabeledExtract()</code> and <code>LabeledExpand()</code>
+<p id="section-7.1.3-10">The <code>suite_id</code> used implicitly in <code>LabeledExtract()</code>, <code>LabeledExpand()</code>, and <code>LabeledDerive()</code>
 for <code>DeriveKeyPair(ikm)</code> is derived from the KEM identifier of the
 DHKEM in use (see <a href="#kem-ids" class="auto internal xref">Section 7.1</a>), that is, based on the type of key
 pair been generated for that DHKEM type.<a href="#section-7.1.3-10" class="pilcrow">¶</a></p>
@@ -3305,12 +3305,12 @@ HPKE use separate input domains. This justifies modeling them as
 independent functions even if instantiated by the same KDF.
 This domain separation between DHKEM and the remainder of HPKE is achieved by
 using prefix-free sets of <code>suite_id</code> values in <code>LabeledExtract()</code>,
-<code>LabeledExpand()</code>, and LabeledDerive (<code>KEM...</code> in DHKEM and <code>HPKE...</code> in the remainder of HPKE).
+<code>LabeledExpand()</code>, and <code>LabeledDerive()</code> (<code>KEM...</code> in DHKEM and <code>HPKE...</code> in the remainder of HPKE).
 Recall that a set is prefix-free if no element is a prefix of another within the
 set.<a href="#section-9.6-1" class="pilcrow">¶</a></p>
 <p id="section-9.6-2">Separation between uses of the one-stage and two-stage KDFs is ensured by the
-inclusion of the <code>suite_id</code> in <code>LabeledExtract</code>, <code>LabeledExpand</code>, and
-<code>LabeledDerive</code>.<a href="#section-9.6-2" class="pilcrow">¶</a></p>
+inclusion of the <code>suite_id</code> in <code>LabeledExtract()</code>, <code>LabeledExpand()</code>, and
+<code>LabeledDerive()</code>.<a href="#section-9.6-2" class="pilcrow">¶</a></p>
 <p id="section-9.6-3">Future KEM instantiations MUST ensure, should <code>Extract()</code>,
 <code>Expand()</code>, and/or <code>Derive()</code> be used internally, that they can be modeled as functions
 independent from the invocations of these functions in the
@@ -3348,7 +3348,7 @@ mechanisms. Otherwise said, certain properties are out-of-scope for HPKE.<a href
 that ciphertexts MUST be presented to <code>ContextR.Open()</code> in the same order in
 which they were generated by <code>ContextS.Seal()</code>.  When the single-shot API is
 used (see <a href="#single-shot-apis" class="auto internal xref">Section 6</a>), this is trivially true (since there is only
-ever one ciphertext.  Applications that allow for multiple invocations of
+ever one ciphertext).  Applications that allow for multiple invocations of
 <code>Open()</code> / <code>Seal()</code> on the same context MUST enforce the ordering property
 described above.<a href="#section-9.7.1-1" class="pilcrow">¶</a></p>
 <p id="section-9.7.1-2">Ordering requirements of this character are usually fulfilled by providing a
@@ -3486,7 +3486,7 @@ padding policies.<a href="#section-9.7.6-1" class="pilcrow">¶</a></p>
         </h3>
 <p id="section-9.8-1">As discussed in <a href="#hpke-dem" class="auto internal xref">Section 5.2</a>, HPKE encryption is unidirectional from sender
 to recipient. Applications that require bidirectional encryption can derive
-necessary keying material with the secret export interface <a href="#hpke-export" class="auto internal xref">Section 5.3</a>.
+necessary keying material with the secret export interface (<a href="#hpke-export" class="auto internal xref">Section 5.3</a>).
 The type and length of such keying material depends on the application use
 case.<a href="#section-9.8-1" class="pilcrow">¶</a></p>
 <p id="section-9.8-2">As an example, if an application needs AEAD encryption from the recipient to
