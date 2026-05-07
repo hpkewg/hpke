@@ -238,10 +238,10 @@ scheme provides a variant of public key encryption of arbitrary-sized plaintexts
 for a recipient public key. It also includes a variant that authenticates
 possession of a pre-shared key. HPKE works for any combination of an
 asymmetric Key Encapsulation Mechanism (KEM), key derivation function (KDF), and authenticated encryption
-with additional data (AEAD) encryption function. We provide instantiations of
-the scheme using widely used and efficient primitives, such as Elliptic Curve
-Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation function (HKDF),
-and SHA2.
+with additional data (AEAD) encryption function. This document provides
+instantiations of the scheme using widely used and efficient primitives, such as
+Elliptic Curve Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation
+function (HKDF), and SHA-2.
 
 --- middle
 
@@ -265,7 +265,7 @@ variants for hybrid encryption, mostly variants on the Elliptic Curve Integrated
 (ECIES) {{ANSI}}, IEEE 1363a {{IEEE1363}}, ISO/IEC 18033-2 {{ISO}}, and SECG SEC 1
 {{SECG}}.  See {{MAEA10}} for a thorough comparison.  All these existing
 schemes have problems, e.g., because they rely on outdated primitives, lack
-proofs of indistinguishable (adaptive) chosen-ciphertext attack (IND-CCA2) security, or fail to provide test vectors.
+proofs of indistinguishability under adaptive chosen-ciphertext attack (IND-CCA2) security, or fail to provide test vectors.
 
 This document defines an HPKE scheme that provides a subset
 of the functions provided by the collection of schemes above but
@@ -702,12 +702,12 @@ def VerifyPSKInputs(mode, psk, psk_id):
 def CombineSecrets_OneStage(mode, shared_secret, info, psk, psk_id):
   secrets = concat(
     lengthPrefixed(psk),
-    lengthPrefixed(shared_secret),
+    lengthPrefixed(shared_secret)
   )
   context = concat(
     mode,
     lengthPrefixed(psk_id),
-    lengthPrefixed(info),
+    lengthPrefixed(info)
   )
 
   secret = LabeledDerive(secrets, "secret", context, Nk + Nn + Nh)
@@ -745,14 +745,14 @@ def KeySchedule<ROLE>(mode, shared_secret, info, psk, psk_id):
 
 The `ROLE` template parameter is either S or R, depending on the role
 of sender or recipient, respectively. The third parameter in the
-`Context<ROLE>` refers to the sequence number, that is initialised with
+`Context<ROLE>` refers to the sequence number, which is initialized with
 a 0 value. See {{hpke-dem}} for a discussion of the key schedule output,
 including the role-specific Context structure and its Application Programming Interface (API), and the
 usage of the sequence number.
 
-Note that the `key_schedule_context` construction in `KeySchedule()` is
-equivalent to serializing a structure of the following form in the TLS presentation
-syntax:
+Note that when a two-stage KDF is used, the `key_schedule_context`
+construction in `CombineSecrets_TwoStage()` is equivalent to serializing a
+structure of the following form in the TLS presentation syntax:
 
 ~~~~~
 struct {
@@ -895,7 +895,7 @@ def Context<ROLE>.IncrementSeq():
 The sender's context MUST NOT be used for decryption. Similarly, the recipient's
 context MUST NOT be used for encryption. Higher-level protocols reusing the HPKE
 key exchange for more general purposes can derive separate keying material as
-needed using use the secret export interface; see {{hpke-export}} and {{bidirectional}}
+needed using the secret export interface; see {{hpke-export}} and {{bidirectional}}
 for more details.
 
 It is up to the application to ensure that encryptions and decryptions are
@@ -1855,7 +1855,7 @@ Within that constraint, the following list summarizes the major changes from RFC
 
 * Incorporated fixes for all valid errata on RFC 9180.
 
-* Updated the IANA considerations refer to existing registries.
+* Updated the IANA Considerations section to refer to existing registries.
 
 * Added a framework for single-stage KDFs.
 
