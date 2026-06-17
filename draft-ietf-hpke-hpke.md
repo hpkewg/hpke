@@ -16,7 +16,6 @@ pi: [toc, sortrefs, symrefs]
 author:
  -  ins: R. Barnes
     name: Richard L. Barnes
-    org: Cisco
     email: rlb@ipv.sx
  -  ins: K. Bhargavan
     name: Karthik Bhargavan
@@ -101,6 +100,20 @@ informative:
     target: https://secg.org/sec1-v2.pdf
     date: 2009
 
+  BN00:
+    title: "Authenticated Encryption: Relations among Notions and Analysis of the Generic Composition Paradigm"
+    target: https://eprint.iacr.org/2000/025
+    date: 2000
+    author:
+      -
+        ins: M. Bellare
+        name: Mihir Bellare
+        org: University of California San Diego
+      -
+        ins: C. Namprempre
+        name: Chanathip Namprempre
+        org: University of California San Diego
+
   BHK09:
     title: "Subtleties in the Definition of IND-CCA: When and How Should Challenge-Decryption be Disallowed?"
     target: https://eprint.iacr.org/2009/418
@@ -115,8 +128,6 @@ informative:
       -
         ins: Eike Kiltz
         org: CWI Amsterdam
-
-  SigncryptionDZ10: DOI.10.1007/978-3-540-89411-7
 
   HPKEAnalysis:
     title: "An Analysis of Hybrid Public Key Encryption"
@@ -198,8 +209,6 @@ informative:
         name: Björn Tackmann
         org: IBM Research
 
-  IMB: DOI.10.1007/BF00124891
-
   LGR20:
     title: "Partitioning Oracle Attacks"
     target: https://eprint.iacr.org/2020/1491
@@ -226,8 +235,6 @@ informative:
   keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
 
   NISTCurves: DOI.10.6028/NIST.FIPS.186-4
-
-  FIPS202: DOI.10.6028/NIST.FIPS.202
 
   GCM: DOI.10.6028/NIST.SP.800-38D
 
@@ -258,7 +265,7 @@ Specifically, encrypted messages convey a shared secret encapsulated with a
 public key scheme, along with one or more arbitrary-sized ciphertexts encrypted
 using that key. This type of public key encryption has many applications in
 practice, including Messaging Layer Security {{?RFC9420}}, TLS Encrypted
-ClientHello {{?I-D.ietf-tls-esni}}, and Oblivious HTTP {{?RFC9458}}.
+ClientHello {{?RFC9849}}, and Oblivious HTTP {{?RFC9458}}.
 
 Currently, there are numerous competing and non-interoperable standards and
 variants for hybrid encryption, mostly variants on the Elliptic Curve Integrated Encryption Scheme (ECIES), including ANSI X9.63
@@ -590,7 +597,7 @@ For X25519 and X448, the size `Ndh` is equal to 32 and 56, respectively
 # Hybrid Public Key Encryption {#hpke}
 
 In this section, we define a few HPKE variants.  All variants take a
-recipient public key and a sequence of plaintexts `pt` and produce an
+recipient public key `pkR` and a sequence of plaintexts `pt` and produce an
 encapsulated secret `enc` and a sequence of ciphertexts `ct`.  These outputs are
 constructed so that only the holder of `skR` can decapsulate the key from
 `enc` and decrypt the ciphertexts.  All the algorithms also take an
@@ -634,7 +641,7 @@ recipient by some application making use of HPKE. Moreover, a recipient with mor
 than one public key needs some way of determining which of its public keys was
 used for the encapsulation operation. As an example, applications may send this
 information alongside a ciphertext from the sender to the recipient. Specification of
-such a mechanism is left to the application. See {{message-encoding}} for more
+such a mechanism is left to the application. See {{metadata-protection}} for more
 details.
 
 The procedures described in this section are laid out in a
@@ -1242,7 +1249,7 @@ useful for implementations to impose a lower limit on the values they will
 accept (for example, to avoid dynamic allocations). Implementations MUST
 support `info` values of at least 64 bytes. Implementations SHOULD support
 `info` values of at least 16384 bytes to accommodate protocols such as
-Encrypted Client Hello {{?I-D.ietf-tls-esni}}. Applications seeking
+Encrypted Client Hello {{?RFC9849}}. Applications seeking
 maximum interoperability with resource-constrained HPKE implementations
 SHOULD NOT provide `info` values exceeding 64 bytes without confirmation that an
 implementation supports larger `info` values.
@@ -1412,8 +1419,9 @@ well as verifying the additional export key secrecy property.
 
 A preliminary computational analysis of all HPKE modes has been done
 in {{HPKEAnalysis}}, indicating asymptotic security for the case where
-the KEM is DHKEM, the AEAD is any IND-CPA-secure and INT-CTXT-secure scheme,
-and the DH group and KDF satisfy the following conditions:
+the KEM is DHKEM, the AEAD is any scheme that provides both indistinguishability
+under chosen-plaintext attack (IND-CPA) and integrity of ciphertexts (INT-CTXT)
+{{BN00}}, and the DH group and KDF satisfy the following conditions:
 
 - DH group: The gap Diffie-Hellman (GDH) problem is hard in the
   appropriate subgroup {{GAP}}.
@@ -1455,11 +1463,12 @@ into account, in addition to simply using a post-quantum KEM.
 
 In future work, the analysis from {{ABHKLR20}} can be extended to cover
 HPKE's other modes and desired security properties.
-The hybrid quantum-resistance property described above, which is achieved
-by using the PSK mode, is not proven in {{HPKEAnalysis}} because
-this analysis requires the random oracle model; in a quantum
-setting, this model needs adaption to, for example, the quantum random
-oracle model.
+The PSK mode can provide a hybrid quantum-resistance property: if the PSK is
+not known to a quantum-capable adversary, then that adversary cannot recover
+the plaintext even if it can break the (classical) KEM.  This property is not
+proven in {{HPKEAnalysis}}, because that analysis requires the random oracle
+model; in a quantum setting, this model needs adaptation to, for example, the
+quantum random oracle model.
 
 ## Security Requirements on a KEM Used within HPKE {#kem-security}
 
@@ -1470,8 +1479,10 @@ requirements concerning domain separation.
 In particular, the KEM
 shared secret MUST be a uniformly random byte string of length `Nsecret`.
 This means, for instance, that it would not be sufficient if the KEM
-shared secret is only uniformly random as an element of some set prior
-to its encoding as a byte string.
+shared secret is only uniformly random as an element of some structured set
+(such as an elliptic curve group or a finite field) prior
+to its encoding as a byte string, because such an encoding is generally not
+uniformly distributed over byte strings of length `Nsecret`.
 
 ### Encap/Decap Interface
 
@@ -1503,8 +1514,13 @@ at least have the security level provided by the PSK.
 
 ## Security Requirements on an AEAD {#aead-security}
 
-All AEADs MUST be IND-CCA2-secure, as is currently true for all AEADs
-listed in {{aead-ids}}.
+All AEADs MUST provide confidentiality (IND-CPA) and ciphertext integrity
+(INT-CTXT).
+
+In practice, all widely deployed IND-CCA2 symmetric authenticated encryption
+schemes meet these definitions.  As discussed in {{BN00}}, IND-CPA and INT-CTXT
+together imply IND-CCA2.  We list them separately because are the AEAD security
+properties relied upon by the analyses summarized in {{sec-properties}}.
 
 ## Pre-Shared Key Recommendations {#security-psk}
 
@@ -1539,6 +1555,15 @@ The number of partitioning oracle queries remains unchanged.) As a result, the P
 must therefore be chosen with sufficient entropy so that m + log k is prohibitive for
 attackers (e.g., 2^128). Future specifications can define new AEAD algorithms that
 are key-committing.
+
+Pre-processing a low-entropy password with a memory-hard password-based key
+derivation function such as scrypt {{?RFC7914}} or Argon2 {{?RFC9106}} before
+using it as a PSK raises the per-guess cost of the attacks described above, but
+it does not add entropy and therefore does not by itself make a low-entropy
+password safe to use as a PSK.  Applications that need to derive keys from
+passwords, and that must tolerate low-entropy passwords, should use a mechanism
+designed for that purpose (for example, a password-authenticated key exchange)
+rather than relying on HPKE's PSK mode.
 
 ## Domain Separation {#domain-separation}
 
@@ -1698,7 +1723,7 @@ generated securely, as described in {{?RFC8937}}.
 
 AEAD ciphertexts produced by HPKE do not hide the plaintext length. Applications
 requiring this level of privacy should use a suitable padding mechanism. See
-{{?I-D.ietf-tls-esni}} and {{?RFC8467}} for examples of protocol-specific
+{{?RFC9849}} and {{?RFC8467}} for examples of protocol-specific
 padding policies.
 
 ## Bidirectional Encryption {#bidirectional}
@@ -1785,12 +1810,39 @@ IANA created three new registries as requested in {{Section 11 of ?RFC9180}}:
 * HPKE KDF Identifiers
 * HPKE AEAD Identifiers
 
-All these registries are under "Hybrid Public Key
-Encryption", and administered under a Specification Required policy
-{{!RFC8126}}.
+All these registries are under "Hybrid Public Key Encryption", and administered
+under a Specification Required policy {{!RFC8126}}.
 
 This document requests that entries in these registries referring to RFC 9180 be
-updated to refer to this document.
+updated to refer to this document, and provides instructions to the designated
+experts for these registries.
+
+## Designated Expert Instructions
+
+The following instructions apply to all three HPKE registries.
+
+The DE should verify the following things with regard to a request for
+allocation:
+
+* The requested entry is not duplicative with any existing registration.
+
+* The specification defines the algorithm with enough precision that two
+  independent, interoperable implementations can be produced from it.
+
+* For a KEM registration, the algorithm meets the security requirements in
+  {{kem-security}}, including that the KEM shared secret is a uniformly random
+  byte string of length `Nsecret` ({{kem-security}}) and that the algorithm
+  provides appropriate domain separation ({{domain-separation}}).
+
+* For a KDF registration, the specification meets the requirements in
+  {{kdf-choice}} and specifies the input-length bounds required by
+  {{kdf-input-length}}.
+
+* For an AEAD registration, the algorithm meets the requirements in
+  {{aead-security}}.
+
+* The values in the registration (lengths, references, and so on) are internally
+  consistent and match the cited specification.
 
 ## KEM Identifiers {#kem-template}
 
