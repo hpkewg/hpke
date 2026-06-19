@@ -306,6 +306,14 @@ operations, roles, and behaviors of HPKE:
   It is an error to call this function with two arguments of unequal
   length.
 
+Values that are indicated in double quotes (e.g., "key")
+represent sequences of bytes, not text strings.
+The value of bytes is the ASCII encoding {{?RFC20}} of the quoted string.
+An empty string ("") indicates a zero-length byte sequence.
+These byte sequences values do not include any zero byte marker at the end,
+such as can be used in some methods of representing strings.
+
+
 # Cryptographic Dependencies {#base-crypto}
 
 HPKE variants rely on the following primitives:
@@ -648,8 +656,7 @@ context. The key schedule inputs are as follows:
 
 * `mode` - A one-byte value indicating the HPKE mode, defined in {{hpke-modes}}.
 * `shared_secret` - A KEM shared secret generated for this transaction.
-* `info` - Application-supplied information (optional; default value
-  "").
+* `info` - Application-supplied information (optional; default value "").
 * `psk` - A pre-shared key (PSK) held by both the sender
   and the recipient (optional; default value "").
 * `psk_id` - An identifier for the PSK (optional; default value "").
