@@ -313,7 +313,6 @@ An empty string ("") indicates a zero-length byte sequence.
 These byte sequences values do not include any zero byte marker at the end,
 such as can be used in some methods of representing strings.
 
-
 # Cryptographic Dependencies {#base-crypto}
 
 HPKE variants rely on the following primitives:
