@@ -1238,7 +1238,7 @@ that define new KDFs MUST specify bounds for these variable-length
 parameters.
 
 Since the above bounds are larger than any values used in practice, it may be
-useful for implementations to impose a lower limit on the values they will
+useful for implementations to impose a smaller maximum on the values they will
 accept (for example, to avoid dynamic allocations). Implementations MUST
 support `info` values of at least 64 bytes. Implementations SHOULD support
 `info` values of at least 16384 bytes to accommodate protocols such as
