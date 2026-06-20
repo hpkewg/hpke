@@ -1874,12 +1874,16 @@ Within that constraint, the following list summarizes the major changes from RFC
 # Acknowledgements
 
 The authors would like to thank Joël Alwen, Jean-Philippe Aumasson, David
-Benjamin, Benjamin Beurdouche, Bruno Blanchet, Frank Denis, Stephen Farrell,
-Scott Fluhrer, Eduard Hauck, Scott Hollenbeck, Kevin Jacobs, Burt Kaliski, Eike
-Kiltz, Julia Len, John Mattsson, Christopher Patton, Doreen Riepel, Raphael
-Robert, Michael Rosenberg, Michael Scott, Martin Thomson, Steven Valdez, Riad
-Wahby, and other contributors in the CFRG for helpful feedback that greatly
-improved this document.
+Benjamin, Benjamin Beurdouche, Bruno Blanchet, Brian Campbell, Deirdre Connolly,
+Deb Cooley, Frank Denis, Stephen Farrell, Scott Fluhrer, Eduard Hauck, Scott
+Hollenbeck, Kevin Jacobs, Michael B. Jones, Burt Kaliski, Eike Kiltz, Samuel
+Lee, Julia Len, Ilari Liusvaara, Rohan Mahy, John Mattsson, Cory Francis Myers,
+Christopher Patton, Tommy Pauly, Eric Rescorla, Doreen Riepel, Raphael Robert,
+Michael Rosenberg, Yaroslav Rosomakho, Rich Salz, Martin Schanzenbach, David
+Schinazi, Michael Scott, Filip Skokan, Nick Sullivan, Martin Thomson, Steven
+Valdez, Filippo Valsorda, Riad Wahby, Weijun Wang, Bas Westerbaan, and other
+contributors in the CFRG and HPKE WG for helpful feedback that greatly improved
+this document.
 
 # Test Vectors
 
