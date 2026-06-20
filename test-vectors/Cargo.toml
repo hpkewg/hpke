@@ -17,3 +17,11 @@ path = "src/bin/generate.rs"
 [[bin]]
 name = "json-to-markdown"
 path = "src/bin/json-to-markdown.rs"
+
+[[bin]]
+name = "edge-vectors"
+path = "src/bin/edge-vectors.rs"
+
+[[bin]]
+name = "search-p256"
+path = "src/bin/search-p256.rs"
