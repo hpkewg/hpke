@@ -6,9 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                          
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 19 December 2026                                          Inria
+Expires: 26 December 2026                                          Inria
                                                                  C. Wood
-                                                            17 June 2026
+                                                            24 June 2026
 
 
                       Hybrid Public Key Encryption
@@ -26,6 +26,8 @@ Abstract
    document provides instantiations of the scheme using widely used and
    efficient primitives, such as Elliptic Curve Diffie-Hellman (ECDH)
    key agreement, HMAC-based key derivation function (HKDF), and SHA-2.
+
+   This document obsoletes RFC 9180.
 
 Discussion Venues
 
@@ -49,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 December 2026.
+   This Internet-Draft will expire on 26 December 2026.
 
 Copyright Notice
 
