@@ -6,9 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 8 November 2026                                           Inria
+Expires: 26 December 2026                                          Inria
                                                                  C. Wood
-                                                              7 May 2026
+                                                            24 June 2026
 
 
                       Hybrid Public Key Encryption
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 November 2026.
+   This Internet-Draft will expire on 26 December 2026.
 
 Copyright Notice
 
@@ -235,6 +235,13 @@ Table of Contents
    *  xor(a,b): XOR of byte strings; xor(0xF0F0, 0x1234) = 0xE2C4.  It
       is an error to call this function with two arguments of unequal
       length.
+
+   Values that are indicated in double quotes (e.g., "key") represent
+   sequences of bytes, not text strings.  The value of bytes is the
+   ASCII encoding [RFC20] of the quoted string.  An empty string ("")
+   indicates a zero-length byte sequence.  These byte sequences values
+   do not include any zero byte marker at the end, such as can be used
+   in some methods of representing strings.
 
 4.  Cryptographic Dependencies
 
@@ -1986,6 +1993,10 @@ Table of Contents
               Standards and Technology (U.S.),
               DOI 10.6028/nist.fips.186-4, 2013,
               <https://doi.org/10.6028/nist.fips.186-4>.
+
+   [RFC20]    Cerf, V., "ASCII format for network interchange", STD 80,
+              RFC 20, DOI 10.17487/RFC0020, October 1969,
+              <https://www.rfc-editor.org/rfc/rfc20>.
 
    [RFC1421]  Linn, J., "Privacy Enhancement for Internet Electronic
               Mail: Part I: Message Encryption and Authentication
