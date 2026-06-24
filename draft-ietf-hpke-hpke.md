@@ -250,6 +250,8 @@ instantiations of the scheme using widely used and efficient primitives, such as
 Elliptic Curve Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation
 function (HKDF), and SHA-2.
 
+This document obsoletes RFC 9180.
+
 --- middle
 
 # Introduction
