@@ -238,6 +238,28 @@ informative:
 
   GCM: DOI.10.6028/NIST.SP.800-38D
 
+  AJKL23:
+    title: "The Pre-Shared Key Modes of HPKE"
+    target: https://eprint.iacr.org/2023/1480
+    date: 2023
+    author:
+      -
+        ins: J. Alwen
+        name: Joël Alwen
+        org: AWS-Wickr
+      -
+        ins: J. Janneck
+        name: Jonas Janneck
+        org: Ruhr-Universität Bochum
+      -
+        ins: E. Kiltz
+        name: Eike Kiltz
+        org: Ruhr-Universität Bochum
+      -
+        ins: B. Lipp
+        name: Benjamin Lipp
+        org: Max Planck Institute for Security and Privacy
+
 --- abstract
 
 This document describes a scheme for hybrid public key encryption (HPKE).  This
@@ -1463,15 +1485,18 @@ necessary to prove their security. The results from {{CS01}} provide
 some indication that any IND-CCA2-secure KEM will suffice here, but are
 not conclusive given the differences in the schemes.
 
+A detailed computational analysis of the PSK mode has been done in
+{{AJKL23}}.
+
 ### Post-Quantum Security
 
-All of {{CS01}}, {{HPKEAnalysis}}, and {{ABHKLR20}} are premised on
+All of {{CS01}}, {{HPKEAnalysis}}, {{ABHKLR20}}, and {{AJKL23}} are premised on
 classical security models and assumptions, and do not consider
 adversaries capable of quantum computation. A full proof of post-quantum
 security would need to take appropriate security models and assumptions
 into account, in addition to simply using a post-quantum KEM.
 
-In future work, the analysis from {{ABHKLR20}} can be extended to cover
+In future work, the analyses from {{ABHKLR20}} and {{AJKL23}} can be extended to cover
 HPKE's other modes and desired security properties.
 The PSK mode can provide a hybrid quantum-resistance property: if the PSK is
 not known to a quantum-capable adversary, then that adversary cannot recover
