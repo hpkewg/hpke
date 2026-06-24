@@ -1242,7 +1242,7 @@ useful for implementations to impose a smaller maximum on the values they will
 accept (for example, to avoid dynamic allocations). Implementations MUST
 support `info` values of at least 64 bytes. Implementations SHOULD support
 `info` values of at least 16384 bytes to accommodate protocols such as
-Encrypted Client Hello {{?I-D.ietf-tls-esni}}. Applications seeking
+Encrypted Client Hello {{?ECH=RFC9849}}. Applications seeking
 maximum interoperability with resource-constrained HPKE implementations
 SHOULD NOT provide `info` values exceeding 64 bytes without confirmation that an
 implementation supports larger `info` values.
