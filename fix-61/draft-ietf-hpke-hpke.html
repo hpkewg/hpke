@@ -2862,7 +2862,7 @@ useful for implementations to impose a smaller maximum on the values they will
 accept (for example, to avoid dynamic allocations). Implementations MUST
 support <code>info</code> values of at least 64 bytes. Implementations SHOULD support
 <code>info</code> values of at least 16384 bytes to accommodate protocols such as
-Encrypted Client Hello <span>[<a href="#I-D.ietf-tls-esni" class="cite xref">I-D.ietf-tls-esni</a>]</span>. Applications seeking
+Encrypted Client Hello <span>[<a href="#ECH" class="cite xref">ECH</a>]</span>. Applications seeking
 maximum interoperability with resource-constrained HPKE implementations
 SHOULD NOT provide <code>info</code> values exceeding 64 bytes without confirmation that an
 implementation supports larger <code>info</code> values.<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
@@ -3767,6 +3767,10 @@ These identifiers are two-byte values, so the maximum possible value is
 <dt id="CS01">[CS01]</dt>
         <dd>
 <span class="refAuthor">Cramer, R.</span> and <span class="refAuthor">V. Shoup</span>, <span class="refTitle">"Design and Analysis of Practical Public-Key Encryption Schemes Secure against Adaptive Chosen Ciphertext Attack"</span>, <time datetime="2001" class="refDate">2001</time>, <span>&lt;<a href="https://eprint.iacr.org/2001/108">https://eprint.iacr.org/2001/108</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="ECH">[ECH]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Oku, K.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"TLS Encrypted Client Hello"</span>, <span class="seriesInfo">RFC 9849</span>, <span class="seriesInfo">DOI 10.17487/RFC9849</span>, <time datetime="2026-03" class="refDate">March 2026</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9849">https://www.rfc-editor.org/rfc/rfc9849</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="FIPS202">[FIPS202]</dt>
         <dd>
