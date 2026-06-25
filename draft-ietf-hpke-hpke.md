@@ -1416,6 +1416,10 @@ These security goals are expected to hold for any honest sender and
 honest recipient keys, as well as if the honest sender and honest
 recipient keys are the same.
 
+A pre-shared key provides authentication; additionally, it strengthens the
+secrecy properties in certain adversary models, including against a
+quantum-capable adversary, see {{post-quantum-security}}.
+
 HPKE mitigates malleability problems (called benign malleability {{SECG}}) in prior
 public key encryption standards based on ECIES by including all public keys in the
 context of the key schedule.
@@ -1492,7 +1496,7 @@ base mode, the usage of a one-stage KDF, the multi-shot and secret export
 interfaces, as well as the examples for bidirectional encryption
 {{bidirectional}} and metadata protection {{metadata}}.
 
-### Post-Quantum Security
+### Post-Quantum Security {#post-quantum-security}
 
 The computational analyses in {{ABHKLR20}} and {{AJKL23}} provide
 composition theorems based on PRF assumptions, proving post-quantum
