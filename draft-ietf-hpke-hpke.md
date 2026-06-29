@@ -334,6 +334,21 @@ values are two bytes long.
 
 ## Key Encapsulation Mechanisms {#crypto-kem}
 
+Each KEM is parameterized by the following constants (all measured in bytes):
+
+`Nsecret`:
+: The length of a KEM shared secret produced by this KEM.
+
+`Nenc`:
+: The length of an encapsulated secret produced by this KEM.
+
+`Npk`:
+: The length of an encoded public key for this KEM.
+
+`Nsk`:
+: The length of an encoded private key for this KEM.
+{:compact}
+
 A key encapsulation mechanism (KEM) provides the following functions:
 
 `GenerateKeyPair()`:
@@ -371,21 +386,6 @@ implementation, is either the
 computation of the public key using the private key, or just syntax
 expressing the retrieval of the public key, assuming it is stored along
 with the private key object.
-
-Each KEM is parameterized by the following constants (all measured in bytes):
-
-`Nsecret`:
-: The length of a KEM shared secret produced by this KEM.
-
-`Nenc`:
-: The length of an encapsulated secret produced by this KEM.
-
-`Npk`:
-: The length of an encoded public key for this KEM.
-
-`Nsk`:
-: The length of an encoded private key for this KEM.
-{:compact}
 
 Beyond the above, a KEM MAY also expose the following functions, whose behavior
 is detailed in {{serializeprivatekey}}:
