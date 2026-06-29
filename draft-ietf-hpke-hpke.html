@@ -19,6 +19,7 @@ with additional data (AEAD) encryption function. This document provides
 instantiations of the scheme using widely used and efficient primitives, such as
 Elliptic Curve Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation
 function (HKDF), and SHA-2. 
+       This document obsoletes RFC 9180. 
     " name="description">
 <meta content="xml2rfc 3.34.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
@@ -1085,7 +1086,6 @@ svg {
 <dd class="authors">
 <div class="author">
       <div class="author-name">R. Barnes</div>
-<div class="org">Cisco</div>
 </div>
 <div class="author">
       <div class="author-name">K. Bhargavan</div>
@@ -1113,6 +1113,7 @@ with additional data (AEAD) encryption function. This document provides
 instantiations of the scheme using widely used and efficient primitives, such as
 Elliptic Curve Diffie-Hellman (ECDH) key agreement, HMAC-based key derivation
 function (HKDF), and SHA-2.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This document obsoletes RFC 9180.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-discussion-venues">
@@ -1354,13 +1355,16 @@ function (HKDF), and SHA-2.<a href="#section-abstract-1" class="pilcrow">¶</a><
             <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
-                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-kem-identifiers" class="internal xref">KEM Identifiers</a></p>
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-designated-expert-instructi" class="internal xref">Designated Expert Instructions</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
-                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-kdf-identifiers" class="internal xref">KDF Identifiers</a></p>
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-kem-identifiers" class="internal xref">KEM Identifiers</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
-                <p id="section-toc.1-1.11.2.3.1"><a href="#section-11.3" class="auto internal xref">11.3</a>.  <a href="#name-aead-identifiers" class="internal xref">AEAD Identifiers</a></p>
+                <p id="section-toc.1-1.11.2.3.1"><a href="#section-11.3" class="auto internal xref">11.3</a>.  <a href="#name-kdf-identifiers" class="internal xref">KDF Identifiers</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.4">
+                <p id="section-toc.1-1.11.2.4.1"><a href="#section-11.4" class="auto internal xref">11.4</a>.  <a href="#name-aead-identifiers" class="internal xref">AEAD Identifiers</a></p>
 </li>
             </ul>
 </li>
@@ -1531,7 +1535,7 @@ Specifically, encrypted messages convey a shared secret encapsulated with a
 public key scheme, along with one or more arbitrary-sized ciphertexts encrypted
 using that key. This type of public key encryption has many applications in
 practice, including Messaging Layer Security <span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span>, TLS Encrypted
-ClientHello <span>[<a href="#I-D.ietf-tls-esni" class="cite xref">I-D.ietf-tls-esni</a>]</span>, and Oblivious HTTP <span>[<a href="#RFC9458" class="cite xref">RFC9458</a>]</span>.<a href="#section-1-1" class="pilcrow">¶</a></p>
+ClientHello <span>[<a href="#RFC9849" class="cite xref">RFC9849</a>]</span>, and Oblivious HTTP <span>[<a href="#RFC9458" class="cite xref">RFC9458</a>]</span>.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">Currently, there are numerous competing and non-interoperable standards and
 variants for hybrid encryption, mostly variants on the Elliptic Curve Integrated Encryption Scheme (ECIES), including ANSI X9.63
 (ECIES) <span>[<a href="#ANSI" class="cite xref">ANSI</a>]</span>, IEEE 1363a <span>[<a href="#IEEE1363" class="cite xref">IEEE1363</a>]</span>, ISO/IEC 18033-2 <span>[<a href="#ISO" class="cite xref">ISO</a>]</span>, and SECG SEC 1
@@ -1646,89 +1650,89 @@ values are two bytes long.<a href="#section-4-4" class="pilcrow">¶</a></p>
         <h3 id="name-key-encapsulation-mechanism">
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-key-encapsulation-mechanism" class="section-name selfRef">Key Encapsulation Mechanisms</a>
         </h3>
-<p id="section-4.1-1">A key encapsulation mechanism (KEM) provides the following functions:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-4.1-2">
+<p id="section-4.1-1">Each KEM is parameterized by the following constants (all measured in bytes):<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-4.1-2">
           <dt id="section-4.1-2.1">
-<code>GenerateKeyPair()</code>:</dt>
+<code>Nsecret</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-2.2">
-            <p id="section-4.1-2.2.1">Randomized algorithm to generate a key pair <code>(skX, pkX)</code>.<a href="#section-4.1-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-2.2.1">The length of a KEM shared secret produced by this KEM.<a href="#section-4.1-2.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.1-2.3">
-<code>DeriveKeyPair(ikm)</code>:</dt>
+<code>Nenc</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-2.4">
-            <p id="section-4.1-2.4.1">Deterministic algorithm to derive a key pair <code>(skX,
-pkX)</code> from the byte string <code>ikm</code>, where <code>ikm</code> is an arbitrary-length byte
-string (within the bounds in <a href="#input-limits" class="auto internal xref">Table 4</a>).  The <code>ikm</code> input SHOULD have
-at least <code>Nsk</code> bytes of entropy.<a href="#section-4.1-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-2.4.1">The length of an encapsulated secret produced by this KEM.<a href="#section-4.1-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.1-2.5">
-<code>SerializePublicKey(pkX)</code>:</dt>
+<code>Npk</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-2.6">
-            <p id="section-4.1-2.6.1">Produce a byte string of length <code>Npk</code> encoding the
-public key <code>pkX</code>.<a href="#section-4.1-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-2.6.1">The length of an encoded public key for this KEM.<a href="#section-4.1-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.1-2.7">
-<code>DeserializePublicKey(pkXm)</code>:</dt>
+<code>Nsk</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-2.8">
-            <p id="section-4.1-2.8.1">Parse a byte string of length <code>Npk</code> to recover a
-public key. This function can raise a <code>DeserializeError</code> error upon <code>pkXm</code>
-deserialization failure.<a href="#section-4.1-2.8.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-2.8.1">The length of an encoded private key for this KEM.<a href="#section-4.1-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.1-3">A key encapsulation mechanism (KEM) provides the following functions:<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.1-4">
+          <dt id="section-4.1-4.1">
+<code>GenerateKeyPair()</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-4.2">
+            <p id="section-4.1-4.2.1">Randomized algorithm to generate a key pair <code>(skX, pkX)</code>.<a href="#section-4.1-4.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-4.1-2.9">
+<dt id="section-4.1-4.3">
+<code>DeriveKeyPair(ikm)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-4.4">
+            <p id="section-4.1-4.4.1">Deterministic algorithm to derive a key pair <code>(skX,
+pkX)</code> from the byte string <code>ikm</code>, where <code>ikm</code> is an arbitrary-length byte
+string (within the bounds in <a href="#input-limits" class="auto internal xref">Table 4</a>).  The <code>ikm</code> input SHOULD have
+at least <code>Nsk</code> bytes of entropy.<a href="#section-4.1-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-4.5">
+<code>SerializePublicKey(pkX)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-4.6">
+            <p id="section-4.1-4.6.1">Produce a byte string of length <code>Npk</code> encoding the
+public key <code>pkX</code>.<a href="#section-4.1-4.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-4.7">
+<code>DeserializePublicKey(pkXm)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-4.8">
+            <p id="section-4.1-4.8.1">Parse a byte string of length <code>Npk</code> to recover a
+public key. This function can raise a <code>DeserializeError</code> error upon <code>pkXm</code>
+deserialization failure.<a href="#section-4.1-4.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-4.9">
 <code>Encap(pkR)</code>:</dt>
-          <dd style="margin-left: 1.5em" id="section-4.1-2.10">
-            <p id="section-4.1-2.10.1">Randomized algorithm to generate an ephemeral, fixed-length
+          <dd style="margin-left: 1.5em" id="section-4.1-4.10">
+            <p id="section-4.1-4.10.1">Randomized algorithm to generate an ephemeral, fixed-length
 shared secret and a fixed-length encapsulation of that secret (also known as
 the KEM ciphertext) that can be decapsulated by the holder of the private
 key corresponding to <code>pkR</code>. This function can raise an <code>EncapError</code> on
-encapsulation failure.<a href="#section-4.1-2.10.1" class="pilcrow">¶</a></p>
+encapsulation failure.<a href="#section-4.1-4.10.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-4.1-2.11">
+<dt id="section-4.1-4.11">
 <code>Decap(enc, skR)</code>:</dt>
-          <dd style="margin-left: 1.5em" id="section-4.1-2.12">
-            <p id="section-4.1-2.12.1">Deterministic algorithm using the private key <code>skR</code> to
+          <dd style="margin-left: 1.5em" id="section-4.1-4.12">
+            <p id="section-4.1-4.12.1">Deterministic algorithm using the private key <code>skR</code> to
 recover the shared secret from the encapsulated secret <code>enc</code>. This function
-can raise a <code>DecapError</code> on decapsulation failure.<a href="#section-4.1-2.12.1" class="pilcrow">¶</a></p>
+can raise a <code>DecapError</code> on decapsulation failure.<a href="#section-4.1-4.12.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
-<p id="section-4.1-3">The notation <code>pk(skX)</code>, depending on its use and the KEM and its
+<p id="section-4.1-5">The notation <code>pk(skX)</code>, depending on its use and the KEM and its
 implementation, is either the
 computation of the public key using the private key, or just syntax
 expressing the retrieval of the public key, assuming it is stored along
-with the private key object.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
-<p id="section-4.1-4">Each KEM is parameterized by the following constants (all measured in bytes):<a href="#section-4.1-4" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlCompact dlParallel" id="section-4.1-5">
-          <dt id="section-4.1-5.1">
-<code>Nsecret</code>:</dt>
-          <dd style="margin-left: 1.5em" id="section-4.1-5.2">
-            <p id="section-4.1-5.2.1">The length of a KEM shared secret produced by this KEM.<a href="#section-4.1-5.2.1" class="pilcrow">¶</a></p>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-4.1-5.3">
-<code>Nenc</code>:</dt>
-          <dd style="margin-left: 1.5em" id="section-4.1-5.4">
-            <p id="section-4.1-5.4.1">The length of an encapsulated secret produced by this KEM.<a href="#section-4.1-5.4.1" class="pilcrow">¶</a></p>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-4.1-5.5">
-<code>Npk</code>:</dt>
-          <dd style="margin-left: 1.5em" id="section-4.1-5.6">
-            <p id="section-4.1-5.6.1">The length of an encoded public key for this KEM.<a href="#section-4.1-5.6.1" class="pilcrow">¶</a></p>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-4.1-5.7">
-<code>Nsk</code>:</dt>
-          <dd style="margin-left: 1.5em" id="section-4.1-5.8">
-            <p id="section-4.1-5.8.1">The length of an encoded private key for this KEM.<a href="#section-4.1-5.8.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-</dl>
+with the private key object.<a href="#section-4.1-5" class="pilcrow">¶</a></p>
 <p id="section-4.1-6">Beyond the above, a KEM MAY also expose the following functions, whose behavior
 is detailed in <a href="#serializeprivatekey" class="auto internal xref">Section 7.1.2</a>:<a href="#section-4.1-6" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-4.1-7">
@@ -2012,7 +2016,7 @@ For X25519 and X448, the size <code>Ndh</code> is equal to 32 and 56, respective
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-hybrid-public-key-encryptio" class="section-name selfRef">Hybrid Public Key Encryption</a>
       </h2>
 <p id="section-5-1">In this section, we define a few HPKE variants.  All variants take a
-recipient public key and a sequence of plaintexts <code>pt</code> and produce an
+recipient public key <code>pkR</code> and a sequence of plaintexts <code>pt</code> and produce an
 encapsulated secret <code>enc</code> and a sequence of ciphertexts <code>ct</code>.  These outputs are
 constructed so that only the holder of <code>skR</code> can decapsulate the key from
 <code>enc</code> and decrypt the ciphertexts.  All the algorithms also take an
@@ -2080,7 +2084,7 @@ recipient by some application making use of HPKE. Moreover, a recipient with mor
 than one public key needs some way of determining which of its public keys was
 used for the encapsulation operation. As an example, applications may send this
 information alongside a ciphertext from the sender to the recipient. Specification of
-such a mechanism is left to the application. See <a href="#message-encoding" class="auto internal xref">Section 10</a> for more
+such a mechanism is left to the application. See <a href="#metadata-protection" class="auto internal xref">Section 9.9</a> for more
 details.<a href="#section-5-8" class="pilcrow">¶</a></p>
 <p id="section-5-9">The procedures described in this section are laid out in a
 Python-like pseudocode. The algorithms in use are left implicit.<a href="#section-5-9" class="pilcrow">¶</a></p>
@@ -2911,28 +2915,28 @@ parameters.<a href="#section-7.2.1-4" class="pilcrow">¶</a></p>
 useful for implementations to impose a smaller maximum on the values they will
 accept (for example, to avoid dynamic allocations). Implementations MUST
 support <code>info</code> values of at least 64 bytes. Implementations SHOULD support
-<code>info</code> values of at least 16384 bytes to accommodate protocols such as
-Encrypted Client Hello <span>[<a href="#ECH" class="cite xref">ECH</a>]</span>. Applications seeking
+<code>info</code> values of at least 16384 bytes to accommodate protocols such as<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-6">Encrypted Client Hello <span>[<a href="#ECH" class="cite xref">ECH</a>]</span>. Applications seeking
 maximum interoperability with resource-constrained HPKE implementations
 SHOULD NOT provide <code>info</code> values exceeding 64 bytes without confirmation that an
-implementation supports larger <code>info</code> values.<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-6">The values for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>ikm</code>, which are inputs to
-<code>LabeledExtract()</code>, were computed with the following expression:<a href="#section-7.2.1-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.2.1-7">
+implementation supports larger <code>info</code> values.<a href="#section-7.2.1-6" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-7">The values for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>ikm</code>, which are inputs to
+<code>LabeledExtract()</code>, were computed with the following expression:<a href="#section-7.2.1-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.2.1-8">
 <pre>
 max_size_hash_input - Nb - size_version_label -
     size_suite_id - size_input_label
-</pre><a href="#section-7.2.1-7" class="pilcrow">¶</a>
+</pre><a href="#section-7.2.1-8" class="pilcrow">¶</a>
 </div>
-<p id="section-7.2.1-8">The value for <code>exporter_context</code>, which is an input to <code>LabeledExpand()</code>,
-was computed with the following expression:<a href="#section-7.2.1-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.2.1-9">
+<p id="section-7.2.1-9">The value for <code>exporter_context</code>, which is an input to <code>LabeledExpand()</code>,
+was computed with the following expression:<a href="#section-7.2.1-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.2.1-10">
 <pre>
 max_size_hash_input - Nb - Nh - size_version_label -
     size_suite_id - size_input_label - 2 - 1
-</pre><a href="#section-7.2.1-9" class="pilcrow">¶</a>
+</pre><a href="#section-7.2.1-10" class="pilcrow">¶</a>
 </div>
-<p id="section-7.2.1-10">In these equations, <code>max_size_hash_input</code> is the maximum input length
+<p id="section-7.2.1-11">In these equations, <code>max_size_hash_input</code> is the maximum input length
 of the underlying hash function in bytes, <code>Nb</code> is the block size of the
 underlying hash function in bytes, <code>size_version_label</code> is the size
 of "HPKE-v1" in bytes and equals 7, <code>size_suite_id</code> is the size of the
@@ -2940,7 +2944,7 @@ of "HPKE-v1" in bytes and equals 7, <code>size_suite_id</code> is the size of th
 remainder of HPKE (relevant for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>exporter_context</code>),
 and <code>size_input_label</code> is the size in bytes of the label used as parameter to
 <code>LabeledExtract()</code> or <code>LabeledExpand()</code>, the maximum of which is 13
-across all labels in this document.<a href="#section-7.2.1-10" class="pilcrow">¶</a></p>
+across all labels in this document.<a href="#section-7.2.1-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3180,8 +3184,9 @@ additional KDF calls do not cause the IND-CCA2 property to fail, as
 well as verifying the additional export key secrecy property.<a href="#section-9.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-9.1.1-2">A preliminary computational analysis of all HPKE modes has been done
 in <span>[<a href="#HPKEAnalysis" class="cite xref">HPKEAnalysis</a>]</span>, indicating asymptotic security for the case where
-the KEM is DHKEM, the AEAD is any IND-CPA-secure and INT-CTXT-secure scheme,
-and the DH group and KDF satisfy the following conditions:<a href="#section-9.1.1-2" class="pilcrow">¶</a></p>
+the KEM is DHKEM, the AEAD is any scheme that provides both indistinguishability
+under chosen-plaintext attack (IND-CPA) and integrity of ciphertexts (INT-CTXT)
+<span>[<a href="#BN00" class="cite xref">BN00</a>]</span>, and the DH group and KDF satisfy the following conditions:<a href="#section-9.1.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-9.1.1-3.1">
               <p id="section-9.1.1-3.1.1">DH group: The gap Diffie-Hellman (GDH) problem is hard in the
@@ -3248,11 +3253,12 @@ security would need to take appropriate security models and assumptions
 into account, in addition to simply using a post-quantum KEM.<a href="#section-9.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-9.1.2-2">In future work, the analysis from <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span> can be extended to cover
 HPKE's other modes and desired security properties.
-The hybrid quantum-resistance property described above, which is achieved
-by using the PSK mode, is not proven in <span>[<a href="#HPKEAnalysis" class="cite xref">HPKEAnalysis</a>]</span> because
-this analysis requires the random oracle model; in a quantum
-setting, this model needs adaption to, for example, the quantum random
-oracle model.<a href="#section-9.1.2-2" class="pilcrow">¶</a></p>
+The PSK mode can provide a hybrid quantum-resistance property: if the PSK is
+not known to a quantum-capable adversary, then that adversary cannot recover
+the plaintext even if it can break the (classical) KEM.  This property is not
+proven in <span>[<a href="#HPKEAnalysis" class="cite xref">HPKEAnalysis</a>]</span>, because that analysis requires the random oracle
+model; in a quantum setting, this model needs adaptation to, for example, the
+quantum random oracle model.<a href="#section-9.1.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3268,8 +3274,10 @@ requirements concerning domain separation.<a href="#section-9.2-1" class="pilcro
 <p id="section-9.2-2">In particular, the KEM
 shared secret MUST be a uniformly random byte string of length <code>Nsecret</code>.
 This means, for instance, that it would not be sufficient if the KEM
-shared secret is only uniformly random as an element of some set prior
-to its encoding as a byte string.<a href="#section-9.2-2" class="pilcrow">¶</a></p>
+shared secret is only uniformly random as an element of some structured set
+(such as an elliptic curve group or a finite field) prior
+to its encoding as a byte string, because such an encoding is generally not
+uniformly distributed over byte strings of length <code>Nsecret</code>.<a href="#section-9.2-2" class="pilcrow">¶</a></p>
 <div id="encapdecap-interface">
 <section id="section-9.2.1">
           <h4 id="name-encap-decap-interface">
@@ -3316,8 +3324,12 @@ at least have the security level provided by the PSK.<a href="#section-9.3-1" cl
         <h3 id="name-security-requirements-on-an">
 <a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-security-requirements-on-an" class="section-name selfRef">Security Requirements on an AEAD</a>
         </h3>
-<p id="section-9.4-1">All AEADs MUST be IND-CCA2-secure, as is currently true for all AEADs
-listed in <a href="#aead-ids" class="auto internal xref">Section 7.3</a>.<a href="#section-9.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.4-1">All AEADs MUST provide confidentiality (IND-CPA) and ciphertext integrity
+(INT-CTXT).<a href="#section-9.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.4-2">In practice, all widely deployed IND-CCA2 symmetric authenticated encryption
+schemes meet these definitions.  As discussed in <span>[<a href="#BN00" class="cite xref">BN00</a>]</span>, IND-CPA and INT-CTXT
+together imply IND-CCA2.  We list them separately because they are the AEAD security
+properties relied upon by the analyses summarized in <a href="#sec-properties" class="auto internal xref">Section 9.1</a>.<a href="#section-9.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-psk">
@@ -3354,6 +3366,14 @@ The number of partitioning oracle queries remains unchanged.) As a result, the P
 must therefore be chosen with sufficient entropy so that m + log k is prohibitive for
 attackers (e.g., 2^128). Future specifications can define new AEAD algorithms that
 are key-committing.<a href="#section-9.5-3" class="pilcrow">¶</a></p>
+<p id="section-9.5-4">Pre-processing a low-entropy password with a memory-hard password-based key
+derivation function such as scrypt <span>[<a href="#RFC7914" class="cite xref">RFC7914</a>]</span> or Argon2 <span>[<a href="#RFC9106" class="cite xref">RFC9106</a>]</span> before
+using it as a PSK raises the per-guess cost of the attacks described above, but
+it does not add entropy and therefore does not by itself make a low-entropy
+password safe to use as a PSK.  Applications that need to derive keys from
+passwords, and that must tolerate low-entropy passwords, should use a mechanism
+designed for that purpose (for example, a password-authenticated key exchange)
+rather than relying on HPKE's PSK mode.<a href="#section-9.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="domain-separation">
@@ -3536,7 +3556,7 @@ generated securely, as described in <span>[<a href="#RFC8937" class="cite xref">
           </h4>
 <p id="section-9.7.6-1">AEAD ciphertexts produced by HPKE do not hide the plaintext length. Applications
 requiring this level of privacy should use a suitable padding mechanism. See
-<span>[<a href="#I-D.ietf-tls-esni" class="cite xref">I-D.ietf-tls-esni</a>]</span> and <span>[<a href="#RFC8467" class="cite xref">RFC8467</a>]</span> for examples of protocol-specific
+<span>[<a href="#RFC9849" class="cite xref">RFC9849</a>]</span> and <span>[<a href="#RFC8467" class="cite xref">RFC8467</a>]</span> for examples of protocol-specific
 padding policies.<a href="#section-9.7.6-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -3644,56 +3664,56 @@ the last Nt bytes of the ciphertext output.<a href="#section-10-2" class="pilcro
           <p id="section-11-2.3.1">HPKE AEAD Identifiers<a href="#section-11-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-11-3">All these registries are under "Hybrid Public Key
-Encryption", and administered under a Specification Required policy
-<span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-11-3" class="pilcrow">¶</a></p>
+<p id="section-11-3">All these registries are under "Hybrid Public Key Encryption", and administered
+under a Specification Required policy <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-11-3" class="pilcrow">¶</a></p>
 <p id="section-11-4">This document requests that entries in these registries referring to RFC 9180 be
-updated to refer to this document.<a href="#section-11-4" class="pilcrow">¶</a></p>
-<div id="kem-template">
+updated to refer to this document, and provides instructions to the designated
+experts for these registries.<a href="#section-11-4" class="pilcrow">¶</a></p>
+<div id="designated-expert-instructions">
 <section id="section-11.1">
-        <h3 id="name-kem-identifiers">
-<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-kem-identifiers" class="section-name selfRef">KEM Identifiers</a>
+        <h3 id="name-designated-expert-instructi">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-designated-expert-instructi" class="section-name selfRef">Designated Expert Instructions</a>
         </h3>
-<p id="section-11.1-1">The "HPKE KEM Identifiers" registry lists identifiers for key encapsulation
-algorithms defined for use with HPKE.  These identifiers are two-byte values,
-so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.1-1" class="pilcrow">¶</a></p>
-<p id="section-11.1-2">Template:<a href="#section-11.1-2" class="pilcrow">¶</a></p>
+<p id="section-11.1-1">The following instructions apply to all three HPKE registries.<a href="#section-11.1-1" class="pilcrow">¶</a></p>
+<p id="section-11.1-2">The DE should verify the following things with regard to a request for
+allocation:<a href="#section-11.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-11.1-3.1">
-            <p id="section-11.1-3.1.1">Value: The two-byte identifier for the algorithm<a href="#section-11.1-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-11.1-3.1.1">The requested entry is not duplicative with any existing registration.<a href="#section-11.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.1-3.2">
-            <p id="section-11.1-3.2.1">KEM: The name of the algorithm<a href="#section-11.1-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-11.1-3.2.1">The specification defines the algorithm with enough precision that two
+independent, interoperable implementations can be produced from it.<a href="#section-11.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.1-3.3">
-            <p id="section-11.1-3.3.1">Nsecret: The length in bytes of a KEM shared secret produced by the algorithm<a href="#section-11.1-3.3.1" class="pilcrow">¶</a></p>
+            <p id="section-11.1-3.3.1">For a KEM registration, the algorithm meets the security requirements in
+<a href="#kem-security" class="auto internal xref">Section 9.2</a>, including that the KEM shared secret is a uniformly random
+byte string of length <code>Nsecret</code> (<a href="#kem-security" class="auto internal xref">Section 9.2</a>) and that the algorithm
+provides appropriate domain separation (<a href="#domain-separation" class="auto internal xref">Section 9.6</a>).<a href="#section-11.1-3.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.1-3.4">
-            <p id="section-11.1-3.4.1">Nenc: The length in bytes of an encoded encapsulated secret produced by the algorithm<a href="#section-11.1-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-11.1-3.4.1">For a KDF registration, the specification meets the requirements in
+<a href="#kdf-choice" class="auto internal xref">Section 9.3</a> and specifies the input-length bounds required by
+<a href="#kdf-input-length" class="auto internal xref">Section 7.2.1</a>.<a href="#section-11.1-3.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.1-3.5">
-            <p id="section-11.1-3.5.1">Npk: The length in bytes of an encoded public key for the algorithm<a href="#section-11.1-3.5.1" class="pilcrow">¶</a></p>
+            <p id="section-11.1-3.5.1">For an AEAD registration, the algorithm meets the requirements in
+<a href="#aead-security" class="auto internal xref">Section 9.4</a>.<a href="#section-11.1-3.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.1-3.6">
-            <p id="section-11.1-3.6.1">Nsk: The length in bytes of an encoded private key for the algorithm<a href="#section-11.1-3.6.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-11.1-3.7">
-            <p id="section-11.1-3.7.1">Auth: A boolean indicating if this algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code> interface<a href="#section-11.1-3.7.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-11.1-3.8">
-            <p id="section-11.1-3.8.1">Reference: Where this algorithm is defined<a href="#section-11.1-3.8.1" class="pilcrow">¶</a></p>
+            <p id="section-11.1-3.6.1">The values in the registration (lengths, references, and so on) are internally
+consistent and match the cited specification.<a href="#section-11.1-3.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-11.1-4">Initial contents: Provided in <a href="#kemid-values" class="auto internal xref">Table 2</a><a href="#section-11.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="kdf-identifiers">
+<div id="kem-template">
 <section id="section-11.2">
-        <h3 id="name-kdf-identifiers">
-<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-kdf-identifiers" class="section-name selfRef">KDF Identifiers</a>
+        <h3 id="name-kem-identifiers">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-kem-identifiers" class="section-name selfRef">KEM Identifiers</a>
         </h3>
-<p id="section-11.2-1">The "HPKE KDF Identifiers" registry lists identifiers for key derivation
-functions defined for use with HPKE.  These identifiers are two-byte values,
+<p id="section-11.2-1">The "HPKE KEM Identifiers" registry lists identifiers for key encapsulation
+algorithms defined for use with HPKE.  These identifiers are two-byte values,
 so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.2-1" class="pilcrow">¶</a></p>
 <p id="section-11.2-2">Template:<a href="#section-11.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -3701,56 +3721,94 @@ so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.2-1" class=
             <p id="section-11.2-3.1.1">Value: The two-byte identifier for the algorithm<a href="#section-11.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.2">
-            <p id="section-11.2-3.2.1">KDF: The name of the algorithm<a href="#section-11.2-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-11.2-3.2.1">KEM: The name of the algorithm<a href="#section-11.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.3">
-            <p id="section-11.2-3.3.1">Nh: For two-stage KDFs, the output size of the Extract function in
-bytes.  For one-stage KDFs, the security strength in bytes, as
-defined for the KDF identifier.<a href="#section-11.2-3.3.1" class="pilcrow">¶</a></p>
+            <p id="section-11.2-3.3.1">Nsecret: The length in bytes of a KEM shared secret produced by the algorithm<a href="#section-11.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.4">
-            <p id="section-11.2-3.4.1">Two-Stage: Whether the KDF provides Extract and Expand functions (Y)
-or only a single-stage Derive function (N).  N/A for reserved
-entries.<a href="#section-11.2-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-11.2-3.4.1">Nenc: The length in bytes of an encoded encapsulated secret produced by the algorithm<a href="#section-11.2-3.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.5">
-            <p id="section-11.2-3.5.1">Reference: Where this algorithm is defined<a href="#section-11.2-3.5.1" class="pilcrow">¶</a></p>
+            <p id="section-11.2-3.5.1">Npk: The length in bytes of an encoded public key for the algorithm<a href="#section-11.2-3.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.2-3.6">
+            <p id="section-11.2-3.6.1">Nsk: The length in bytes of an encoded private key for the algorithm<a href="#section-11.2-3.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.2-3.7">
+            <p id="section-11.2-3.7.1">Auth: A boolean indicating if this algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code> interface<a href="#section-11.2-3.7.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.2-3.8">
+            <p id="section-11.2-3.8.1">Reference: Where this algorithm is defined<a href="#section-11.2-3.8.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-11.2-4">Initial contents: Provided in <a href="#kdfid-values" class="auto internal xref">Table 3</a><a href="#section-11.2-4" class="pilcrow">¶</a></p>
+<p id="section-11.2-4">Initial contents: Provided in <a href="#kemid-values" class="auto internal xref">Table 2</a><a href="#section-11.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="aead-identifiers">
+<div id="kdf-identifiers">
 <section id="section-11.3">
-        <h3 id="name-aead-identifiers">
-<a href="#section-11.3" class="section-number selfRef">11.3. </a><a href="#name-aead-identifiers" class="section-name selfRef">AEAD Identifiers</a>
+        <h3 id="name-kdf-identifiers">
+<a href="#section-11.3" class="section-number selfRef">11.3. </a><a href="#name-kdf-identifiers" class="section-name selfRef">KDF Identifiers</a>
         </h3>
-<p id="section-11.3-1">The "HPKE AEAD Identifiers" registry lists identifiers for authenticated
-encryption with associated data (AEAD) algorithms defined for use with HPKE.
-These identifiers are two-byte values, so the maximum possible value is
-0xFFFF = 65535.<a href="#section-11.3-1" class="pilcrow">¶</a></p>
+<p id="section-11.3-1">The "HPKE KDF Identifiers" registry lists identifiers for key derivation
+functions defined for use with HPKE.  These identifiers are two-byte values,
+so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.3-1" class="pilcrow">¶</a></p>
 <p id="section-11.3-2">Template:<a href="#section-11.3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-11.3-3.1">
             <p id="section-11.3-3.1.1">Value: The two-byte identifier for the algorithm<a href="#section-11.3-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.3-3.2">
-            <p id="section-11.3-3.2.1">AEAD: The name of the algorithm<a href="#section-11.3-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-11.3-3.2.1">KDF: The name of the algorithm<a href="#section-11.3-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.3-3.3">
-            <p id="section-11.3-3.3.1">Nk: The length in bytes of a key for this algorithm<a href="#section-11.3-3.3.1" class="pilcrow">¶</a></p>
+            <p id="section-11.3-3.3.1">Nh: For two-stage KDFs, the output size of the Extract function in
+bytes.  For one-stage KDFs, the security strength in bytes, as
+defined for the KDF identifier.<a href="#section-11.3-3.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.3-3.4">
-            <p id="section-11.3-3.4.1">Nn: The length in bytes of a nonce for this algorithm<a href="#section-11.3-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-11.3-3.4.1">Two-Stage: Whether the KDF provides Extract and Expand functions (Y)
+or only a single-stage Derive function (N).  N/A for reserved
+entries.<a href="#section-11.3-3.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.3-3.5">
-            <p id="section-11.3-3.5.1">Nt: The length in bytes of an authentication tag for this algorithm<a href="#section-11.3-3.5.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-11.3-3.6">
-            <p id="section-11.3-3.6.1">Reference: Where this algorithm is defined<a href="#section-11.3-3.6.1" class="pilcrow">¶</a></p>
+            <p id="section-11.3-3.5.1">Reference: Where this algorithm is defined<a href="#section-11.3-3.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-11.3-4">Initial contents: Provided in <a href="#aeadid-values" class="auto internal xref">Table 5</a><a href="#section-11.3-4" class="pilcrow">¶</a></p>
+<p id="section-11.3-4">Initial contents: Provided in <a href="#kdfid-values" class="auto internal xref">Table 3</a><a href="#section-11.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="aead-identifiers">
+<section id="section-11.4">
+        <h3 id="name-aead-identifiers">
+<a href="#section-11.4" class="section-number selfRef">11.4. </a><a href="#name-aead-identifiers" class="section-name selfRef">AEAD Identifiers</a>
+        </h3>
+<p id="section-11.4-1">The "HPKE AEAD Identifiers" registry lists identifiers for authenticated
+encryption with associated data (AEAD) algorithms defined for use with HPKE.
+These identifiers are two-byte values, so the maximum possible value is
+0xFFFF = 65535.<a href="#section-11.4-1" class="pilcrow">¶</a></p>
+<p id="section-11.4-2">Template:<a href="#section-11.4-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11.4-3.1">
+            <p id="section-11.4-3.1.1">Value: The two-byte identifier for the algorithm<a href="#section-11.4-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.4-3.2">
+            <p id="section-11.4-3.2.1">AEAD: The name of the algorithm<a href="#section-11.4-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.4-3.3">
+            <p id="section-11.4-3.3.1">Nk: The length in bytes of a key for this algorithm<a href="#section-11.4-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.4-3.4">
+            <p id="section-11.4-3.4.1">Nn: The length in bytes of a nonce for this algorithm<a href="#section-11.4-3.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.4-3.5">
+            <p id="section-11.4-3.5.1">Nt: The length in bytes of an authentication tag for this algorithm<a href="#section-11.4-3.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.4-3.6">
+            <p id="section-11.4-3.6.1">Reference: Where this algorithm is defined<a href="#section-11.4-3.6.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-11.4-4">Initial contents: Provided in <a href="#aeadid-values" class="auto internal xref">Table 5</a><a href="#section-11.4-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3811,6 +3869,10 @@ These identifiers are two-byte values, so the maximum possible value is
         <dd>
 <span class="refAuthor">Mihir Bellare</span>, <span class="refAuthor">Dennis Hofheinz</span>, and <span class="refAuthor">Eike Kiltz</span>, <span class="refTitle">"Subtleties in the Definition of IND-CCA: When and How Should Challenge-Decryption be Disallowed?"</span>, <time datetime="2009" class="refDate">2009</time>, <span>&lt;<a href="https://eprint.iacr.org/2009/418">https://eprint.iacr.org/2009/418</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="BN00">[BN00]</dt>
+        <dd>
+<span class="refAuthor">Bellare, M.</span> and <span class="refAuthor">C. Namprempre</span>, <span class="refTitle">"Authenticated Encryption: Relations among Notions and Analysis of the Generic Composition Paradigm"</span>, <time datetime="2000" class="refDate">2000</time>, <span>&lt;<a href="https://eprint.iacr.org/2000/025">https://eprint.iacr.org/2000/025</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="BNT19">[BNT19]</dt>
         <dd>
 <span class="refAuthor">Bellare, M.</span>, <span class="refAuthor">Ng, R.</span>, and <span class="refAuthor">B. Tackmann</span>, <span class="refTitle">"Nonces Are Noticed: AEAD Revisited"</span>, <time datetime="2019" class="refDate">2019</time>, <span>&lt;<a href="http://dx.doi.org/10.1007/978-3-030-26948-7_9">http://dx.doi.org/10.1007/978-3-030-26948-7_9</a>&gt;</span>. </dd>
@@ -3822,10 +3884,6 @@ These identifiers are two-byte values, so the maximum possible value is
 <dt id="ECH">[ECH]</dt>
         <dd>
 <span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Oku, K.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"TLS Encrypted Client Hello"</span>, <span class="seriesInfo">RFC 9849</span>, <span class="seriesInfo">DOI 10.17487/RFC9849</span>, <time datetime="2026-03" class="refDate">March 2026</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9849">https://www.rfc-editor.org/rfc/rfc9849</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="FIPS202">[FIPS202]</dt>
-        <dd>
-<span class="refTitle">"SHA-3 standard :: permutation-based hash and extendable-output functions"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.202</span>, <time datetime="2015" class="refDate">2015</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.202">https://doi.org/10.6028/nist.fips.202</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="GAP">[GAP]</dt>
         <dd>
@@ -3843,17 +3901,9 @@ These identifiers are two-byte values, so the maximum possible value is
         <dd>
 <span class="refAuthor">Lipp, B.</span>, <span class="refTitle">"An Analysis of Hybrid Public Key Encryption"</span>, <time datetime="2020" class="refDate">2020</time>, <span>&lt;<a href="https://eprint.iacr.org/2020/243">https://eprint.iacr.org/2020/243</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="I-D.ietf-tls-esni">[I-D.ietf-tls-esni]</dt>
-        <dd>
-<span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Oku, K.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"TLS Encrypted Client Hello"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-tls-esni-25</span>, <time datetime="2025-06-14" class="refDate">14 June 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-tls-esni-25">https://datatracker.ietf.org/doc/html/draft-ietf-tls-esni-25</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="IEEE1363">[IEEE1363]</dt>
         <dd>
 <span class="refAuthor">Institute of Electrical and Electronics Engineers</span>, <span class="refTitle">"IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques""</span>, <time datetime="2004" class="refDate">2004</time>. </dd>
-<dd class="break"></dd>
-<dt id="IMB">[IMB]</dt>
-        <dd>
-<span class="refAuthor">Diffie, W.</span>, <span class="refAuthor">Van Oorschot, P.</span>, and <span class="refAuthor">M. Wiener</span>, <span class="refTitle">"Authentication and authenticated key exchanges"</span>, <span class="refContent">Springer Science and Business Media LLC</span>, <span class="seriesInfo">Designs, Codes and Cryptography vol. 2, no. 2, pp. 107-125</span>, <span class="seriesInfo">DOI 10.1007/bf00124891</span>, <time datetime="1992-06" class="refDate">June 1992</time>, <span>&lt;<a href="https://doi.org/10.1007/bf00124891">https://doi.org/10.1007/bf00124891</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ISO">[ISO]</dt>
         <dd>
@@ -3891,6 +3941,10 @@ These identifiers are two-byte values, so the maximum possible value is
         <dd>
 <span class="refAuthor">Langley, A.</span>, <span class="refAuthor">Hamburg, M.</span>, and <span class="refAuthor">S. Turner</span>, <span class="refTitle">"Elliptic Curves for Security"</span>, <span class="seriesInfo">RFC 7748</span>, <span class="seriesInfo">DOI 10.17487/RFC7748</span>, <time datetime="2016-01" class="refDate">January 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7748">https://www.rfc-editor.org/rfc/rfc7748</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC7914">[RFC7914]</dt>
+        <dd>
+<span class="refAuthor">Percival, C.</span> and <span class="refAuthor">S. Josefsson</span>, <span class="refTitle">"The scrypt Password-Based Key Derivation Function"</span>, <span class="seriesInfo">RFC 7914</span>, <span class="seriesInfo">DOI 10.17487/RFC7914</span>, <time datetime="2016-08" class="refDate">August 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7914">https://www.rfc-editor.org/rfc/rfc7914</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC8439">[RFC8439]</dt>
         <dd>
 <span class="refAuthor">Nir, Y.</span> and <span class="refAuthor">A. Langley</span>, <span class="refTitle">"ChaCha20 and Poly1305 for IETF Protocols"</span>, <span class="seriesInfo">RFC 8439</span>, <span class="seriesInfo">DOI 10.17487/RFC8439</span>, <time datetime="2018-06" class="refDate">June 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8439">https://www.rfc-editor.org/rfc/rfc8439</a>&gt;</span>. </dd>
@@ -3907,6 +3961,10 @@ These identifiers are two-byte values, so the maximum possible value is
         <dd>
 <span class="refAuthor">Cremers, C.</span>, <span class="refAuthor">Garratt, L.</span>, <span class="refAuthor">Smyshlyaev, S.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. Wood</span>, <span class="refTitle">"Randomness Improvements for Security Protocols"</span>, <span class="seriesInfo">RFC 8937</span>, <span class="seriesInfo">DOI 10.17487/RFC8937</span>, <time datetime="2020-10" class="refDate">October 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8937">https://www.rfc-editor.org/rfc/rfc8937</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC9106">[RFC9106]</dt>
+        <dd>
+<span class="refAuthor">Biryukov, A.</span>, <span class="refAuthor">Dinu, D.</span>, <span class="refAuthor">Khovratovich, D.</span>, and <span class="refAuthor">S. Josefsson</span>, <span class="refTitle">"Argon2 Memory-Hard Function for Password Hashing and Proof-of-Work Applications"</span>, <span class="seriesInfo">RFC 9106</span>, <span class="seriesInfo">DOI 10.17487/RFC9106</span>, <time datetime="2021-09" class="refDate">September 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9106">https://www.rfc-editor.org/rfc/rfc9106</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC9180">[RFC9180]</dt>
         <dd>
 <span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Bhargavan, K.</span>, <span class="refAuthor">Lipp, B.</span>, and <span class="refAuthor">C. Wood</span>, <span class="refTitle">"Hybrid Public Key Encryption"</span>, <span class="seriesInfo">RFC 9180</span>, <span class="seriesInfo">DOI 10.17487/RFC9180</span>, <time datetime="2022-02" class="refDate">February 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9180">https://www.rfc-editor.org/rfc/rfc9180</a>&gt;</span>. </dd>
@@ -3915,13 +3973,13 @@ These identifiers are two-byte values, so the maximum possible value is
         <dd>
 <span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Robert, R.</span>, <span class="refAuthor">Millican, J.</span>, <span class="refAuthor">Omara, E.</span>, and <span class="refAuthor">K. Cohn-Gordon</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Protocol"</span>, <span class="seriesInfo">RFC 9420</span>, <span class="seriesInfo">DOI 10.17487/RFC9420</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9420">https://www.rfc-editor.org/rfc/rfc9420</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC9849">[RFC9849]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Oku, K.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"TLS Encrypted Client Hello"</span>, <span class="seriesInfo">RFC 9849</span>, <span class="seriesInfo">DOI 10.17487/RFC9849</span>, <time datetime="2026-03" class="refDate">March 2026</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9849">https://www.rfc-editor.org/rfc/rfc9849</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="SECG">[SECG]</dt>
         <dd>
 <span class="refTitle">"Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"</span>, <time datetime="2009" class="refDate">2009</time>, <span>&lt;<a href="https://secg.org/sec1-v2.pdf">https://secg.org/sec1-v2.pdf</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="SigncryptionDZ10">[SigncryptionDZ10]</dt>
-        <dd>
-<span class="refTitle">"Practical Signcryption"</span>, <span class="refContent">Springer Berlin Heidelberg</span>, <span class="seriesInfo">Information Security and Cryptography</span>, <span class="seriesInfo">DOI 10.1007/978-3-540-89411-7</span>, <span class="seriesInfo">ISBN ["9783540894094", "9783540894117"]</span>, <time datetime="2010" class="refDate">2010</time>, <span>&lt;<a href="https://doi.org/10.1007/978-3-540-89411-7">https://doi.org/10.1007/978-3-540-89411-7</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="TestVectors">[TestVectors]</dt>
       <dd>
@@ -6073,7 +6131,6 @@ exported_value:
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Richard L. Barnes</span></div>
-<div dir="auto" class="left"><span class="org">Cisco</span></div>
 <div class="email">
 <span>Email:</span>
 <a href="mailto:rlb@ipv.sx" class="email">rlb@ipv.sx</a>

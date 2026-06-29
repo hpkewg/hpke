@@ -3,7 +3,7 @@
 
 
 HPKE                                                           R. Barnes
-Internet-Draft                                                     Cisco
+Internet-Draft                                                          
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
 Expires: 31 December 2026                                          Inria
@@ -26,6 +26,8 @@ Abstract
    document provides instantiations of the scheme using widely used and
    efficient primitives, such as Elliptic Curve Diffie-Hellman (ECDH)
    key agreement, HMAC-based key derivation function (HKDF), and SHA-2.
+
+   This document obsoletes RFC 9180.
 
 Discussion Venues
 
@@ -121,9 +123,10 @@ Table of Contents
      9.9.  Metadata Protection
    10. Message Encoding
    11. IANA Considerations
-     11.1.  KEM Identifiers
-     11.2.  KDF Identifiers
-     11.3.  AEAD Identifiers
+     11.1.  Designated Expert Instructions
+     11.2.  KEM Identifiers
+     11.3.  KDF Identifiers
+     11.4.  AEAD Identifiers
    12. References
      12.1.  Normative References
      12.2.  Informative References
@@ -179,7 +182,7 @@ Table of Contents
    or more arbitrary-sized ciphertexts encrypted using that key.  This
    type of public key encryption has many applications in practice,
    including Messaging Layer Security [RFC9420], TLS Encrypted
-   ClientHello [I-D.ietf-tls-esni], and Oblivious HTTP [RFC9458].
+   ClientHello [RFC9849], and Oblivious HTTP [RFC9458].
 
    Currently, there are numerous competing and non-interoperable
    standards and variants for hybrid encryption, mostly variants on the
@@ -274,6 +277,14 @@ Table of Contents
 
 4.1.  Key Encapsulation Mechanisms
 
+   Each KEM is parameterized by the following constants (all measured in
+   bytes):
+
+   Nsecret:  The length of a KEM shared secret produced by this KEM.
+   Nenc:  The length of an encapsulated secret produced by this KEM.
+   Npk:  The length of an encoded public key for this KEM.
+   Nsk:  The length of an encoded private key for this KEM.
+
    A key encapsulation mechanism (KEM) provides the following functions:
 
    GenerateKeyPair():  Randomized algorithm to generate a key pair (skX,
@@ -305,14 +316,6 @@ Table of Contents
    implementation, is either the computation of the public key using the
    private key, or just syntax expressing the retrieval of the public
    key, assuming it is stored along with the private key object.
-
-   Each KEM is parameterized by the following constants (all measured in
-   bytes):
-
-   Nsecret:  The length of a KEM shared secret produced by this KEM.
-   Nenc:  The length of an encapsulated secret produced by this KEM.
-   Npk:  The length of an encoded public key for this KEM.
-   Nsk:  The length of an encoded private key for this KEM.
 
    Beyond the above, a KEM MAY also expose the following functions,
    whose behavior is detailed in Section 7.1.2:
@@ -500,8 +503,8 @@ Table of Contents
 5.  Hybrid Public Key Encryption
 
    In this section, we define a few HPKE variants.  All variants take a
-   recipient public key and a sequence of plaintexts pt and produce an
-   encapsulated secret enc and a sequence of ciphertexts ct.  These
+   recipient public key pkR and a sequence of plaintexts pt and produce
+   an encapsulated secret enc and a sequence of ciphertexts ct.  These
    outputs are constructed so that only the holder of skR can
    decapsulate the key from enc and decrypt the ciphertexts.  All the
    algorithms also take an info parameter that can be used to influence
@@ -555,7 +558,7 @@ Table of Contents
    operation.  As an example, applications may send this information
    alongside a ciphertext from the sender to the recipient.
    Specification of such a mechanism is left to the application.  See
-   Section 10 for more details.
+   Section 9.9 for more details.
 
    The procedures described in this section are laid out in a Python-
    like pseudocode.  The algorithms in use are left implicit.
@@ -1194,11 +1197,12 @@ Table of Contents
    the values they will accept (for example, to avoid dynamic
    allocations).  Implementations MUST support info values of at least
    64 bytes.  Implementations SHOULD support info values of at least
-   16384 bytes to accommodate protocols such as Encrypted Client Hello
-   [ECH].  Applications seeking maximum interoperability with resource-
-   constrained HPKE implementations SHOULD NOT provide info values
-   exceeding 64 bytes without confirmation that an implementation
-   supports larger info values.
+   16384 bytes to accommodate protocols such as
+
+   Encrypted Client Hello [ECH].  Applications seeking maximum
+   interoperability with resource-constrained HPKE implementations
+   SHOULD NOT provide info values exceeding 64 bytes without
+   confirmation that an implementation supports larger info values.
 
    The values for psk, psk_id, info, and ikm, which are inputs to
    LabeledExtract(), were computed with the following expression:
@@ -1391,8 +1395,10 @@ Table of Contents
 
    A preliminary computational analysis of all HPKE modes has been done
    in [HPKEAnalysis], indicating asymptotic security for the case where
-   the KEM is DHKEM, the AEAD is any IND-CPA-secure and INT-CTXT-secure
-   scheme, and the DH group and KDF satisfy the following conditions:
+   the KEM is DHKEM, the AEAD is any scheme that provides both
+   indistinguishability under chosen-plaintext attack (IND-CPA) and
+   integrity of ciphertexts (INT-CTXT) [BN00], and the DH group and KDF
+   satisfy the following conditions:
 
    *  DH group: The gap Diffie-Hellman (GDH) problem is hard in the
       appropriate subgroup [GAP].
@@ -1440,12 +1446,13 @@ Table of Contents
    KEM.
 
    In future work, the analysis from [ABHKLR20] can be extended to cover
-   HPKE's other modes and desired security properties.  The hybrid
-   quantum-resistance property described above, which is achieved by
-   using the PSK mode, is not proven in [HPKEAnalysis] because this
-   analysis requires the random oracle model; in a quantum setting, this
-   model needs adaption to, for example, the quantum random oracle
-   model.
+   HPKE's other modes and desired security properties.  The PSK mode can
+   provide a hybrid quantum-resistance property: if the PSK is not known
+   to a quantum-capable adversary, then that adversary cannot recover
+   the plaintext even if it can break the (classical) KEM.  This
+   property is not proven in [HPKEAnalysis], because that analysis
+   requires the random oracle model; in a quantum setting, this model
+   needs adaptation to, for example, the quantum random oracle model.
 
 9.2.  Security Requirements on a KEM Used within HPKE
 
@@ -1456,7 +1463,10 @@ Table of Contents
    In particular, the KEM shared secret MUST be a uniformly random byte
    string of length Nsecret.  This means, for instance, that it would
    not be sufficient if the KEM shared secret is only uniformly random
-   as an element of some set prior to its encoding as a byte string.
+   as an element of some structured set (such as an elliptic curve group
+   or a finite field) prior to its encoding as a byte string, because
+   such an encoding is generally not uniformly distributed over byte
+   strings of length Nsecret.
 
 9.2.1.  Encap/Decap Interface
 
@@ -1487,8 +1497,14 @@ Table of Contents
 
 9.4.  Security Requirements on an AEAD
 
-   All AEADs MUST be IND-CCA2-secure, as is currently true for all AEADs
-   listed in Section 7.3.
+   All AEADs MUST provide confidentiality (IND-CPA) and ciphertext
+   integrity (INT-CTXT).
+
+   In practice, all widely deployed IND-CCA2 symmetric authenticated
+   encryption schemes meet these definitions.  As discussed in [BN00],
+   IND-CPA and INT-CTXT together imply IND-CCA2.  We list them
+   separately because they are the AEAD security properties relied upon
+   by the analyses summarized in Section 9.1.
 
 9.5.  Pre-Shared Key Recommendations
 
@@ -1526,6 +1542,16 @@ Table of Contents
    must therefore be chosen with sufficient entropy so that m + log k is
    prohibitive for attackers (e.g., 2^128).  Future specifications can
    define new AEAD algorithms that are key-committing.
+
+   Pre-processing a low-entropy password with a memory-hard password-
+   based key derivation function such as scrypt [RFC7914] or Argon2
+   [RFC9106] before using it as a PSK raises the per-guess cost of the
+   attacks described above, but it does not add entropy and therefore
+   does not by itself make a low-entropy password safe to use as a PSK.
+   Applications that need to derive keys from passwords, and that must
+   tolerate low-entropy passwords, should use a mechanism designed for
+   that purpose (for example, a password-authenticated key exchange)
+   rather than relying on HPKE's PSK mode.
 
 9.6.  Domain Separation
 
@@ -1695,8 +1721,8 @@ Table of Contents
 
    AEAD ciphertexts produced by HPKE do not hide the plaintext length.
    Applications requiring this level of privacy should use a suitable
-   padding mechanism.  See [I-D.ietf-tls-esni] and [RFC8467] for
-   examples of protocol-specific padding policies.
+   padding mechanism.  See [RFC9849] and [RFC8467] for examples of
+   protocol-specific padding policies.
 
 9.8.  Bidirectional Encryption
 
@@ -1796,9 +1822,40 @@ Table of Contents
    administered under a Specification Required policy [RFC8126].
 
    This document requests that entries in these registries referring to
-   RFC 9180 be updated to refer to this document.
+   RFC 9180 be updated to refer to this document, and provides
+   instructions to the designated experts for these registries.
 
-11.1.  KEM Identifiers
+11.1.  Designated Expert Instructions
+
+   The following instructions apply to all three HPKE registries.
+
+   The DE should verify the following things with regard to a request
+   for allocation:
+
+   *  The requested entry is not duplicative with any existing
+      registration.
+
+   *  The specification defines the algorithm with enough precision that
+      two independent, interoperable implementations can be produced
+      from it.
+
+   *  For a KEM registration, the algorithm meets the security
+      requirements in Section 9.2, including that the KEM shared secret
+      is a uniformly random byte string of length Nsecret (Section 9.2)
+      and that the algorithm provides appropriate domain separation
+      (Section 9.6).
+
+   *  For a KDF registration, the specification meets the requirements
+      in Section 9.3 and specifies the input-length bounds required by
+      Section 7.2.1.
+
+   *  For an AEAD registration, the algorithm meets the requirements in
+      Section 9.4.
+
+   *  The values in the registration (lengths, references, and so on)
+      are internally consistent and match the cited specification.
+
+11.2.  KEM Identifiers
 
    The "HPKE KEM Identifiers" registry lists identifiers for key
    encapsulation algorithms defined for use with HPKE.  These
@@ -1830,7 +1887,7 @@ Table of Contents
 
    Initial contents: Provided in Table 2
 
-11.2.  KDF Identifiers
+11.3.  KDF Identifiers
 
    The "HPKE KDF Identifiers" registry lists identifiers for key
    derivation functions defined for use with HPKE.  These identifiers
@@ -1854,7 +1911,7 @@ Table of Contents
 
    Initial contents: Provided in Table 3
 
-11.3.  AEAD Identifiers
+11.4.  AEAD Identifiers
 
    The "HPKE AEAD Identifiers" registry lists identifiers for
    authenticated encryption with associated data (AEAD) algorithms
@@ -1925,6 +1982,11 @@ Table of Contents
               Should Challenge-Decryption be Disallowed?", 2009,
               <https://eprint.iacr.org/2009/418>.
 
+   [BN00]     Bellare, M. and C. Namprempre, "Authenticated Encryption:
+              Relations among Notions and Analysis of the Generic
+              Composition Paradigm", 2000,
+              <https://eprint.iacr.org/2000/025>.
+
    [BNT19]    Bellare, M., Ng, R., and B. Tackmann, "Nonces Are Noticed:
               AEAD Revisited", 2019,
               <http://dx.doi.org/10.1007/978-3-030-26948-7_9>.
@@ -1937,11 +1999,6 @@ Table of Contents
    [ECH]      Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
               Encrypted Client Hello", RFC 9849, DOI 10.17487/RFC9849,
               March 2026, <https://www.rfc-editor.org/rfc/rfc9849>.
-
-   [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
-              output functions", National Institute of Standards and
-              Technology (U.S.), DOI 10.6028/nist.fips.202, 2015,
-              <https://doi.org/10.6028/nist.fips.202>.
 
    [GAP]      Okamoto, T. and D. Pointcheval, "The Gap-Problems - a New
               Class of Problems for the Security of Cryptographic
@@ -1963,23 +2020,9 @@ Table of Contents
               Lipp, B., "An Analysis of Hybrid Public Key Encryption",
               2020, <https://eprint.iacr.org/2020/243>.
 
-   [I-D.ietf-tls-esni]
-              Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
-              Encrypted Client Hello", Work in Progress, Internet-Draft,
-              draft-ietf-tls-esni-25, 14 June 2025,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
-              esni-25>.
-
    [IEEE1363] Institute of Electrical and Electronics Engineers, "IEEE
               1363a, Standard Specifications for Public Key Cryptography
               - Amendment 1 -- Additional Techniques"", 2004.
-
-   [IMB]      Diffie, W., Van Oorschot, P., and M. Wiener,
-              "Authentication and authenticated key exchanges", Springer
-              Science and Business Media LLC, Designs, Codes and
-              Cryptography vol. 2, no. 2, pp. 107-125,
-              DOI 10.1007/bf00124891, June 1992,
-              <https://doi.org/10.1007/bf00124891>.
 
    [ISO]      International Organization for Standardization /
               International Electrotechnical Commission, "ISO/IEC
@@ -2028,6 +2071,10 @@ Table of Contents
               for Security", RFC 7748, DOI 10.17487/RFC7748, January
               2016, <https://www.rfc-editor.org/rfc/rfc7748>.
 
+   [RFC7914]  Percival, C. and S. Josefsson, "The scrypt Password-Based
+              Key Derivation Function", RFC 7914, DOI 10.17487/RFC7914,
+              August 2016, <https://www.rfc-editor.org/rfc/rfc7914>.
+
    [RFC8439]  Nir, Y. and A. Langley, "ChaCha20 and Poly1305 for IETF
               Protocols", RFC 8439, DOI 10.17487/RFC8439, June 2018,
               <https://www.rfc-editor.org/rfc/rfc8439>.
@@ -2045,6 +2092,12 @@ Table of Contents
               Protocols", RFC 8937, DOI 10.17487/RFC8937, October 2020,
               <https://www.rfc-editor.org/rfc/rfc8937>.
 
+   [RFC9106]  Biryukov, A., Dinu, D., Khovratovich, D., and S.
+              Josefsson, "Argon2 Memory-Hard Function for Password
+              Hashing and Proof-of-Work Applications", RFC 9106,
+              DOI 10.17487/RFC9106, September 2021,
+              <https://www.rfc-editor.org/rfc/rfc9106>.
+
    [RFC9180]  Barnes, R., Bhargavan, K., Lipp, B., and C. Wood, "Hybrid
               Public Key Encryption", RFC 9180, DOI 10.17487/RFC9180,
               February 2022, <https://www.rfc-editor.org/rfc/rfc9180>.
@@ -2054,16 +2107,13 @@ Table of Contents
               Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
               July 2023, <https://www.rfc-editor.org/rfc/rfc9420>.
 
+   [RFC9849]  Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
+              Encrypted Client Hello", RFC 9849, DOI 10.17487/RFC9849,
+              March 2026, <https://www.rfc-editor.org/rfc/rfc9849>.
+
    [SECG]     "Elliptic Curve Cryptography, Standards for Efficient
               Cryptography Group, ver. 2", 2009,
               <https://secg.org/sec1-v2.pdf>.
-
-   [SigncryptionDZ10]
-              "Practical Signcryption", Springer Berlin Heidelberg,
-              Information Security and Cryptography,
-              DOI 10.1007/978-3-540-89411-7, ISBN ["9783540894094",
-              "9783540894117"], 2010,
-              <https://doi.org/10.1007/978-3-540-89411-7>.
 
    [TestVectors]
               "HPKE Test Vectors", 2021, <https://github.com/cfrg/draft-
@@ -3709,7 +3759,6 @@ D.5.1.2.  Exported Values
 Authors' Addresses
 
    Richard L. Barnes
-   Cisco
    Email: rlb@ipv.sx
 
 
