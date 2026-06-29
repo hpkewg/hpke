@@ -6,9 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                          
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 26 December 2026                                          Inria
+Expires: 31 December 2026                                          Inria
                                                                  C. Wood
-                                                            24 June 2026
+                                                            29 June 2026
 
 
                       Hybrid Public Key Encryption
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 December 2026.
+   This Internet-Draft will expire on 31 December 2026.
 
 Copyright Notice
 
@@ -259,6 +259,14 @@ Table of Contents
 
 4.1.  Key Encapsulation Mechanisms
 
+   Each KEM is parameterized by the following constants (all measured in
+   bytes):
+
+   Nsecret:  The length of a KEM shared secret produced by this KEM.
+   Nenc:  The length of an encapsulated secret produced by this KEM.
+   Npk:  The length of an encoded public key for this KEM.
+   Nsk:  The length of an encoded private key for this KEM.
+
    A key encapsulation mechanism (KEM) provides the following functions:
 
    GenerateKeyPair():  Randomized algorithm to generate a key pair (skX,
@@ -290,14 +298,6 @@ Table of Contents
    implementation, is either the computation of the public key using the
    private key, or just syntax expressing the retrieval of the public
    key, assuming it is stored along with the private key object.
-
-   Each KEM is parameterized by the following constants (all measured in
-   bytes):
-
-   Nsecret:  The length of a KEM shared secret produced by this KEM.
-   Nenc:  The length of an encapsulated secret produced by this KEM.
-   Npk:  The length of an encoded public key for this KEM.
-   Nsk:  The length of an encoded private key for this KEM.
 
    Beyond the above, a KEM MAY also expose the following functions,
    whose behavior is detailed in Section 7.1.2:
