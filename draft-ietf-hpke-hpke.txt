@@ -6,9 +6,9 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                     Cisco
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                 B. Lipp
-Expires: 26 December 2026                                          Inria
+Expires: 31 December 2026                                          Inria
                                                                  C. Wood
-                                                            24 June 2026
+                                                            29 June 2026
 
 
                       Hybrid Public Key Encryption
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 December 2026.
+   This Internet-Draft will expire on 31 December 2026.
 
 Copyright Notice
 
@@ -1179,15 +1179,15 @@ Table of Contents
    these variable-length parameters.
 
    Since the above bounds are larger than any values used in practice,
-   it may be useful for implementations to impose a lower limit on the
-   values they will accept (for example, to avoid dynamic allocations).
-   Implementations MUST support info values of at least 64 bytes.
-   Implementations SHOULD support info values of at least 16384 bytes to
-   accommodate protocols such as Encrypted Client Hello
-   [I-D.ietf-tls-esni].  Applications seeking maximum interoperability
-   with resource-constrained HPKE implementations SHOULD NOT provide
-   info values exceeding 64 bytes without confirmation that an
-   implementation supports larger info values.
+   it may be useful for implementations to impose a smaller maximum on
+   the values they will accept (for example, to avoid dynamic
+   allocations).  Implementations MUST support info values of at least
+   64 bytes.  Implementations SHOULD support info values of at least
+   16384 bytes to accommodate protocols such as Encrypted Client Hello
+   [ECH].  Applications seeking maximum interoperability with resource-
+   constrained HPKE implementations SHOULD NOT provide info values
+   exceeding 64 bytes without confirmation that an implementation
+   supports larger info values.
 
    The values for psk, psk_id, info, and ikm, which are inputs to
    LabeledExtract(), were computed with the following expression:
@@ -1921,6 +1921,10 @@ Table of Contents
               Public-Key Encryption Schemes Secure against Adaptive
               Chosen Ciphertext Attack", 2001,
               <https://eprint.iacr.org/2001/108>.
+
+   [ECH]      Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
+              Encrypted Client Hello", RFC 9849, DOI 10.17487/RFC9849,
+              March 2026, <https://www.rfc-editor.org/rfc/rfc9849>.
 
    [FIPS202]  "SHA-3 standard :: permutation-based hash and extendable-
               output functions", National Institute of Standards and
