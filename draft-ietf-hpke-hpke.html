@@ -2997,10 +2997,11 @@ for <code>Export()</code>. Application information applicable to multiple operat
 should use the Setup <code>info</code> parameter. This avoids redundantly processing this information for
 each Context operation. In contrast, application information that varies on a per-message basis
 should be specified via the Context APIs (<code>Seal()</code>, <code>Open()</code>, or <code>Export()</code>).<a href="#section-8.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.1-2">Applications that only use the single-shot APIs described in <a href="#single-shot-apis" class="auto internal xref">Section 6</a> should use the
-Setup <code>info</code> parameter for specifying auxiliary authenticated information. Implementations which
-only expose single-shot APIs should not allow applications to use both Setup <code>info</code> and Context
-<code>aad</code> or <code>exporter_context</code> auxiliary information parameters.<a href="#section-8.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.1-2">Applications that only use the single-shot APIs described in <a href="#single-shot-apis" class="auto internal xref">Section 6</a> can specify
+auxiliary authenticated information using both the Setup <code>info</code> parameter and the Context <code>aad</code>
+and <code>exporter_context</code> parameters. Such applications should prefer the <code>info</code> parameter, because
+<code>info</code> is the parameter intended for information that applies to the whole context, and using it
+keeps their behavior consistent with applications that also use the underlying multi-shot APIs.<a href="#section-8.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="api-errors">

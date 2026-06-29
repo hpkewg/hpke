@@ -1253,11 +1253,12 @@ Table of Contents
    APIs (Seal(), Open(), or Export()).
 
    Applications that only use the single-shot APIs described in
-   Section 6 should use the Setup info parameter for specifying
-   auxiliary authenticated information.  Implementations which only
-   expose single-shot APIs should not allow applications to use both
-   Setup info and Context aad or exporter_context auxiliary information
-   parameters.
+   Section 6 can specify auxiliary authenticated information using both
+   the Setup info parameter and the Context aad and exporter_context
+   parameters.  Such applications should prefer the info parameter,
+   because info is the parameter intended for information that applies
+   to the whole context, and using it keeps their behavior consistent
+   with applications that also use the underlying multi-shot APIs.
 
 8.2.  Errors
 
