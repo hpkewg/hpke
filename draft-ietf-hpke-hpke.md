@@ -1521,7 +1521,7 @@ All AEADs MUST provide confidentiality (IND-CPA) and ciphertext integrity
 
 In practice, all widely deployed IND-CCA2 symmetric authenticated encryption
 schemes meet these definitions.  As discussed in {{BN00}}, IND-CPA and INT-CTXT
-together imply IND-CCA2.  We list them separately because are the AEAD security
+together imply IND-CCA2.  We list them separately because they are the AEAD security
 properties relied upon by the analyses summarized in {{sec-properties}}.
 
 ## Pre-Shared Key Recommendations {#security-psk}
