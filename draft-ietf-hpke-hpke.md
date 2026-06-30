@@ -23,7 +23,7 @@ author:
     email: karthikeyan.bhargavan@inria.fr
  -  ins: B. Lipp
     name: Benjamin Lipp
-    org: Inria
+    org: Rosenpass
     email: ietf@benjaminlipp.de
  -  ins: C. Wood
     name: Christopher A. Wood
@@ -238,6 +238,28 @@ informative:
 
   GCM: DOI.10.6028/NIST.SP.800-38D
 
+  AJKL23:
+    title: "The Pre-Shared Key Modes of HPKE"
+    target: https://eprint.iacr.org/2023/1480
+    date: 2023
+    author:
+      -
+        ins: J. Alwen
+        name: Joël Alwen
+        org: AWS-Wickr
+      -
+        ins: J. Janneck
+        name: Jonas Janneck
+        org: Ruhr-Universität Bochum
+      -
+        ins: E. Kiltz
+        name: Eike Kiltz
+        org: Ruhr-Universität Bochum
+      -
+        ins: B. Lipp
+        name: Benjamin Lipp
+        org: Max Planck Institute for Security and Privacy
+
 --- abstract
 
 This document describes a scheme for hybrid public key encryption (HPKE).  This
@@ -281,7 +303,8 @@ of the functions provided by the collection of schemes above but
 specified with sufficient clarity that they can be interoperably
 implemented. The HPKE construction defined herein is secure against (adaptive)
 chosen ciphertext attacks (IND-CCA2-secure) under classical assumptions about
-the underlying primitives {{HPKEAnalysis}} {{ABHKLR20}}. A summary of
+the underlying primitives {{HPKEAnalysis}} {{AJKL23}} {{ABHKLR20}}, and post-quantum
+secure when used with a post-quantum secure KEM {{AJKL23}} {{ABHKLR20}}. A summary of
 these analyses is in {{sec-properties}}.
 
 # Requirements Notation
@@ -650,7 +673,7 @@ recipient by some application making use of HPKE. Moreover, a recipient with mor
 than one public key needs some way of determining which of its public keys was
 used for the encapsulation operation. As an example, applications may send this
 information alongside a ciphertext from the sender to the recipient. Specification of
-such a mechanism is left to the application. See {{metadata-protection}} for more
+such a mechanism is left to the application. See {{metadata}} for more
 details.
 
 The procedures described in this section are laid out in a
@@ -1393,6 +1416,10 @@ These security goals are expected to hold for any honest sender and
 honest recipient keys, as well as if the honest sender and honest
 recipient keys are the same.
 
+A pre-shared key provides authentication; additionally, it strengthens the
+secrecy properties in certain adversary models, including against a
+quantum-capable adversary, see {{post-quantum-security}}.
+
 HPKE mitigates malleability problems (called benign malleability {{SECG}}) in prior
 public key encryption standards based on ECIES by including all public keys in the
 context of the key schedule.
@@ -1405,12 +1432,11 @@ expected to hold if the recipient private key `skR` and the pre-shared key
 are not both compromised at any point in time. See {{non-goals}} for more
 details.
 
-Besides forward secrecy and key-compromise impersonation, which are highlighted
-in this section because of their particular cryptographic importance, HPKE
-has other non-goals that are described in {{non-goals}}: no tolerance of
-message reordering or loss, no downgrade or replay prevention, no hiding of the
-plaintext length, and no protection against bad ephemeral randomness. {{non-goals}}
-suggests application-level mitigations for some of them.
+Besides forward secrecy, HPKE has other non-goals that are described in
+{{non-goals}}: no tolerance of message reordering or loss, no downgrade or replay
+prevention, no hiding of the plaintext length, and no protection against bad
+ephemeral randomness. {{non-goals}} suggests application-level mitigations for some
+of them.
 
 ### Computational Analysis
 
@@ -1463,28 +1489,35 @@ necessary to prove their security. The results from {{CS01}} provide
 some indication that any IND-CCA2-secure KEM will suffice here, but are
 not conclusive given the differences in the schemes.
 
-### Post-Quantum Security
+A detailed computational analysis of the PSK mode has been done in
+{{AJKL23}}. In future work, the analyses from {{ABHKLR20}} and {{AJKL23}}
+can be extended to cover a detailed computational analysis of HPKE's
+base mode, the usage of a one-stage KDF, the multi-shot and secret export
+interfaces, as well as the examples for bidirectional encryption
+{{bidirectional}} and metadata protection {{metadata}}.
 
-All of {{CS01}}, {{HPKEAnalysis}}, and {{ABHKLR20}} are premised on
+### Post-Quantum Security {#post-quantum-security}
+
+The computational analyses in {{ABHKLR20}} and {{AJKL23}} provide
+composition theorems based on PRF assumptions, proving post-quantum
+security for HPKE when used with a post-quantum secure KEM.
+The analyses in {{CS01}} and {{HPKEAnalysis}} are premised on
 classical security models and assumptions, and do not consider
-adversaries capable of quantum computation. A full proof of post-quantum
-security would need to take appropriate security models and assumptions
-into account, in addition to simply using a post-quantum KEM.
+adversaries capable of quantum computation.
 
-In future work, the analysis from {{ABHKLR20}} can be extended to cover
-HPKE's other modes and desired security properties.
 The PSK mode can provide a hybrid quantum-resistance property: if the PSK is
 not known to a quantum-capable adversary, then that adversary cannot recover
-the plaintext even if it can break the (classical) KEM.  This property is not
-proven in {{HPKEAnalysis}}, because that analysis requires the random oracle
-model; in a quantum setting, this model needs adaptation to, for example, the
-quantum random oracle model.
+the plaintext even if it can break the (classical) KEM.  This property is
+proven in {{AJKL23}}. The analysis in {{HPKEAnalysis}} is not sufficient,
+because it requires the random oracle model and would need adaption to, for
+example, the quantum random oracle model.
 
 ## Security Requirements on a KEM Used within HPKE {#kem-security}
 
 A KEM used within HPKE MUST allow HPKE to satisfy its desired security
-properties described in {{sec-properties}}. {{domain-separation}} lists
-requirements concerning domain separation.
+properties described in {{sec-properties}}. For the security proofs from
+{{ABHKLR20}} and {{AJKL23}} to apply, the KEM MUST be CCA-secure.
+{{domain-separation}} lists requirements concerning domain separation.
 
 In particular, the KEM
 shared secret MUST be a uniformly random byte string of length `Nsecret`.
@@ -1493,14 +1526,6 @@ shared secret is only uniformly random as an element of some structured set
 (such as an elliptic curve group or a finite field) prior
 to its encoding as a byte string, because such an encoding is generally not
 uniformly distributed over byte strings of length `Nsecret`.
-
-### Encap/Decap Interface
-
-As mentioned in {{sec-considerations}}, {{CS01}} provides some indications
-that if the KEM's `Encap()`/`Decap()` interface (which is used in the Base
-and PSK modes) is IND-CCA2-secure, HPKE is able to satisfy its desired
-security properties. An appropriate definition of IND-CCA2 security for
-KEMs can be found in {{CS01}} and {{BHK09}}.
 
 ### KEM Key Reuse
 
@@ -1512,8 +1537,8 @@ Since a KEM key pair belonging to a sender or recipient works with all modes, it
 be used with multiple modes in parallel. HPKE is constructed to be
 secure in such settings due to domain separation using the `suite_id`
 variable. However, there is no formal proof of security at the time of
-writing for using multiple modes in parallel; {{HPKEAnalysis}} and
-{{ABHKLR20}} only analyze isolated modes.
+writing for using multiple modes in parallel; {{HPKEAnalysis}},
+{{ABHKLR20}}, and {{AJKL23}} only analyze isolated modes.
 
 ## Security Requirements on a KDF {#kdf-choice}
 
@@ -1521,6 +1546,10 @@ The choice of the KDF for HPKE SHOULD be made based on the security
 level provided by the KEM and, if applicable, by the PSK. The KDF
 SHOULD at least have the security level of the KEM and SHOULD
 at least have the security level provided by the PSK.
+
+For the security proofs from {{ABHKLR20}} and {{AJKL23}} to apply, the
+KDF MUST allow to prove PRF security for the key schedule both with
+`shared_secret` or `psk` as PRF key.
 
 ## Security Requirements on an AEAD {#aead-security}
 
@@ -1772,7 +1801,7 @@ In this context, HPKE's limitations with regard to sender authentication become
 limits on recipient authentication. In particular, in the Base mode, there is no
 authentication of the remote party at all.
 
-## Metadata Protection
+## Metadata Protection {#metadata}
 
 The PSK mode of HPKE requires that the recipient
 know what key material to use for the sender.  This can be signaled in
@@ -1840,9 +1869,10 @@ allocation:
   independent, interoperable implementations can be produced from it.
 
 * For a KEM registration, the algorithm meets the security requirements in
-  {{kem-security}}, including that the KEM shared secret is a uniformly random
-  byte string of length `Nsecret` ({{kem-security}}) and that the algorithm
-  provides appropriate domain separation ({{domain-separation}}).
+  {{kem-security}}, including that the KEM is CCA-secure, the KEM shared
+  secret is a uniformly random byte string of length `Nsecret`
+  ({{kem-security}}), and that the algorithm provides appropriate domain
+  separation ({{domain-separation}}).
 
 * For a KDF registration, the specification meets the requirements in
   {{kdf-choice}} and specifies the input-length bounds required by
@@ -1938,14 +1968,14 @@ Within that constraint, the following list summarizes the major changes from RFC
 The authors would like to thank Joël Alwen, Jean-Philippe Aumasson, David
 Benjamin, Benjamin Beurdouche, Bruno Blanchet, Brian Campbell, Deirdre Connolly,
 Deb Cooley, Frank Denis, Stephen Farrell, Scott Fluhrer, Eduard Hauck, Scott
-Hollenbeck, Kevin Jacobs, Michael B. Jones, Burt Kaliski, Eike Kiltz, Samuel
-Lee, Julia Len, Ilari Liusvaara, Rohan Mahy, John Mattsson, Cory Francis Myers,
-Christopher Patton, Tommy Pauly, Eric Rescorla, Doreen Riepel, Raphael Robert,
-Michael Rosenberg, Yaroslav Rosomakho, Rich Salz, Martin Schanzenbach, David
-Schinazi, Michael Scott, Filip Skokan, Nick Sullivan, Martin Thomson, Steven
-Valdez, Filippo Valsorda, Riad Wahby, Weijun Wang, Bas Westerbaan, and other
-contributors in the CFRG and HPKE WG for helpful feedback that greatly improved
-this document.
+Hollenbeck, Kevin Jacobs, Jonas Janneck, Michael B. Jones, Burt Kaliski, Eike
+Kiltz, Samuel Lee, Julia Len, Ilari Liusvaara, Rohan Mahy, John Mattsson, Cory
+Francis Myers, Christopher Patton, Tommy Pauly, Eric Rescorla, Doreen Riepel,
+Raphael Robert, Michael Rosenberg, Yaroslav Rosomakho, Rich Salz, Martin
+Schanzenbach, David Schinazi, Michael Scott, Filip Skokan, Nick Sullivan, Martin
+Thomson, Steven Valdez, Filippo Valsorda, Riad Wahby, Weijun Wang, Bas Westerbaan,
+and other contributors in the CFRG and HPKE WG for helpful feedback that greatly
+improved this document.
 
 # Test Vectors
 
