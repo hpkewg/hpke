@@ -673,7 +673,7 @@ recipient by some application making use of HPKE. Moreover, a recipient with mor
 than one public key needs some way of determining which of its public keys was
 used for the encapsulation operation. As an example, applications may send this
 information alongside a ciphertext from the sender to the recipient. Specification of
-such a mechanism is left to the application. See {{metadata-protection}} for more
+such a mechanism is left to the application. See {{metadata}} for more
 details.
 
 The procedures described in this section are laid out in a
