@@ -1869,9 +1869,10 @@ allocation:
   independent, interoperable implementations can be produced from it.
 
 * For a KEM registration, the algorithm meets the security requirements in
-  {{kem-security}}, including that the KEM shared secret is a uniformly random
-  byte string of length `Nsecret` ({{kem-security}}) and that the algorithm
-  provides appropriate domain separation ({{domain-separation}}).
+  {{kem-security}}, including that the KEM is CCA-secure, the KEM shared
+  secret is a uniformly random byte string of length `Nsecret`
+  ({{kem-security}}), and that the algorithm provides appropriate domain
+  separation ({{domain-separation}}).
 
 * For a KDF registration, the specification meets the requirements in
   {{kdf-choice}} and specifies the input-length bounds required by
