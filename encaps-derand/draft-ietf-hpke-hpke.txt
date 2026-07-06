@@ -2167,20 +2167,20 @@ Appendix C.  Test Vectors
 
    1.  Configuration information and private key material: This includes
        the mode, info string, HPKE ciphersuite identifiers (kem_id,
-       kdf_id, aead_id), and all sender, recipient, and ephemeral key
-       material.  For each role X, where X is one of S, R, or E, as
-       sender, recipient, and ephemeral, respectively, key pairs are
-       generated as (skX, pkX) = DeriveKeyPair(ikmX).  Each key pair
-       (skX, pkX) is written in its serialized form, where skXm =
-       SerializePrivateKey(skX) and pkXm = SerializePublicKey(pkX).  For
-       applicable modes, the shared PSK and PSK identifier are also
-       included.
+       kdf_id, aead_id), and the recipient's key material.  Recipient
+       key pairs are generated as (skR, pkR) = DeriveKeyPair(ikmR).  Key
+       pairs are written in their serialized form (as produced by
+       SerializePublicKey and SerializePrivateKey).  For the PSK mode,
+       the shared PSK and PSK identifier are also included.
 
    2.  Context creation intermediate values and outputs: This includes
-       the KEM outputs enc and shared_secret used to create the context,
-       along with intermediate values key_schedule_context and secret
-       computed in the KeySchedule function in Section 5.1.  The outputs
-       include the context values key, base_nonce, and exporter_secret.
+       the randomness ikmE used for deterministic encapsulation, KEM
+       outputs enc and shared_secret used to create the context, along
+       with intermediate values key_schedule_context and secret computed
+       in the KeySchedule function in Section 5.1.  The outputs include
+       the context values key, base_nonce, and exporter_secret.  For
+       DHKEM test vectors, the ephemeral key pair (skEm, pkEm) is also
+       provided.
 
    3.  Encryption test vectors: A fixed plaintext message is encrypted
        using different sequence numbers and AAD values using the context

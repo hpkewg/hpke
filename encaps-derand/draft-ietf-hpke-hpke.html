@@ -4050,21 +4050,22 @@ this document.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 contains the following values:<a href="#appendix-C-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="appendix-C-2">
 <li id="appendix-C-2.1">
-          <p id="appendix-C-2.1.1">Configuration information and private key material: This includes the <code>mode</code>, <code>info</code> string, HPKE
-ciphersuite identifiers (<code>kem_id</code>, <code>kdf_id</code>, <code>aead_id</code>), and all
-sender, recipient, and ephemeral key material. For each role X,
-where X is one of S, R, or E, as sender, recipient, and ephemeral,
-respectively, key pairs are generated as <code>(skX, pkX) = DeriveKeyPair(ikmX)</code>.
-Each key pair <code>(skX, pkX)</code> is written in its serialized form, where
-<code>skXm = SerializePrivateKey(skX)</code> and <code>pkXm = SerializePublicKey(pkX)</code>.
-For applicable modes, the shared PSK and PSK identifier are also included.<a href="#appendix-C-2.1.1" class="pilcrow">¶</a></p>
+          <p id="appendix-C-2.1.1">Configuration information and private key material: This includes the <code>mode</code>,
+<code>info</code> string, HPKE ciphersuite identifiers (<code>kem_id</code>, <code>kdf_id</code>, <code>aead_id</code>),
+and the recipient's key material. Recipient key pairs are generated as <code>(skR,
+pkR) = DeriveKeyPair(ikmR)</code>.  Key pairs are written in their serialized form
+(as produced by <code>SerializePublicKey</code> and <code>SerializePrivateKey</code>).  For the PSK
+mode, the shared PSK and PSK identifier are also included.<a href="#appendix-C-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="appendix-C-2.2">
           <p id="appendix-C-2.2.1">Context creation intermediate values and outputs: This includes the
+randomness <code>ikmE</code> used for deterministic encapsulation,
 KEM outputs <code>enc</code> and <code>shared_secret</code> used to create the context, along
 with intermediate values <code>key_schedule_context</code> and <code>secret</code> computed
 in the KeySchedule function in <a href="#encryption-context" class="auto internal xref">Section 5.1</a>. The outputs
-include the context values <code>key</code>, <code>base_nonce</code>, and <code>exporter_secret</code>.<a href="#appendix-C-2.2.1" class="pilcrow">¶</a></p>
+include the context values <code>key</code>, <code>base_nonce</code>, and <code>exporter_secret</code>.
+For DHKEM test vectors, the ephemeral key pair (<code>skEm</code>, <code>pkEm</code>) is also
+provided.<a href="#appendix-C-2.2.1" class="pilcrow">¶</a></p>
 </li>
         <li id="appendix-C-2.3">
           <p id="appendix-C-2.3.1">Encryption test vectors: A fixed plaintext message is encrypted using
