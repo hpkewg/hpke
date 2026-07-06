@@ -2199,7 +2199,7 @@ Appendix C.  Test Vectors
 C.1.  Deterministic Encapsulation
 
    The test vectors can support testing of encapsulation as well as
-   decapsulation if KEM being tested provides a derandomized
+   decapsulation if the KEM being tested provides a derandomized
    encapsulation function:
 
    EncapDerand(enc, randomness)  Deterministic algorithm to generate an
