@@ -1982,19 +1982,20 @@ improved this document.
 Each section below contains test vectors for a single HPKE ciphersuite and
 contains the following values:
 
-1. Configuration information and private key material: This includes the `mode`, `info` string, HPKE
-   ciphersuite identifiers (`kem_id`, `kdf_id`, `aead_id`), and all
-   sender, recipient, and ephemeral key material. For each role X,
-   where X is one of S, R, or E, as sender, recipient, and ephemeral,
-   respectively, key pairs are generated as `(skX, pkX) = DeriveKeyPair(ikmX)`.
-   Each key pair `(skX, pkX)` is written in its serialized form, where
-   `skXm = SerializePrivateKey(skX)` and `pkXm = SerializePublicKey(pkX)`.
-   For applicable modes, the shared PSK and PSK identifier are also included.
+1. Configuration information and private key material: This includes the `mode`,
+   `info` string, HPKE ciphersuite identifiers (`kem_id`, `kdf_id`, `aead_id`),
+   and the recipient's key material. Recipient key pairs are generated as `(skR,
+   pkR) = DeriveKeyPair(ikmR)`.  Key pairs are written in their serialized form
+   (as produced by `SerializePublicKey` and `SerializePrivateKey`).  For the PSK
+   mode, the shared PSK and PSK identifier are also included.
 2. Context creation intermediate values and outputs: This includes the
+   randomness `ikmE` used for deterministic encapsulation,
    KEM outputs `enc` and `shared_secret` used to create the context, along
    with intermediate values `key_schedule_context` and `secret` computed
    in the KeySchedule function in {{encryption-context}}. The outputs
    include the context values `key`, `base_nonce`, and `exporter_secret`.
+   For DHKEM test vectors, the ephemeral key pair (`skEm`, `pkEm`) is also
+   provided.
 3. Encryption test vectors: A fixed plaintext message is encrypted using
    different sequence numbers and AAD values using the context computed in (2).
    Each test vector lists the sequence number and corresponding nonce computed
@@ -2006,6 +2007,37 @@ contains the following values:
    value.
 
 These test vectors are also available in JSON format at {{TestVectors}}.
+
+## Deterministic Encapsulation
+
+The test vectors can support testing of encapsulation as well as decapsulation
+if the KEM being tested provides a derandomized encapsulation function:
+
+`EncapDerand(enc, randomness)`
+: Deterministic algorithm to generate an ephemeral, fixed-length
+  shared secret and a fixed-length encapsulation of that secret (also known as
+  the KEM ciphertext) that can be decapsulated by the holder of the private
+  key corresponding to `pkR`. This function can raise an `EncapError` on
+  encapsulation failure.
+
+For DHKEM, this function simply replaces `GenerateKeyPair()` with
+`DeriveKeyPair()` in the generation of the ephemeral key pair:
+
+~~~
+def EncapDerand(pkR, randomness):
+  skE, pkE = DeriveKeyPair(randomness)
+  dh = DH(skE, pkR)
+  enc = SerializePublicKey(pkE)
+
+  pkRm = SerializePublicKey(pkR)
+  kem_context = concat(enc, pkRm)
+
+  shared_secret = ExtractAndExpand(dh, kem_context)
+  return shared_secret, enc
+~~~
+
+The input `ikmE` in the context creation inputs is the `randomness` input to
+`EncapsDerand()`.
 
 ## DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
 
