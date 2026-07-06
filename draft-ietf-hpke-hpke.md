@@ -1981,7 +1981,7 @@ These test vectors are also available in JSON format at {{TestVectors}}.
 ## Deterministic Encapsulation
 
 The test vectors can support testing of encapsulation as well as decapsulation
-if KEM being tested provides a derandomized encapsulation function:
+if the KEM being tested provides a derandomized encapsulation function:
 
 `EncapDerand(enc, randomness)`
 : Deterministic algorithm to generate an ephemeral, fixed-length
