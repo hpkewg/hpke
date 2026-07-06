@@ -1977,6 +1977,37 @@ contains the following values:
 
 These test vectors are also available in JSON format at {{TestVectors}}.
 
+## Deterministic Encapsulation
+
+The test vectors can support testing of encapsulation as well as decapsulation
+if KEM being tested provides a derandomized encapsulation function:
+
+`EncapDerand(enc, randomness)`
+: Deterministic algorithm to generate an ephemeral, fixed-length
+  shared secret and a fixed-length encapsulation of that secret (also known as
+  the KEM ciphertext) that can be decapsulated by the holder of the private
+  key corresponding to `pkR`. This function can raise an `EncapError` on
+  encapsulation failure.
+
+For DHKEM, this function simply replaces `GenerateKeyPair()` with
+`DeriveKeyPair()` in the generation of the ephemeral key pair:
+
+~~~
+def EncapDerand(pkR, randomness):
+  skE, pkE = DeriveKeyPair(randomness)
+  dh = DH(skE, pkR)
+  enc = SerializePublicKey(pkE)
+
+  pkRm = SerializePublicKey(pkR)
+  kem_context = concat(enc, pkRm)
+
+  shared_secret = ExtractAndExpand(dh, kem_context)
+  return shared_secret, enc
+~~~
+
+The input `ikmE` in the context creation inputs is the `randomness` input to
+`EncapsDerand()`.
+
 ## DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
 
 ### Base Setup Information
