@@ -1082,8 +1082,10 @@ respectively.
 | 0x0021 | DHKEM(X448, HKDF-SHA512)   | 64       | 56   | 56  | 56  | yes  | {{?RFC7748}}, {{?RFC5869}}   |
 {: #kemid-values title="KEM IDs"}
 
-The `Auth` column indicates if the KEM algorithm provides the `AuthEncap()`/`AuthDecap()`
-interface defined in {{?RFC9180}}.
+The `Auth` column indicates if the KEM algorithm provides the
+`AuthEncap()`/`AuthDecap()` interface defined in {{?RFC9180}}.  Those methods
+have been removed from the KEM interface in this document, so a KEM implementing
+the interface described here should always have "no" in the `Auth` column.
 
 ### SerializePublicKey and DeserializePublicKey
 
@@ -1898,7 +1900,8 @@ Template:
 * Nenc: The length in bytes of an encoded encapsulated secret produced by the algorithm
 * Npk: The length in bytes of an encoded public key for the algorithm
 * Nsk: The length in bytes of an encoded private key for the algorithm
-* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface
+* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()`
+  interface defined in {{?RFC9180}}
 * Reference: Where this algorithm is defined
 
 Initial contents: Provided in {{kemid-values}}
