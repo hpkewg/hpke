@@ -114,21 +114,6 @@ informative:
         name: Chanathip Namprempre
         org: University of California San Diego
 
-  BHK09:
-    title: "Subtleties in the Definition of IND-CCA: When and How Should Challenge-Decryption be Disallowed?"
-    target: https://eprint.iacr.org/2009/418
-    date: 2009
-    author:
-      -
-        ins: Mihir Bellare
-        org: University of California San Diego
-      -
-        ins: Dennis Hofheinz
-        org: CWI Amsterdam
-      -
-        ins: Eike Kiltz
-        org: CWI Amsterdam
-
   HPKEAnalysis:
     title: "An Analysis of Hybrid Public Key Encryption"
     target: https://eprint.iacr.org/2020/243
@@ -329,7 +314,7 @@ operations, roles, and behaviors of HPKE:
   described in {{!RFC8017}}, assuming big-endian byte order.
 - `concat(x0, ..., xN)`: Concatenation of byte strings.
   `concat(0x01, 0x0203, 0x040506) = 0x010203040506`.
-- `lengthPrefixed(x)`: The two-byte length of the byte string `x`, concatenated
+- `lengthPrefixed(x)`: The two-byte, big-endian length of the byte string `x`, concatenated
   with `x` itself.  (`lengthPrefixed(x) = concat(I2OSP(len(x), 2), x)`)  It is
   an error to call this function with an `x` value that is more than 65535 bytes
   long.
@@ -351,7 +336,7 @@ HPKE variants rely on the following primitives:
 
 * A Key Encapsulation Mechanism (KEM); see {{crypto-kem}}
 * A Key Derivation Function (KDF); see {{crypto-kdf}}
-* An Authenticated Encryption with Associated Data (AEAD); see {{crypto-aead}}
+* An Authenticated Encryption with Associated Data (AEAD) algorithm; see {{crypto-aead}}
 
 A _ciphersuite_ is a triple (KEM, KDF, AEAD) containing a choice of algorithm
 for each primitive.
@@ -1281,7 +1266,7 @@ accept (for example, to avoid dynamic allocations). Implementations MUST
 support `info` values of at least 64 bytes. Implementations SHOULD support
 `info` values of at least 16384 bytes to accommodate protocols such as
 
-Encrypted Client Hello {{?ECH=RFC9849}}. Applications seeking
+Encrypted Client Hello {{?RFC9849}}. Applications seeking
 maximum interoperability with resource-constrained HPKE implementations
 SHOULD NOT provide `info` values exceeding 64 bytes without confirmation that an
 implementation supports larger `info` values.
@@ -1344,7 +1329,7 @@ should be specified via the Context APIs (`Seal()`, `Open()`, or `Export()`).
 
 Applications that only use the single-shot APIs described in {{single-shot-apis}} can specify
 auxiliary authenticated information using both the Setup `info` parameter and the Context `aad`
-and `exporter_context` parameters. Such applications should prefer the `info` parameter, because
+and `exporter_context` parameters. Such applications SHOULD prefer the `info` parameter, because
 `info` is the parameter intended for information that applies to the whole context, and using it
 keeps their behavior consistent with applications that also use the underlying multi-shot APIs.
 
