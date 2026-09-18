@@ -457,6 +457,7 @@ A two-stage KDF provides the functions:
 
 The `Nh` parameter indicates security strength of KDF, in bytes.
 For a two-stage KDF, `Nh` is the output size of the `Extract()` function.
+For a one-stage KDF, `Nh` is specified as part of the definition of the KDF.
 
 Certain functions have a different structure depending on whether a one-stage or
 two-stage KDF is being used.  For clarity, such functions will be described
@@ -1240,6 +1241,10 @@ algorithm whose output length is `Npk`.
 | 0x0002 | HKDF-SHA384 | 48  | Y         | {{?RFC5869}} |
 | 0x0003 | HKDF-SHA512 | 64  | Y         | {{?RFC5869}} |
 {: #kdfid-values title="KDF IDs"}
+
+This document defines no one-stage KDFs; every KDF listed in
+{{kdfid-values}} is a two-stage KDF.  An initial set of one-stage KDFs is
+defined in {{?I-D.ietf-hpke-pq}}.
 
 ### Input Length Restrictions {#kdf-input-length}
 
