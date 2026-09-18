@@ -1921,7 +1921,11 @@ Template:
   entries.
 * Reference: Where this algorithm is defined
 
-Initial contents: Provided in {{kdfid-values}}
+This document adds no entries to this registry.  The existing contents of the
+registry are retained, and {{kdfid-values}} provides updates to the
+corresponding existing entries.  Existing entries that have no `Two-Stage`
+value are assigned the value `Y`, except for the reserved entry `0x0000`, which
+is assigned `N/A`.
 
 ## AEAD Identifiers
 
