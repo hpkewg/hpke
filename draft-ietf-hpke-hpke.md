@@ -1843,18 +1843,18 @@ the last Nt bytes of the ciphertext output.
 
 # IANA Considerations {#iana}
 
-IANA created three new registries as requested in {{Section 11 of ?RFC9180}}:
+IANA created three registries as requested in {{Section 11 of ?RFC9180}}:
 
 * HPKE KEM Identifiers
 * HPKE KDF Identifiers
 * HPKE AEAD Identifiers
 
-All these registries are under "Hybrid Public Key Encryption", and administered
-under a Specification Required policy {{!RFC8126}}.
+All these registries are in the "Hybrid Public Key Encryption (HPKE)" registry
+group, and administered under a Specification Required policy {{!RFC8126}}.
 
-This document requests that entries in these registries referring to RFC 9180 be
-updated to refer to this document, and provides instructions to the designated
-experts for these registries.
+This document replaces RFC 9180 as the specification for these registries and
+provides instructions to the designated experts for these registries.
+Registrations made under RFC 9180 remain valid.
 
 ## Designated Expert Instructions
 
