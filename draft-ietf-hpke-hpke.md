@@ -1898,10 +1898,15 @@ Template:
 * Nenc: The length in bytes of an encoded encapsulated secret produced by the algorithm
 * Npk: The length in bytes of an encoded public key for the algorithm
 * Nsk: The length in bytes of an encoded private key for the algorithm
-* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface
+* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface.
+  This field is retained for compatibility with RFC 9180.  It is unused by this
+  document. For new registrations, the value should be `no` unless the KEM
+  explicitly incorporates support for the RFC 9180 interface.
 * Reference: Where this algorithm is defined
 
-Initial contents: Provided in {{kemid-values}}
+This document adds no entries to this registry.  The existing contents of the
+registry are retained, and {{kemid-values}} provides updates to the
+corresponding existing entries.
 
 ## KDF Identifiers
 
