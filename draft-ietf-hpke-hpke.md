@@ -1939,7 +1939,9 @@ Template:
 * Nt: The length in bytes of an authentication tag for this algorithm
 * Reference: Where this algorithm is defined
 
-Initial contents: Provided in {{aeadid-values}}
+This document adds no entries to this registry.  The existing contents of the
+registry are retained, and {{aeadid-values}} provides updates to the
+corresponding existing entries.
 
 --- back
 
