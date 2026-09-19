@@ -1854,7 +1854,8 @@ group, and administered under a Specification Required policy {{!RFC8126}}.
 
 This document replaces RFC 9180 as the specification for these registries and
 provides instructions to the designated experts for these registries.
-Registrations made under RFC 9180 remain valid.
+Registrations made under RFC 9180 remain otherwise unchanged;
+implementations that rely on those codepoints do not need to change.
 
 ## Designated Expert Instructions
 
