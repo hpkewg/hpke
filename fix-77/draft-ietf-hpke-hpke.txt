@@ -6,10 +6,10 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                          
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                   Inria
-Expires: 22 March 2027                                           B. Lipp
+Expires: 23 March 2027                                           B. Lipp
                                                                Rosenpass
                                                                  C. Wood
-                                                       18 September 2026
+                                                       19 September 2026
 
 
                       Hybrid Public Key Encryption
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 March 2027.
+   This Internet-Draft will expire on 23 March 2027.
 
 Copyright Notice
 
@@ -1832,7 +1832,9 @@ Table of Contents
 
    This document replaces RFC 9180 as the specification for these
    registries and provides instructions to the designated experts for
-   these registries.  Registrations made under RFC 9180 remain valid.
+   these registries.  Registrations made under RFC 9180 remain otherwise
+   unchanged; implementations that rely on those codepoints do not need
+   to change.
 
 11.1.  Designated Expert Instructions
 
