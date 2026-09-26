@@ -2620,8 +2620,10 @@ respectively.<a href="#section-7-1" class="pilcrow">¶</a></p>
           </tbody>
         </table>
 </div>
-<p id="section-7.1-2">The <code>Auth</code> column indicates if the KEM algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code>
-interface defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.1-2">The <code>Auth</code> column indicates if the KEM algorithm provides the
+<code>AuthEncap()</code>/<code>AuthDecap()</code> interface defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>.  Those methods
+have been removed from the KEM interface in this document, so a KEM implementing
+the interface described here should always have "no" in the <code>Auth</code> column.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
 <div id="serializepublickey-and-deserializepublickey">
 <section id="section-7.1.1">
           <h4 id="name-serializepublickey-and-dese">
@@ -3736,7 +3738,8 @@ so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.2-1" class=
             <p id="section-11.2-3.6.1">Nsk: The length in bytes of an encoded private key for the algorithm<a href="#section-11.2-3.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.7">
-            <p id="section-11.2-3.7.1">Auth: A boolean indicating if this algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code> interface<a href="#section-11.2-3.7.1" class="pilcrow">¶</a></p>
+            <p id="section-11.2-3.7.1">Auth: A boolean indicating if this algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code>
+interface defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span><a href="#section-11.2-3.7.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.8">
             <p id="section-11.2-3.8.1">Reference: Where this algorithm is defined<a href="#section-11.2-3.8.1" class="pilcrow">¶</a></p>

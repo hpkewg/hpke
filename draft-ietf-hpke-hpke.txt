@@ -987,7 +987,10 @@ Table of Contents
                              Table 2: KEM IDs
 
    The Auth column indicates if the KEM algorithm provides the
-   AuthEncap()/AuthDecap() interface defined in [RFC9180].
+   AuthEncap()/AuthDecap() interface defined in [RFC9180].  Those
+   methods have been removed from the KEM interface in this document, so
+   a KEM implementing the interface described here should always have
+   "no" in the Auth column.
 
 7.1.1.  SerializePublicKey and DeserializePublicKey
 
@@ -1893,7 +1896,7 @@ Table of Contents
       algorithm
 
    *  Auth: A boolean indicating if this algorithm provides the
-      AuthEncap()/AuthDecap() interface
+      AuthEncap()/AuthDecap() interface defined in [RFC9180]
 
    *  Reference: Where this algorithm is defined
 
