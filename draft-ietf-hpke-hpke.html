@@ -1599,7 +1599,7 @@ described in <span>[<a href="#RFC8017" class="cite xref">RFC8017</a>]</span>, as
 <code>concat(0x01, 0x0203, 0x040506) = 0x010203040506</code>.<a href="#section-3-2.8.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-2.9">
-          <p id="section-3-2.9.1"><code>lengthPrefixed(x)</code>: The two-byte length of the byte string <code>x</code>, concatenated
+          <p id="section-3-2.9.1"><code>lengthPrefixed(x)</code>: The two-byte, big-endian length of the byte string <code>x</code>, concatenated
 with <code>x</code> itself.  (<code>lengthPrefixed(x) = concat(I2OSP(len(x), 2), x)</code>)  It is
 an error to call this function with an <code>x</code> value that is more than 65535 bytes
 long.<a href="#section-3-2.9.1" class="pilcrow">¶</a></p>
@@ -1635,7 +1635,7 @@ such as can be used in some methods of representing strings.<a href="#section-3-
           <p id="section-4-2.2.1">A Key Derivation Function (KDF); see <a href="#crypto-kdf" class="auto internal xref">Section 4.2</a><a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-2.3">
-          <p id="section-4-2.3.1">An Authenticated Encryption with Associated Data (AEAD); see <a href="#crypto-aead" class="auto internal xref">Section 4.3</a><a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.3.1">An Authenticated Encryption with Associated Data (AEAD) algorithm; see <a href="#crypto-aead" class="auto internal xref">Section 4.3</a><a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-4-3">A <em>ciphersuite</em> is a triple (KEM, KDF, AEAD) containing a choice of algorithm
@@ -2920,7 +2920,7 @@ useful for implementations to impose a smaller maximum on the values they will
 accept (for example, to avoid dynamic allocations). Implementations MUST
 support <code>info</code> values of at least 64 bytes. Implementations SHOULD support
 <code>info</code> values of at least 16384 bytes to accommodate protocols such as<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-6">Encrypted Client Hello <span>[<a href="#ECH" class="cite xref">ECH</a>]</span>. Applications seeking
+<p id="section-7.2.1-6">Encrypted Client Hello <span>[<a href="#RFC9849" class="cite xref">RFC9849</a>]</span>. Applications seeking
 maximum interoperability with resource-constrained HPKE implementations
 SHOULD NOT provide <code>info</code> values exceeding 64 bytes without confirmation that an
 implementation supports larger <code>info</code> values.<a href="#section-7.2.1-6" class="pilcrow">¶</a></p>
@@ -3052,7 +3052,7 @@ each Context operation. In contrast, application information that varies on a pe
 should be specified via the Context APIs (<code>Seal()</code>, <code>Open()</code>, or <code>Export()</code>).<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 <p id="section-8.1-2">Applications that only use the single-shot APIs described in <a href="#single-shot-apis" class="auto internal xref">Section 6</a> can specify
 auxiliary authenticated information using both the Setup <code>info</code> parameter and the Context <code>aad</code>
-and <code>exporter_context</code> parameters. Such applications should prefer the <code>info</code> parameter, because
+and <code>exporter_context</code> parameters. Such applications SHOULD prefer the <code>info</code> parameter, because
 <code>info</code> is the parameter intended for information that applies to the whole context, and using it
 keeps their behavior consistent with applications that also use the underlying multi-shot APIs.<a href="#section-8.1-2" class="pilcrow">¶</a></p>
 </section>
@@ -3886,10 +3886,6 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
         <dd>
 <span class="refAuthor">American National Standards Institute</span>, <span class="refTitle">"ANSI X9.63 Public Key Cryptography for the Financial Services Industry -- Key Agreement and Key Transport Using Elliptic Curve Cryptography"</span>, <time datetime="2001" class="refDate">2001</time>. </dd>
 <dd class="break"></dd>
-<dt id="BHK09">[BHK09]</dt>
-        <dd>
-<span class="refAuthor">Mihir Bellare</span>, <span class="refAuthor">Dennis Hofheinz</span>, and <span class="refAuthor">Eike Kiltz</span>, <span class="refTitle">"Subtleties in the Definition of IND-CCA: When and How Should Challenge-Decryption be Disallowed?"</span>, <time datetime="2009" class="refDate">2009</time>, <span>&lt;<a href="https://eprint.iacr.org/2009/418">https://eprint.iacr.org/2009/418</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="BN00">[BN00]</dt>
         <dd>
 <span class="refAuthor">Bellare, M.</span> and <span class="refAuthor">C. Namprempre</span>, <span class="refTitle">"Authenticated Encryption: Relations among Notions and Analysis of the Generic Composition Paradigm"</span>, <time datetime="2000" class="refDate">2000</time>, <span>&lt;<a href="https://eprint.iacr.org/2000/025">https://eprint.iacr.org/2000/025</a>&gt;</span>. </dd>
@@ -3901,10 +3897,6 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
 <dt id="CS01">[CS01]</dt>
         <dd>
 <span class="refAuthor">Cramer, R.</span> and <span class="refAuthor">V. Shoup</span>, <span class="refTitle">"Design and Analysis of Practical Public-Key Encryption Schemes Secure against Adaptive Chosen Ciphertext Attack"</span>, <time datetime="2001" class="refDate">2001</time>, <span>&lt;<a href="https://eprint.iacr.org/2001/108">https://eprint.iacr.org/2001/108</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="ECH">[ECH]</dt>
-        <dd>
-<span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Oku, K.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"TLS Encrypted Client Hello"</span>, <span class="seriesInfo">RFC 9849</span>, <span class="seriesInfo">DOI 10.17487/RFC9849</span>, <time datetime="2026-03" class="refDate">March 2026</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9849">https://www.rfc-editor.org/rfc/rfc9849</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="GAP">[GAP]</dt>
         <dd>
