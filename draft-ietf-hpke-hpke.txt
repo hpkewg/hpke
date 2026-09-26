@@ -354,7 +354,9 @@ Table of Contents
       string info into L bytes of output keying material.
 
    The Nh parameter indicates security strength of KDF, in bytes.  For a
-   two-stage KDF, Nh is the output size of the Extract() function.
+   two-stage KDF, Nh is the output size of the Extract() function.  For
+   a one-stage KDF, Nh is specified as part of the definition of the
+   KDF.
 
    Certain functions have a different structure depending on whether a
    one-stage or two-stage KDF is being used.  For clarity, such
@@ -1153,6 +1155,10 @@ Table of Contents
           +--------+-------------+-----+-----------+-----------+
 
                              Table 3: KDF IDs
+
+   This document defines no one-stage KDFs; every KDF listed in Table 3
+   is a two-stage KDF.  An initial set of one-stage KDFs is defined in
+   [I-D.ietf-hpke-pq].
 
 7.2.1.  Input Length Restrictions
 
@@ -2050,6 +2056,13 @@ Table of Contents
    [HPKEAnalysis]
               Lipp, B., "An Analysis of Hybrid Public Key Encryption",
               2020, <https://eprint.iacr.org/2020/243>.
+
+   [I-D.ietf-hpke-pq]
+              Barnes, R. and D. Connolly, "Post-Quantum and Post-
+              Quantum/Traditional Hybrid Algorithms for HPKE", Work in
+              Progress, Internet-Draft, draft-ietf-hpke-pq-05, 6 July
+              2026, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              hpke-pq-05>.
 
    [IEEE1363] Institute of Electrical and Electronics Engineers, "IEEE
               1363a, Standard Specifications for Public Key Cryptography
