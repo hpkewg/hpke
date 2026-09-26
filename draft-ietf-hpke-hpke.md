@@ -1854,6 +1854,7 @@ group, and administered under a Specification Required policy {{!RFC8126}}.
 
 This document replaces RFC 9180 as the specification for these registries and
 provides instructions to the designated experts for these registries.
+IANA should update all references to {{RFC9180}} in the IANA registries with references to this document.
 Registrations made under RFC 9180 remain otherwise unchanged;
 implementations that rely on those codepoints do not need to change.
 
