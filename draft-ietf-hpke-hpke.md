@@ -1082,8 +1082,10 @@ respectively.
 | 0x0021 | DHKEM(X448, HKDF-SHA512)   | 64       | 56   | 56  | 56  | yes  | {{?RFC7748}}, {{?RFC5869}}   |
 {: #kemid-values title="KEM IDs"}
 
-The `Auth` column indicates if the KEM algorithm provides the `AuthEncap()`/`AuthDecap()`
-interface defined in {{?RFC9180}}.
+The `Auth` column indicates if the KEM algorithm provides the
+`AuthEncap()`/`AuthDecap()` interface defined in {{?RFC9180}}.  Those methods
+have been removed from the KEM interface in this document, so a KEM implementing
+the interface described here should always have "no" in the `Auth` column.
 
 ### SerializePublicKey and DeserializePublicKey
 
@@ -1843,18 +1845,20 @@ the last Nt bytes of the ciphertext output.
 
 # IANA Considerations {#iana}
 
-IANA created three new registries as requested in {{Section 11 of ?RFC9180}}:
+IANA created three registries as requested in {{Section 11 of ?RFC9180}}:
 
 * HPKE KEM Identifiers
 * HPKE KDF Identifiers
 * HPKE AEAD Identifiers
 
-All these registries are under "Hybrid Public Key Encryption", and administered
-under a Specification Required policy {{!RFC8126}}.
+All these registries are in the "Hybrid Public Key Encryption (HPKE)" registry
+group, and administered under a Specification Required policy {{!RFC8126}}.
 
-This document requests that entries in these registries referring to RFC 9180 be
-updated to refer to this document, and provides instructions to the designated
-experts for these registries.
+This document replaces RFC 9180 as the specification for these registries and
+provides instructions to the designated experts for these registries.
+IANA should update all references to {{RFC9180}} in the IANA registries with references to this document.
+Registrations made under RFC 9180 remain otherwise unchanged;
+implementations that rely on those codepoints do not need to change.
 
 ## Designated Expert Instructions
 
@@ -1898,7 +1902,7 @@ Template:
 * Nenc: The length in bytes of an encoded encapsulated secret produced by the algorithm
 * Npk: The length in bytes of an encoded public key for the algorithm
 * Nsk: The length in bytes of an encoded private key for the algorithm
-* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface.
+* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface defined in {{?RFC9180}}
   This field is retained for compatibility with RFC 9180.  It is unused by this
   document. For new registrations, the value should be `no` unless the KEM
   explicitly incorporates support for the RFC 9180 interface.
@@ -1926,7 +1930,11 @@ Template:
   entries.
 * Reference: Where this algorithm is defined
 
-Initial contents: Provided in {{kdfid-values}}
+This document adds no entries to this registry.  The existing contents of the
+registry are retained, and {{kdfid-values}} provides updates to the
+corresponding existing entries.  Existing entries that have no `Two-Stage`
+value are assigned the value `Y`, except for the reserved entry `0x0000`, which
+is assigned `N/A`.
 
 ## AEAD Identifiers
 
@@ -1944,7 +1952,9 @@ Template:
 * Nt: The length in bytes of an authentication tag for this algorithm
 * Reference: Where this algorithm is defined
 
-Initial contents: Provided in {{aeadid-values}}
+This document adds no entries to this registry.  The existing contents of the
+registry are retained, and {{aeadid-values}} provides updates to the
+corresponding existing entries.
 
 --- back
 
