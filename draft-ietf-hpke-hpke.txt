@@ -1948,7 +1948,9 @@ Table of Contents
 
    *  Reference: Where this algorithm is defined
 
-   Initial contents: Provided in Table 5
+   This document adds no entries to this registry.  The existing
+   contents of the registry are retained, and Table 5 provides updates
+   to the corresponding existing entries.
 
 12.  References
 
