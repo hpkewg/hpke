@@ -80,7 +80,7 @@ informative:
         org: American National Standards Institute
 
   IEEE1363:
-    title: IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"
+    title: "IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"
     date: 2004
     author:
       -
@@ -1060,7 +1060,7 @@ respectively.
 
 | Value  | KEM                        | Nsecret  | Nenc | Npk | Nsk | Auth | Reference                    |
 |:-------|:---------------------------|:---------|:-----|:----|:----|:-----|:-----------------------------|
-| 0x0000 | Reserved                   | N/A      | N/A  | N/A | N/A | yes  | RFC 9180                     |
+| 0x0000 | Reserved                   | N/A      | N/A  | N/A | N/A | yes  | This document                |
 | 0x0010 | DHKEM(P-256, HKDF-SHA256)  | 32       | 65   | 65  | 32  | yes  | {{NISTCurves}}, {{?RFC5869}} |
 | 0x0011 | DHKEM(P-384, HKDF-SHA384)  | 48       | 97   | 97  | 48  | yes  | {{NISTCurves}}, {{?RFC5869}} |
 | 0x0012 | DHKEM(P-521, HKDF-SHA512)  | 64       | 133  | 133 | 66  | yes  | {{NISTCurves}}, {{?RFC5869}} |
@@ -1221,12 +1221,12 @@ algorithm whose output length is `Npk`.
 
 ## Key Derivation Functions (KDFs) {#kdf-ids}
 
-| Value  | KDF         | Nh  | Two-Stage | Reference    |
-|:-------|:------------|-----|-----------|:-------------|
-| 0x0000 | Reserved    | N/A | N/A       | RFC 9180     |
-| 0x0001 | HKDF-SHA256 | 32  | Y         | {{?RFC5869}} |
-| 0x0002 | HKDF-SHA384 | 48  | Y         | {{?RFC5869}} |
-| 0x0003 | HKDF-SHA512 | 64  | Y         | {{?RFC5869}} |
+| Value  | KDF         | Nh  | Two-Stage | Reference     |
+|:-------|:------------|-----|-----------|:--------------|
+| 0x0000 | Reserved    | N/A | N/A       | This document |
+| 0x0001 | HKDF-SHA256 | 32  | Y         | {{?RFC5869}}  |
+| 0x0002 | HKDF-SHA384 | 48  | Y         | {{?RFC5869}}  |
+| 0x0003 | HKDF-SHA512 | 64  | Y         | {{?RFC5869}}  |
 {: #kdfid-values title="KDF IDs"}
 
 This document defines no one-stage KDFs; every KDF listed in
@@ -1306,13 +1306,13 @@ across all labels in this document.
 
 ## Authenticated Encryption with Associated Data (AEAD) Functions {#aead-ids}
 
-| Value  | AEAD             | Nk  | Nn  | Nt  | Reference    |
-|:-------|:-----------------|:----|:----|:----|:-------------|
-| 0x0000 | Reserved         | N/A | N/A | N/A | RFC 9180     |
-| 0x0001 | AES-128-GCM      | 16  | 12  | 16  | {{GCM}}      |
-| 0x0002 | AES-256-GCM      | 32  | 12  | 16  | {{GCM}}      |
-| 0x0003 | ChaCha20Poly1305 | 32  | 12  | 16  | {{?RFC8439}} |
-| 0xFFFF | Export-only      | 0   | 0   | N/A | RFC 9180     |
+| Value  | AEAD             | Nk  | Nn  | Nt  | Reference     |
+|:-------|:-----------------|:----|:----|:----|:--------------|
+| 0x0000 | Reserved         | N/A | N/A | N/A | This document |
+| 0x0001 | AES-128-GCM      | 16  | 12  | 16  | {{GCM}}       |
+| 0x0002 | AES-256-GCM      | 32  | 12  | 16  | {{GCM}}       |
+| 0x0003 | ChaCha20Poly1305 | 32  | 12  | 16  | {{?RFC8439}}  |
+| 0xFFFF | Export-only      | 0   | 0   | N/A | This document |
 {: #aeadid-values title="AEAD IDs"}
 
 The `0xFFFF` AEAD ID is reserved for applications that only use the Export
@@ -1846,8 +1846,8 @@ group, and administered under a Specification Required policy {{!RFC8126}}.
 
 This document replaces RFC 9180 as the specification for these registries and
 provides instructions to the designated experts for these registries.
-IANA should update all references to {{RFC9180}} in the IANA registries with references to this document.
-Registrations made under RFC 9180 remain otherwise unchanged;
+IANA should update all references to {{?RFC9180}} in the IANA registries with references to this document.
+Registrations made under RFC 9180 remain functionally unchanged;
 implementations that rely on those codepoints do not need to change.
 
 ## Designated Expert Instructions
@@ -1878,6 +1878,8 @@ allocation:
 * The values in the registration (lengths, references, and so on) are internally
   consistent and match the cited specification.
 
+* The registration specification references this document, not {{?RFC9180}}.
+
 ## KEM Identifiers {#kem-template}
 
 The "HPKE KEM Identifiers" registry lists identifiers for key encapsulation
@@ -1899,8 +1901,8 @@ Template:
 * Reference: Where this algorithm is defined
 
 This document adds no entries to this registry.  The existing contents of the
-registry are retained, and {{kemid-values}} provides updates to the
-corresponding existing entries.
+registry are retained.
+{{kemid-values}}  lists entries from {{?RFC9180}} with updated references.
 
 ## KDF Identifiers
 
@@ -1920,11 +1922,12 @@ Template:
   entries.
 * Reference: Where this algorithm is defined
 
-This document adds no entries to this registry.  The existing contents of the
-registry are retained, and {{kdfid-values}} provides updates to the
-corresponding existing entries.  Existing entries that have no `Two-Stage`
-value are assigned the value `Y`, except for the reserved entry `0x0000`, which
-is assigned `N/A`.
+This document adds no entries to this registry,
+other than to add a new `Two-Stage` field to existing registrations.
+Existing entries that have no `Two-Stage` value are assigned the value `Y`,
+except for the reserved entry `0x0000`, which is assigned `N/A`.
+{{kdfid-values}} lists entries from {{?RFC9180}} with updated references
+and `Two-Stage` values.
 
 ## AEAD Identifiers
 
@@ -1943,8 +1946,8 @@ Template:
 * Reference: Where this algorithm is defined
 
 This document adds no entries to this registry.  The existing contents of the
-registry are retained, and {{aeadid-values}} provides updates to the
-corresponding existing entries.
+registry are retained.
+{{aeadid-values}} lists entries from {{?RFC9180}} with updated references.
 
 --- back
 
@@ -3643,4 +3646,3 @@ L: 32
 exported_value:
 000521bf952f7f7c56cf7dbf40ec1f6943a3233abe36a72d20aa4f87e0d90a95
 ~~~
-
