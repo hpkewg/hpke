@@ -977,7 +977,7 @@ the export-only AEAD ID `0xFFFF` when computing the key schedule. Such
 applications can avoid computing the `key` and `base_nonce` values in the
 key schedule, as they are not used by the Export interface described above.
 
-Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of ?RFC8446}}),
+Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of ?RFC9846}}),
 the HPKE export interface does not provide replay protection. While the resulting
 secret will only be known to the sender and recipient, a replayed encapsulated
 secret `enc` will produce an identical context, and thus the same exported
