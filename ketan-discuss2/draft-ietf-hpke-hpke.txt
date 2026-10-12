@@ -968,7 +968,7 @@ Table of Contents
    +======+===============+=========+====+===+===+====+===============+
    |Value | KEM           | Nsecret |Nenc|Npk|Nsk|Auth| Reference     |
    +======+===============+=========+====+===+===+====+===============+
-   |0x0000| Reserved      | N/A     |N/A |N/A|N/A|yes | This document |
+   |0x0000| Reserved      | N/A     |N/A |N/A|N/A|N/A | This document |
    +------+---------------+---------+----+---+---+----+---------------+
    |0x0010| DHKEM(P-256,  | 32      |65  |65 |32 |yes | [NISTCurves], |
    |      | HKDF-SHA256)  |         |    |   |   |    | [RFC5869]     |
