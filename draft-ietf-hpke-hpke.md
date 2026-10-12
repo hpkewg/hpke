@@ -1060,7 +1060,7 @@ respectively.
 
 | Value  | KEM                        | Nsecret  | Nenc | Npk | Nsk | Auth | Reference                    |
 |:-------|:---------------------------|:---------|:-----|:----|:----|:-----|:-----------------------------|
-| 0x0000 | Reserved                   | N/A      | N/A  | N/A | N/A | yes  | This document                |
+| 0x0000 | Reserved                   | N/A      | N/A  | N/A | N/A | N/A  | This document                |
 | 0x0010 | DHKEM(P-256, HKDF-SHA256)  | 32       | 65   | 65  | 32  | yes  | {{NISTCurves}}, {{?RFC5869}} |
 | 0x0011 | DHKEM(P-384, HKDF-SHA384)  | 48       | 97   | 97  | 48  | yes  | {{NISTCurves}}, {{?RFC5869}} |
 | 0x0012 | DHKEM(P-521, HKDF-SHA512)  | 64       | 133  | 133 | 66  | yes  | {{NISTCurves}}, {{?RFC5869}} |
