@@ -1564,7 +1564,7 @@ entropy and SHOULD be of length `Nh` bytes or longer. Using a PSK longer than
 32 bytes but shorter than `Nh` bytes is permitted.
 
 The KDFs used with HPKE are not designed to slow down dictionary attacks;
-this is true of HKDF (see {{?RFC5869}}) as well as of one-stage KDFs. Thus, HPKE's
+this is true of HKDF (see {{!RFC5869}}) as well as of one-stage KDFs. Thus, HPKE's
 PSK mechanism is not suitable for use with a low-entropy password as the
 PSK: In scenarios in which the adversary knows the KEM shared secret
 `shared_secret` and has access to an oracle that distinguishes between
