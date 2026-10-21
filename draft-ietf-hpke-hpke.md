@@ -1898,9 +1898,8 @@ registries listed above:
 Registrations made under RFC 9180 remain otherwise unchanged;
 implementations that rely on those codepoints do not need to change.
 
-RFC Editor: Please replace "RFC XXXX" in {{kemid-values}}, {{kdfid-values}},
-and {{aeadid-values}} with the RFC number assigned to this document, and remove
-this note.
+RFC Editor: Please replace all instances of "RFC XXXX" in this document with
+the RFC number assigned to this document, and remove this note.
 
 ## Designated Expert Instructions
 
