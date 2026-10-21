@@ -80,7 +80,7 @@ informative:
         org: American National Standards Institute
 
   IEEE1363:
-    title: IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"
+    title: "IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"
     date: 2004
     author:
       -
@@ -214,8 +214,8 @@ informative:
 
   TestVectors:
     title: "HPKE Test Vectors"
-    target: https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json
-    date: 2021
+    target: https://github.com/hpkewg/hpke/blob/main/test-vectors/test-vectors.json
+    date: 2026
 
   keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
 
@@ -953,6 +953,10 @@ a secret derived from the internal exporter secret using the corresponding
 KDF Expand function. For the KDFs defined in this specification, `L` has
 a maximum value of `255*Nh`. Future specifications that define new KDFs
 MUST specify a bound for `L`.
+For one-stage KDFs, `LabeledDerive()` encodes `L` in two bytes, so `L` cannot
+exceed 65,535 regardless of any bound given by the KDF's own specification. A
+specification for a one-stage KDF MUST NOT specify a bound for `L` larger than
+65,535.
 
 The `exporter_context` parameter has a maximum length that depends on the KDF
 itself, on the definition of `LabeledExpand()`, and on the constant labels
@@ -1383,7 +1387,7 @@ to raise `ValidationError` unmodified.
 Applications using HPKE APIs should not assume that the errors here are complete,
 nor should they assume certain classes of errors will always manifest the same way
 for all ciphersuites. For example, the DHKEM specified in this document will emit
-a `DeserializationError` or `ValidationError` if a KEM public key is invalid. However,
+a `DeserializeError` or `ValidationError` if a KEM public key is invalid. However,
 a new KEM might not have an efficient algorithm for determining whether or not a
 public key is valid. In this case, an invalid public key might instead yield an
 `OpenError` when trying to decrypt a ciphertext.
@@ -1555,12 +1559,12 @@ properties relied upon by the analyses summarized in {{sec-properties}}.
 
 ## Pre-Shared Key Recommendations {#security-psk}
 
-In the PSK modes, the PSK MUST have at least 32 bytes of
+In PSK mode, the PSK MUST have at least 32 bytes of
 entropy and SHOULD be of length `Nh` bytes or longer. Using a PSK longer than
 32 bytes but shorter than `Nh` bytes is permitted.
 
-HPKE is specified to use HKDF as its key derivation function. HKDF is not
-designed to slow down dictionary attacks (see {{?RFC5869}}). Thus, HPKE's
+The KDFs used with HPKE are not designed to slow down dictionary attacks;
+this is true of HKDF (see {{?RFC5869}}) as well as of one-stage KDFs. Thus, HPKE's
 PSK mechanism is not suitable for use with a low-entropy password as the
 PSK: In scenarios in which the adversary knows the KEM shared secret
 `shared_secret` and has access to an oracle that distinguishes between
@@ -1690,18 +1694,18 @@ encryption described as an example in {{Section 9.8 of RFC9180}}:
 ~~~
 B->A: pk
 
-A:    enc1, ctx = SetupBaseS(pk)
+A:    enc1, ctx = SetupBaseS(pk, info)
       ct1 = ctx.seal(aad, pt)
 A->B: enc1, ct1
 
-B:    ctx = SetupBaseR(sk, enc1)
+B:    ctx = SetupBaseR(enc1, sk, info)
       key, nonce = ctx.export(...)
       ct2 = AEAD.seal(key, nonce, aad2, pt2)
 B->A: ct2
 
 X->B: enc1, ct1 [replay of previously sent values]
 
-B:    ctx = SetupBaseR(sk, enc)
+B:    ctx = SetupBaseR(enc1, sk, info)
       key, nonce = ctx.export(...)
       ct3 = AEAD.seal(key, nonce, aad3, pt3)
 B->X: ct3
@@ -1967,6 +1971,18 @@ Within that constraint, the following list summarizes the major changes from RFC
 
 * Extended the discussion of replay to cover considerations related to exported
   secrets.
+
+* Added a requirement that applications not derive AEAD (key, nonce) pairs from
+  exported secrets without fresh per-derivation input ({{hpke-export}}), and
+  updated the bidirectional encryption example ({{bidirectional}}) to
+  incorporate a fresh recipient-provided nonce.  Applications built on the
+  example in {{Section 9.8 of RFC9180}} do not meet this requirement.
+
+* Changed the guidance on `info` lengths ({{kdf-input-length}}).  RFC 9180
+  RECOMMENDED a limit of 64 bytes; this document requires implementations to
+  support `info` values of at least 64 bytes and recommends support for at
+  least 16384 bytes.  Implementations that followed the RFC 9180 recommendation
+  may not meet the new recommendation.
 
 # Acknowledgements
 
