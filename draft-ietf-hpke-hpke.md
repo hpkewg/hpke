@@ -1634,7 +1634,7 @@ KEM shared secret as in another scheme or version.
 
 ## Application Embedding and Non-Goals {#non-goals}
 
-HPKE is designed to be a fairly low-level mechanism.  As a result, it assumes
+HPKE is designed to be a low-level mechanism.  As a result, it assumes
 that certain properties are provided by the application in which HPKE is
 embedded and leaves certain security properties to be provided by other
 mechanisms. Otherwise said, certain properties are out-of-scope for HPKE.
