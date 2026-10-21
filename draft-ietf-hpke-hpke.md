@@ -29,6 +29,18 @@ author:
     name: Christopher A. Wood
     email: caw@heapingbits.net
 
+normative:
+  SECG:
+    title: "Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"
+    target: https://secg.org/sec1-v2.pdf
+    date: 2009
+
+  keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
+
+  NISTCurves: DOI.10.6028/NIST.SP.800-186
+
+  GCM: DOI.10.6028/NIST.SP.800-38D
+
 informative:
   CS01:
     title: "Design and Analysis of Practical Public-Key Encryption Schemes Secure against Adaptive Chosen Ciphertext Attack"
@@ -94,11 +106,6 @@ informative:
       -
         ins:
         org: International Organization for Standardization / International Electrotechnical Commission
-
-  SECG:
-    title: "Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"
-    target: https://secg.org/sec1-v2.pdf
-    date: 2009
 
   BN00:
     title: "Authenticated Encryption: Relations among Notions and Analysis of the Generic Composition Paradigm"
@@ -178,7 +185,7 @@ informative:
 
   BNT19:
     title: "Nonces Are Noticed: AEAD Revisited"
-    target: http://dx.doi.org/10.1007/978-3-030-26948-7_9
+    target: https://doi.org/10.1007/978-3-030-26948-7_9
     date: 2019
     author:
       -
@@ -216,12 +223,6 @@ informative:
     title: "HPKE Test Vectors"
     target: https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json
     date: 2021
-
-  keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
-
-  NISTCurves: DOI.10.6028/NIST.FIPS.186-4
-
-  GCM: DOI.10.6028/NIST.SP.800-38D
 
   AJKL23:
     title: "The Pre-Shared Key Modes of HPKE"
@@ -302,7 +303,7 @@ The following terms are used throughout this document to describe the
 operations, roles, and behaviors of HPKE:
 
 - `(skX, pkX)`: A key encapsulation mechanism (KEM) key pair used in role X,
-  where X is one of S, R, or E as sender, recipient, and ephemeral, respectively;
+  where X is one of R or E as recipient and ephemeral, respectively;
   `skX` is the private key and `pkX` is the public key.
 - `pk(skX)`: The KEM public key corresponding to the KEM private key `skX`.
 - Sender (S): Role of entity that sends an encrypted message.
@@ -547,8 +548,8 @@ A DH-based KEM is parameterized by the constants (in bytes):
 
 Then we can construct a KEM that implements the interface defined in {{crypto-kem}}
 called `DHKEM(Group, KDF)` in the following way, where `Group` denotes the
-Diffie-Hellman group and `KDF` denotes the KDF. The function parameters `pkR` and `pkS`
-are deserialized public keys, and `enc` is a serialized public key. Since
+Diffie-Hellman group and `KDF` denotes the KDF. The function parameter `pkR`
+is a deserialized public key, and `enc` is a serialized public key. Since
 encapsulated shared secrets are Diffie-Hellman public keys in this KEM algorithm,
 we use `SerializePublicKey()` and `DeserializePublicKey()` to encode and decode
 them, respectively. `GenerateKeyPair()` produces a key pair
@@ -610,7 +611,7 @@ underlying the KDF. For P-256, P-384, and P-521, the size `Ndh` of the
 Diffie-Hellman shared secret is equal to 32, 48, and 66, respectively,
 corresponding to the x-coordinate of the resulting elliptic curve point {{IEEE1363}}.
 For X25519 and X448, the size `Ndh` is equal to 32 and 56, respectively
-(see {{Section 5 of ?RFC7748}}).
+(see {{Section 5 of !RFC7748}}).
 
 # Hybrid Public Key Encryption {#hpke}
 
@@ -949,13 +950,13 @@ in multiple encryptions with the same sequence number, and thus the same nonce.
 HPKE provides an interface for exporting secrets from the encryption context
 using a variable-length pseudorandom function (PRF). This interface takes as input a context
 string `exporter_context` and a desired length `L` in bytes, and produces
-a secret derived from the internal exporter secret using the corresponding
-KDF Expand function. For the KDFs defined in this specification, `L` has
-a maximum value of `255*Nh`. Future specifications that define new KDFs
+a secret derived from the internal exporter secret using `LabeledExpand()` (for
+a two-stage KDF) or `LabeledDerive()` (for a one-stage KDF). For the KDFs
+defined in this specification, `L` has a maximum value of `255*Nh`. Future specifications that define new KDFs
 MUST specify a bound for `L`.
 
 The `exporter_context` parameter has a maximum length that depends on the KDF
-itself, on the definition of `LabeledExpand()`, and on the constant labels
+itself, on the definition of `LabeledExpand()` or `LabeledDerive()`, and on the constant labels
 used together with them. See {{kdf-input-length}} for precise limits on this
 length.
 
@@ -982,12 +983,13 @@ secret will only be known to the sender and recipient, a replayed encapsulated
 secret `enc` will produce an identical context, and thus the same exported
 secrets. In particular, applications MUST NOT use exported secrets unless it is
 safe for the same exported values to be used multiple times.  For example,
-applications MUST NOT use an exported secret to derive a (key, nonce) pair for
-AEAD encryption (as suggested in {{Section 9.8 of ?RFC9180}}), since reuse of a
-(key, nonce) pair harms security in most AEAD algorithms.  In such cases,
-applications SHOULD incorporate a fresh recipient-provided nonce when deriving
-values from an export context, as discussed in {{Section 4.4 of !RFC9458}} and
-{{bidirectional}}.
+applications MUST NOT derive a (key, nonce) pair for AEAD encryption from an
+exported secret unless the derivation also incorporates a value that is fresh
+for each derivation, such as a recipient-provided nonce (see
+{{Section 4.4 of ?RFC9458}} and {{bidirectional}}), since reuse of a (key,
+nonce) pair harms security in most AEAD algorithms.  In particular, the example
+in {{Section 9.8 of ?RFC9180}}, which derives an AEAD key and nonce from an
+exported secret with no fresh input, does not meet this requirement.
 
 # Single-Shot APIs {#single-shot-apis}
 
@@ -1061,11 +1063,11 @@ respectively.
 | Value  | KEM                        | Nsecret  | Nenc | Npk | Nsk | Auth | Reference                    |
 |:-------|:---------------------------|:---------|:-----|:----|:----|:-----|:-----------------------------|
 | 0x0000 | Reserved                   | N/A      | N/A  | N/A | N/A | yes  | RFC 9180                     |
-| 0x0010 | DHKEM(P-256, HKDF-SHA256)  | 32       | 65   | 65  | 32  | yes  | {{NISTCurves}}, {{?RFC5869}} |
-| 0x0011 | DHKEM(P-384, HKDF-SHA384)  | 48       | 97   | 97  | 48  | yes  | {{NISTCurves}}, {{?RFC5869}} |
-| 0x0012 | DHKEM(P-521, HKDF-SHA512)  | 64       | 133  | 133 | 66  | yes  | {{NISTCurves}}, {{?RFC5869}} |
-| 0x0020 | DHKEM(X25519, HKDF-SHA256) | 32       | 32   | 32  | 32  | yes  | {{?RFC7748}}, {{?RFC5869}}   |
-| 0x0021 | DHKEM(X448, HKDF-SHA512)   | 64       | 56   | 56  | 56  | yes  | {{?RFC7748}}, {{?RFC5869}}   |
+| 0x0010 | DHKEM(P-256, HKDF-SHA256)  | 32       | 65   | 65  | 32  | yes  | {{NISTCurves}}, {{!RFC5869}} |
+| 0x0011 | DHKEM(P-384, HKDF-SHA384)  | 48       | 97   | 97  | 48  | yes  | {{NISTCurves}}, {{!RFC5869}} |
+| 0x0012 | DHKEM(P-521, HKDF-SHA512)  | 64       | 133  | 133 | 66  | yes  | {{NISTCurves}}, {{!RFC5869}} |
+| 0x0020 | DHKEM(X25519, HKDF-SHA256) | 32       | 32   | 32  | 32  | yes  | {{!RFC7748}}, {{!RFC5869}}   |
+| 0x0021 | DHKEM(X448, HKDF-SHA512)   | 64       | 56   | 56  | 56  | yes  | {{!RFC7748}}, {{!RFC5869}}   |
 {: #kemid-values title="KEM IDs"}
 
 The `Auth` column indicates if the KEM algorithm provides the
@@ -1109,7 +1111,7 @@ representation.
 To catch invalid keys early on, implementors of DHKEMs SHOULD check that
 deserialized private keys are not equivalent to 0 (mod `order`), where `order`
 is the order of the DH group. Note that this property is trivially true for X25519
-and X448 groups, since clamped values can never be 0 (mod `order`).
+and X448 groups, since clamped values (see {{Section 5 of RFC7748}}) can never be 0 (mod `order`).
 
 ### DeriveKeyPair {#derive-key-pair}
 
@@ -1149,7 +1151,7 @@ def DeriveKeyPair(ikm):
   return (sk, pk(sk))
 ~~~
 
-`order` is the order of the curve being used (see Section D.1.2 of {{NISTCurves}}), and
+`order` is the order of the curve being used (see Section 3.2.1 of {{NISTCurves}}), and
 is listed below for completeness.
 
 ~~~~~
@@ -1208,7 +1210,7 @@ point at infinity. Additionally, senders and recipients MUST ensure the
 Diffie-Hellman shared secret is not the point at infinity.
 
 For X25519 and X448, public keys and Diffie-Hellman outputs MUST be validated
-as described in {{?RFC7748}}. In particular, recipients MUST check whether
+as described in {{!RFC7748}}. In particular, recipients MUST check whether
 the Diffie-Hellman shared secret is the all-zero value and abort if so.
 
 ### Future KEMs {#future-kems}
@@ -1224,9 +1226,9 @@ algorithm whose output length is `Npk`.
 | Value  | KDF         | Nh  | Two-Stage | Reference    |
 |:-------|:------------|-----|-----------|:-------------|
 | 0x0000 | Reserved    | N/A | N/A       | RFC 9180     |
-| 0x0001 | HKDF-SHA256 | 32  | Y         | {{?RFC5869}} |
-| 0x0002 | HKDF-SHA384 | 48  | Y         | {{?RFC5869}} |
-| 0x0003 | HKDF-SHA512 | 64  | Y         | {{?RFC5869}} |
+| 0x0001 | HKDF-SHA256 | 32  | Y         | {{!RFC5869}} |
+| 0x0002 | HKDF-SHA384 | 48  | Y         | {{!RFC5869}} |
+| 0x0003 | HKDF-SHA512 | 64  | Y         | {{!RFC5869}} |
 {: #kdfid-values title="KDF IDs"}
 
 This document defines no one-stage KDFs; every KDF listed in
@@ -1235,7 +1237,7 @@ defined in {{?I-D.ietf-hpke-pq}}.
 
 ### Input Length Restrictions {#kdf-input-length}
 
-For one-stage KDFs, there is length limit of 65,535 bytes for the `psk`,
+For one-stage KDFs, there is a length limit of 65,535 bytes for the `psk`,
 `psk_id`, `info` fields. This limitation arises because these fields are all
 prefixed with a two-byte length when being used as KDF inputs. There is no
 inherent length limitation on `exporter_context`.  If a one-stage KDF has an
@@ -1272,7 +1274,6 @@ useful for implementations to impose a smaller maximum on the values they will
 accept (for example, to avoid dynamic allocations). Implementations MUST
 support `info` values of at least 64 bytes. Implementations SHOULD support
 `info` values of at least 16384 bytes to accommodate protocols such as
-
 Encrypted Client Hello {{?RFC9849}}. Applications seeking
 maximum interoperability with resource-constrained HPKE implementations
 SHOULD NOT provide `info` values exceeding 64 bytes without confirmation that an
@@ -1311,7 +1312,7 @@ across all labels in this document.
 | 0x0000 | Reserved         | N/A | N/A | N/A | RFC 9180     |
 | 0x0001 | AES-128-GCM      | 16  | 12  | 16  | {{GCM}}      |
 | 0x0002 | AES-256-GCM      | 32  | 12  | 16  | {{GCM}}      |
-| 0x0003 | ChaCha20Poly1305 | 32  | 12  | 16  | {{?RFC8439}} |
+| 0x0003 | ChaCha20Poly1305 | 32  | 12  | 16  | {{!RFC8439}} |
 | 0xFFFF | Export-only      | 0   | 0   | N/A | RFC 9180     |
 {: #aeadid-values title="AEAD IDs"}
 
@@ -1404,9 +1405,7 @@ detailed below:
   `Context.Export` is a variable-length PRF
 * Sender authentication: Proof of sender origin for the PSK mode
 
-These security goals are expected to hold for any honest sender and
-honest recipient keys, as well as if the honest sender and honest
-recipient keys are the same.
+These security goals are expected to hold for any honest recipient key pair.
 
 A pre-shared key provides authentication; additionally, it strengthens the
 secrecy properties in certain adversary models, including against a
@@ -1486,7 +1485,7 @@ A detailed computational analysis of the PSK mode has been done in
 can be extended to cover a detailed computational analysis of HPKE's
 base mode, the usage of a one-stage KDF, the multi-shot and secret export
 interfaces, as well as the examples for bidirectional encryption
-{{bidirectional}} and metadata protection {{metadata}}.
+({{bidirectional}}) and metadata protection ({{metadata}}).
 
 ### Post-Quantum Security {#post-quantum-security}
 
@@ -1525,7 +1524,7 @@ An `ikm` input to `DeriveKeyPair()` ({{derive-key-pair}}) MUST NOT be
 reused elsewhere, in particular not with `DeriveKeyPair()` of a
 different KEM.
 
-Since a KEM key pair belonging to a sender or recipient works with all modes, it can
+Since a KEM key pair belonging to a recipient works with all modes, it can
 be used with multiple modes in parallel. HPKE is constructed to be
 secure in such settings due to domain separation using the `suite_id`
 variable. However, there is no formal proof of security at the time of
@@ -1540,7 +1539,7 @@ SHOULD at least have the security level of the KEM and SHOULD
 at least have the security level provided by the PSK.
 
 For the security proofs from {{ABHKLR20}} and {{AJKL23}} to apply, the
-KDF MUST allow to prove PRF security for the key schedule both with
+KDF MUST allow proving PRF security for the key schedule both with
 `shared_secret` or `psk` as PRF key.
 
 ## Security Requirements on an AEAD {#aead-security}
@@ -1560,7 +1559,7 @@ entropy and SHOULD be of length `Nh` bytes or longer. Using a PSK longer than
 32 bytes but shorter than `Nh` bytes is permitted.
 
 HPKE is specified to use HKDF as its key derivation function. HKDF is not
-designed to slow down dictionary attacks (see {{?RFC5869}}). Thus, HPKE's
+designed to slow down dictionary attacks (see {{!RFC5869}}). Thus, HPKE's
 PSK mechanism is not suitable for use with a low-entropy password as the
 PSK: In scenarios in which the adversary knows the KEM shared secret
 `shared_secret` and has access to an oracle that distinguishes between
@@ -1615,17 +1614,20 @@ inclusion of the `suite_id` in `LabeledExtract()`, `LabeledExpand()`, and
 
 Future KEM instantiations MUST ensure, should `Extract()`,
 `Expand()`, and/or `Derive()` be used internally, that they can be modeled as functions
-independent from the invocations of these functions in the
+independent of the invocations of these functions in the
 remainder of HPKE. One way to ensure this is by using `LabeledExtract()` /
 `LabeledExpand()` / `LabeledDerive()` functions with a `suite_id` as defined in {{base-crypto}},
 which will ensure input domain separation, as outlined above.
 Particular attention needs to
 be paid if the KEM directly invokes functions that are used internally
-in HPKE's `Extract()` or `Expand()`, such as `Hash()` and `HMAC()` in the case of HKDF.
+in HPKE's `Extract()`, `Expand()`, or `Derive()`, such as `Hash()` and `HMAC()` in the case of HKDF.
 It MUST be ensured that inputs to these invocations cannot collide with
-inputs to the internal invocations of these functions inside `Extract()` or
-`Expand()`. In HPKE's `KeySchedule()` this is avoided by using `Extract()` instead of
-`Hash()` on the arbitrary-length inputs `info` and `psk_id`.
+inputs to the internal invocations of these functions inside `Extract()`,
+`Expand()`, or `Derive()`. With a two-stage KDF, HPKE's `KeySchedule()` avoids this by using `Extract()` instead of
+`Hash()` on the arbitrary-length inputs `info` and `psk_id`.  With a one-stage
+KDF, `KeySchedule()` passes these inputs, length-prefixed, only to
+`LabeledDerive()`, so they are processed only by the KDF's `Derive()` function
+together with the HPKE-specific label and `suite_id`.
 
 The string literal "HPKE-v1" used in `LabeledExtract()` / `LabeledExpand()` / `LabeledDerive()`
 ensures that any secrets derived in HPKE are bound to the scheme's name
@@ -1770,7 +1772,18 @@ the sender, it can derive a key and nonce from the corresponding HPKE context
 as follows:
 
 ~~~
-def EncryptResponse(context, enc, response_aad, response_pt):
+# For use with a one-stage KDF
+def EncryptResponse_OneStage(context, enc, response_aad, response_pt):
+  secret = context.Export("[application] response", Nh)
+  response_nonce = random(Nh)
+  okm = Derive(concat(secret, enc, response_nonce), Nk + Nn)
+  aead_key = okm[:Nk]
+  aead_nonce = okm[Nk:]
+  ct = Seal(aead_key, aead_nonce, response_aad, response_pt)
+  return (response_nonce, ct)
+
+# For use with a two-stage KDF
+def EncryptResponse_TwoStage(context, enc, response_aad, response_pt):
   secret = context.Export("[application] response", Nh)
   response_nonce = random(Nh)
   salt = concat(enc, response_nonce)
@@ -1780,6 +1793,9 @@ def EncryptResponse(context, enc, response_aad, response_pt):
   ct = Seal(aead_key, aead_nonce, response_aad, response_pt)
   return (response_nonce, ct)
 ~~~
+
+In the one-stage variant, `secret`, `enc`, and `response_nonce` each have a
+fixed length for a given ciphersuite, so their concatenation is unambiguous.
 
 This example mechanism differs from the example mechanism in {{RFC9180}} by
 incorporating a per-transaction random value `response_nonce`.  Because HPKE
@@ -1797,9 +1813,9 @@ authentication of the remote party at all.
 
 The PSK mode of HPKE requires that the recipient
 know what key material to use for the sender.  This can be signaled in
-applications by sending the PSK ID (`psk_id` above) and/or the sender's public
-key (`pkS`).  However, these values themselves might be considered sensitive,
-since, in a given application context, they might identify the sender.
+applications by sending the PSK ID (`psk_id` above).  However, this value
+itself might be considered sensitive, since, in a given application context, it
+might identify the sender.
 
 An application that wishes to protect these metadata values without requiring
 further provisioning of keys can use an additional instance of HPKE, using the
