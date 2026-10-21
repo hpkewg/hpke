@@ -976,7 +976,7 @@ the export-only AEAD ID `0xFFFF` when computing the key schedule. Such
 applications can avoid computing the `key` and `base_nonce` values in the
 key schedule, as they are not used by the Export interface described above.
 
-Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of ?RFC8446}}),
+Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of ?RFC9846}}),
 the HPKE export interface does not provide replay protection. While the resulting
 secret will only be known to the sender and recipient, a replayed encapsulated
 secret `enc` will produce an identical context, and thus the same exported
@@ -1475,6 +1475,7 @@ the given mode satisfies the property.
 |:--------|:------------:|:-----------:|:------------:|
 | Base    | Y            | Y           | N/A          |
 | PSK     | Y            | Y           | Y            |
+{: #variant-properties title="Security Properties of HPKE Variants"}
 
 If non-DH-based KEMs are to be used with HPKE, further analysis will be
 necessary to prove their security. The results from {{CS01}} provide
@@ -1685,7 +1686,9 @@ attacker), such replay can allow the attacker to cause the recipient to re-use
 the exported values.
 
 Consider the following scenario, in which B is using the recipient-to-sender
-encryption described as an example in {{Section 9.8 of RFC9180}}:
+encryption described as an example in {{Section 9.8 of RFC9180}}, which derives
+an AEAD key and nonce deterministically from an exported secret, with no fresh
+per-response input:
 
 ~~~
 B->A: pk
@@ -1736,15 +1739,13 @@ ciphertext.
 If the randomness used for KEM encapsulation is bad -- i.e., of low entropy or
 compromised because of a broken or subverted random number generator -- the
 confidentiality guarantees of HPKE degrade significantly. In Base mode,
-confidentiality guarantees can be lost completely; in the other modes, at least forward secrecy with
+confidentiality guarantees can be lost completely; in PSK mode, at least forward secrecy with
 respect to sender compromise can be lost completely.
 
 Such a situation could also lead to the reuse of the same KEM shared secret
 and thus to the reuse of same key-nonce pairs for the AEAD.
 The AEADs specified in this document are not secure
-in case of nonce reuse. This attack vector is particularly relevant in
-the authenticated mode because knowledge of the ephemeral randomness is not
-enough to derive `shared_secret` in these modes.
+in case of nonce reuse.
 
 One way for applications to mitigate the impacts of bad ephemeral randomness is
 to combine ephemeral randomness with a local long-term secret that has been
