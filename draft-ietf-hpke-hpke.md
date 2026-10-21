@@ -1979,7 +1979,7 @@ Within that constraint, the following list summarizes the major changes from RFC
   example in {{Section 9.8 of RFC9180}} do not meet this requirement.
 
 * Changed the guidance on `info` lengths ({{kdf-input-length}}).  RFC 9180
-  RECOMMENDED a limit of 64 bytes; this document requires implementations to
+  RECOMMENDED a limit of 64 bytes for all application-provided inputs; this document requires implementations to
   support `info` values of at least 64 bytes and recommends support for at
   least 16384 bytes.  Implementations that followed the RFC 9180 recommendation
   may not meet the new recommendation.
