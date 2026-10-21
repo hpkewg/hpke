@@ -1559,7 +1559,7 @@ entropy and SHOULD be of length `Nh` bytes or longer. Using a PSK longer than
 32 bytes but shorter than `Nh` bytes is permitted.
 
 HPKE is specified to use HKDF as its key derivation function. HKDF is not
-designed to slow down dictionary attacks (see {{!RFC5869}}). Thus, HPKE's
+designed to slow down dictionary attacks (see {{?RFC5869}}). Thus, HPKE's
 PSK mechanism is not suitable for use with a low-entropy password as the
 PSK: In scenarios in which the adversary knows the KEM shared secret
 `shared_secret` and has access to an oracle that distinguishes between
