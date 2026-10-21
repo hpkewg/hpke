@@ -289,7 +289,10 @@ specified with sufficient clarity that they can be interoperably
 implemented. The HPKE construction defined herein is secure against (adaptive)
 chosen ciphertext attacks (IND-CCA2-secure) under classical assumptions about
 the underlying primitives {{HPKEAnalysis}} {{AJKL23}} {{ABHKLR20}}, and post-quantum
-secure when used with a post-quantum secure KEM {{AJKL23}} {{ABHKLR20}}. A summary of
+secure when used with a post-quantum secure KEM {{AJKL23}} {{ABHKLR20}}. These
+analyses cover HPKE instantiated with a two-stage KDF.  The security of HPKE
+with a one-stage KDF relies on the KDF meeting the requirements in
+{{kdf-choice}}, and has not yet been analyzed in the same detail. A summary of
 these analyses is in {{sec-properties}}.
 
 # Requirements Notation
@@ -636,8 +639,12 @@ following one-byte values will be used to distinguish between modes:
 | RESERVED      | 0x03  |
 {: #hpke-modes title="HPKE Modes"}
 
-(The values 0x02 and 0x03 were used in {{RFC9180}} to reflect additional
-variants which have been removed from this specification.)
+The values 0x02 and 0x03 are reserved for the `mode_auth` and `mode_auth_psk`
+modes defined in {{RFC9180}}, which are not specified in this document, and
+are not to be used with any other meaning.  This document does not deprecate
+those modes: existing deployments can continue to use them as specified in
+{{RFC9180}}, and future specifications may specify them in terms of the
+interfaces defined in this document.
 
 Both variants follow the same basic two-step pattern:
 
@@ -1060,7 +1067,7 @@ respectively.
 
 | Value  | KEM                        | Nsecret  | Nenc | Npk | Nsk | Auth | Reference                    |
 |:-------|:---------------------------|:---------|:-----|:----|:----|:-----|:-----------------------------|
-| 0x0000 | Reserved                   | N/A      | N/A  | N/A | N/A | yes  | RFC 9180                     |
+| 0x0000 | Reserved                   | N/A      | N/A  | N/A | N/A | N/A  | RFC XXXX                     |
 | 0x0010 | DHKEM(P-256, HKDF-SHA256)  | 32       | 65   | 65  | 32  | yes  | {{NISTCurves}}, {{?RFC5869}} |
 | 0x0011 | DHKEM(P-384, HKDF-SHA384)  | 48       | 97   | 97  | 48  | yes  | {{NISTCurves}}, {{?RFC5869}} |
 | 0x0012 | DHKEM(P-521, HKDF-SHA512)  | 64       | 133  | 133 | 66  | yes  | {{NISTCurves}}, {{?RFC5869}} |
@@ -1068,10 +1075,13 @@ respectively.
 | 0x0021 | DHKEM(X448, HKDF-SHA512)   | 64       | 56   | 56  | 56  | yes  | {{?RFC7748}}, {{?RFC5869}}   |
 {: #kemid-values title="KEM IDs"}
 
-The `Auth` column indicates if the KEM algorithm provides the
-`AuthEncap()`/`AuthDecap()` interface defined in {{?RFC9180}}.  Those methods
-have been removed from the KEM interface in this document, so a KEM implementing
-the interface described here should always have "no" in the `Auth` column.
+The `Auth` column indicates whether the KEM algorithm provides the
+`AuthEncap()`/`AuthDecap()` interface defined in {{?RFC9180}}.  This document
+does not use that interface, since it does not specify the modes that rely on
+it.  The column is retained for compatibility with {{RFC9180}} and with future
+specifications that reintroduce authenticated modes.  The DHKEMs listed above
+provide that interface as specified in {{Section 4.1 of RFC9180}}, and so have
+"yes" in this column.
 
 ### SerializePublicKey and DeserializePublicKey
 
@@ -1223,7 +1233,7 @@ algorithm whose output length is `Npk`.
 
 | Value  | KDF         | Nh  | Two-Stage | Reference    |
 |:-------|:------------|-----|-----------|:-------------|
-| 0x0000 | Reserved    | N/A | N/A       | RFC 9180     |
+| 0x0000 | Reserved    | N/A | N/A       | RFC XXXX     |
 | 0x0001 | HKDF-SHA256 | 32  | Y         | {{?RFC5869}} |
 | 0x0002 | HKDF-SHA384 | 48  | Y         | {{?RFC5869}} |
 | 0x0003 | HKDF-SHA512 | 64  | Y         | {{?RFC5869}} |
@@ -1308,11 +1318,11 @@ across all labels in this document.
 
 | Value  | AEAD             | Nk  | Nn  | Nt  | Reference    |
 |:-------|:-----------------|:----|:----|:----|:-------------|
-| 0x0000 | Reserved         | N/A | N/A | N/A | RFC 9180     |
+| 0x0000 | Reserved         | N/A | N/A | N/A | RFC XXXX     |
 | 0x0001 | AES-128-GCM      | 16  | 12  | 16  | {{GCM}}      |
 | 0x0002 | AES-256-GCM      | 32  | 12  | 16  | {{GCM}}      |
 | 0x0003 | ChaCha20Poly1305 | 32  | 12  | 16  | {{?RFC8439}} |
-| 0xFFFF | Export-only      | 0   | 0   | N/A | RFC 9180     |
+| 0xFFFF | Export-only      | 0   | 0   | N/A | RFC XXXX     |
 {: #aeadid-values title="AEAD IDs"}
 
 The `0xFFFF` AEAD ID is reserved for applications that only use the Export
@@ -1467,6 +1477,17 @@ mentioned above. The analysis considers a sender that sends one message
 using the encryption context, and additionally exports two independent
 secrets using the secret export interface.
 
+The analysis in {{HPKEAnalysis}} considers only two-stage KDFs.  With a
+one-stage KDF, each key schedule computation that a two-stage KDF performs with
+`Extract()` and `Expand()` is instead performed by a single call to
+`LabeledDerive()` over the encoded inputs (see {{encryption-context}}), and
+the DHKEM and export computations are likewise single `LabeledDerive()` calls.
+The analysis is expected to carry over to a one-stage KDF whose `Derive()`
+function can be modeled as a random oracle, since such a function provides
+the properties that the conditions above require of `Extract()` and
+`Expand()`.  However, this has not been formally verified; see the discussion
+of future work below.
+
 The table below summarizes the main results from {{HPKEAnalysis}}. N/A
 means that a property does not apply for the given mode, whereas `Y` means
 the given mode satisfies the property.
@@ -1542,6 +1563,18 @@ at least have the security level provided by the PSK.
 For the security proofs from {{ABHKLR20}} and {{AJKL23}} to apply, the
 KDF MUST allow to prove PRF security for the key schedule both with
 `shared_secret` or `psk` as PRF key.
+
+For a one-stage KDF, the corresponding requirements apply to `Derive(ikm, L)`
+as invoked by `LabeledDerive()`.  The output of the key schedule MUST be
+pseudorandom whenever either `shared_secret` or `psk` is unknown to the
+adversary, even if the adversary knows or chooses the other inputs.
+Similarly, the output of `Context.Export()` MUST be pseudorandom when
+`exporter_secret` is unknown to the adversary, and the DHKEM shared secret
+MUST be pseudorandom when the Diffie-Hellman output is unknown to the
+adversary.  A KDF whose `Derive()` function can be modeled as a random oracle,
+such as an extendable-output function (XOF) like SHAKE, satisfies these
+requirements.  The proofs in {{ABHKLR20}} and {{AJKL23}} have not been
+extended to one-stage KDFs (see {{sec-properties}}).
 
 ## Security Requirements on an AEAD {#aead-security}
 
@@ -1845,10 +1878,29 @@ All these registries are in the "Hybrid Public Key Encryption (HPKE)" registry
 group, and administered under a Specification Required policy {{!RFC8126}}.
 
 This document replaces RFC 9180 as the specification for these registries and
-provides instructions to the designated experts for these registries.
-IANA should update all references to {{RFC9180}} in the IANA registries with references to this document.
+provides instructions to the designated experts for these registries.  IANA is
+requested to make the following changes, which apply only to the three
+registries listed above:
+
+* For each of the three registries, replace {{RFC9180}} with this document as
+  the reference for the registry itself.
+
+* For each registry entry, the Reference field identifies the document that
+  defines the entry.  The entries whose Reference is {{RFC9180}} are the
+  reserved entries with value 0x0000 in all three registries and the
+  Export-only entry 0xFFFF in the "HPKE AEAD Identifiers" registry.  These
+  entries are now defined by this document, so their Reference is updated to
+  this document.  Entries that reference other specifications are unchanged.
+
+* Make the additional per-registry changes described in {{kem-template}},
+  {{kdf-template}}, and {{aead-template}}.
+
 Registrations made under RFC 9180 remain otherwise unchanged;
 implementations that rely on those codepoints do not need to change.
+
+RFC Editor: Please replace "RFC XXXX" in {{kemid-values}}, {{kdfid-values}},
+and {{aeadid-values}} with the RFC number assigned to this document, and remove
+this note.
 
 ## Designated Expert Instructions
 
@@ -1892,17 +1944,27 @@ Template:
 * Nenc: The length in bytes of an encoded encapsulated secret produced by the algorithm
 * Npk: The length in bytes of an encoded public key for the algorithm
 * Nsk: The length in bytes of an encoded private key for the algorithm
-* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface defined in {{?RFC9180}}
-  This field is retained for compatibility with RFC 9180.  It is unused by this
-  document. For new registrations, the value should be `no` unless the KEM
-  explicitly incorporates support for the RFC 9180 interface.
+* Auth: A boolean indicating if this algorithm provides the `AuthEncap()`/`AuthDecap()` interface defined in {{?RFC9180}}.
+  This field is retained for compatibility with RFC 9180 and with future
+  specifications that reintroduce authenticated modes; it is not used by this
+  document.  For new registrations, the value is `yes` only if the
+  specification for the KEM defines `AuthEncap()` and `AuthDecap()` for that
+  KEM, and `no` otherwise.
 * Reference: Where this algorithm is defined
 
-This document adds no entries to this registry.  The existing contents of the
-registry are retained, and {{kemid-values}} provides updates to the
-corresponding existing entries.
+This document adds no entries to this registry.  {{kemid-values}} lists the
+entries defined by {{RFC9180}}.  Their values are unchanged, except that for
+the reserved entry 0x0000, the `Auth` value is changed from "yes" to "N/A" and
+the Reference is updated to this document.
 
-## KDF Identifiers
+IANA is also requested to add the following note to the registry:
+
+> The Auth column indicates whether the KEM provides the
+> AuthEncap()/AuthDecap() interface defined in RFC 9180.  This interface is not
+> used by RFC XXXX.  New registrations use "yes" only if the specification for
+> the KEM defines AuthEncap() and AuthDecap() for that KEM, and "no" otherwise.
+
+## KDF Identifiers {#kdf-template}
 
 The "HPKE KDF Identifiers" registry lists identifiers for key derivation
 functions defined for use with HPKE.  These identifiers are two-byte values,
@@ -1920,13 +1982,24 @@ Template:
   entries.
 * Reference: Where this algorithm is defined
 
-This document adds no entries to this registry.  The existing contents of the
-registry are retained, and {{kdfid-values}} provides updates to the
-corresponding existing entries.  Existing entries that have no `Two-Stage`
-value are assigned the value `Y`, except for the reserved entry `0x0000`, which
-is assigned `N/A`.
+This document adds no entries to this registry.  It adds a `Two-Stage`
+column to the registry.  {{kdfid-values}} lists the entries defined by
+{{RFC9180}}, with the `Two-Stage` value assigned to each of them.  Their other
+values are unchanged, except that the Reference of the reserved entry 0x0000
+is updated to this document.
 
-## AEAD Identifiers
+The following existing entries, registered by {{?I-D.ietf-hpke-pq}}, are
+one-stage KDFs and are assigned the `Two-Stage` value `N`:
+
+* 0x0010 (SHAKE128)
+
+* 0x0011 (SHAKE256)
+
+* 0x0012 (TurboSHAKE128)
+
+* 0x0013 (TurboSHAKE256)
+
+## AEAD Identifiers {#aead-template}
 
 The "HPKE AEAD Identifiers" registry lists identifiers for authenticated
 encryption with associated data (AEAD) algorithms defined for use with HPKE.
@@ -1942,9 +2015,16 @@ Template:
 * Nt: The length in bytes of an authentication tag for this algorithm
 * Reference: Where this algorithm is defined
 
-This document adds no entries to this registry.  The existing contents of the
-registry are retained, and {{aeadid-values}} provides updates to the
-corresponding existing entries.
+This document adds no entries to this registry.  {{aeadid-values}} lists the
+entries defined by {{RFC9180}}.  Their values are unchanged, except for the
+following:
+
+* For the Export-only entry 0xFFFF, the `Nk` and `Nn` values are changed from
+  "N/A" to 0.  This makes the length `Nk + Nn + Nh` of the key schedule output
+  well defined when a one-stage KDF is used ({{encryption-context}}).
+
+* The Reference of the reserved entry 0x0000 and of the Export-only entry
+  0xFFFF is updated to this document.
 
 --- back
 
@@ -2018,7 +2098,7 @@ These test vectors are also available in JSON format at {{TestVectors}}.
 The test vectors can support testing of encapsulation as well as decapsulation
 if the KEM being tested provides a derandomized encapsulation function:
 
-`EncapDerand(enc, randomness)`
+`EncapDerand(pkR, randomness)`
 : Deterministic algorithm to generate an ephemeral, fixed-length
   shared secret and a fixed-length encapsulation of that secret (also known as
   the KEM ciphertext) that can be decapsulated by the holder of the private
@@ -2042,7 +2122,7 @@ def EncapDerand(pkR, randomness):
 ~~~
 
 The input `ikmE` in the context creation inputs is the `randomness` input to
-`EncapsDerand()`.
+`EncapDerand()`.
 
 ## DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, AES-128-GCM
 
