@@ -6,10 +6,10 @@ HPKE                                                           R. Barnes
 Internet-Draft                                                          
 Obsoletes: 9180 (if approved)                               K. Bhargavan
 Intended status: Standards Track                                   Inria
-Expires: 30 March 2027                                           B. Lipp
+Expires: 30 April 2027                                           B. Lipp
                                                                Rosenpass
                                                                  C. Wood
-                                                       26 September 2026
+                                                         27 October 2026
 
 
                       Hybrid Public Key Encryption
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 March 2027.
+   This Internet-Draft will expire on 30 April 2027.
 
 Copyright Notice
 
@@ -1443,7 +1443,7 @@ Table of Contents
           | PSK     |      Y       |      Y      |      Y       |
           +---------+--------------+-------------+--------------+
 
-                                  Table 6
+                    Table 6: Summary of Analysis Results
 
    If non-DH-based KEMs are to be used with HPKE, further analysis will
    be necessary to prove their security.  The results from [CS01]
@@ -1720,15 +1720,13 @@ Table of Contents
    entropy or compromised because of a broken or subverted random number
    generator -- the confidentiality guarantees of HPKE degrade
    significantly.  In Base mode, confidentiality guarantees can be lost
-   completely; in the other modes, at least forward secrecy with respect
-   to sender compromise can be lost completely.
+   completely; in PSK mode, at least forward secrecy with respect to
+   sender compromise can be lost completely.
 
    Such a situation could also lead to the reuse of the same KEM shared
    secret and thus to the reuse of same key-nonce pairs for the AEAD.
    The AEADs specified in this document are not secure in case of nonce
-   reuse.  This attack vector is particularly relevant in the
-   authenticated mode because knowledge of the ephemeral randomness is
-   not enough to derive shared_secret in these modes.
+   reuse.
 
    One way for applications to mitigate the impacts of bad ephemeral
    randomness is to combine ephemeral randomness with a local long-term
@@ -2057,7 +2055,7 @@ Table of Contents
 
    [IEEE1363] Institute of Electrical and Electronics Engineers, "IEEE
               1363a, Standard Specifications for Public Key Cryptography
-              - Amendment 1 -- Additional Techniques"", 2004.
+              - Amendment 1 -- Additional Techniques", 2004.
 
    [ISO]      International Organization for Standardization /
               International Electrotechnical Commission, "ISO/IEC
