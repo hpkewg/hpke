@@ -29,6 +29,18 @@ author:
     name: Christopher A. Wood
     email: caw@heapingbits.net
 
+normative:
+  keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
+
+  NISTCurves: DOI.10.6028/NIST.FIPS.186-4
+
+  GCM: DOI.10.6028/NIST.SP.800-38D
+
+  SECG:
+    title: "Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"
+    target: https://secg.org/sec1-v2.pdf
+    date: 2009
+
 informative:
   CS01:
     title: "Design and Analysis of Practical Public-Key Encryption Schemes Secure against Adaptive Chosen Ciphertext Attack"
@@ -80,7 +92,7 @@ informative:
         org: American National Standards Institute
 
   IEEE1363:
-    title: IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"
+    title: "IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"
     date: 2004
     author:
       -
@@ -94,11 +106,6 @@ informative:
       -
         ins:
         org: International Organization for Standardization / International Electrotechnical Commission
-
-  SECG:
-    title: "Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"
-    target: https://secg.org/sec1-v2.pdf
-    date: 2009
 
   BN00:
     title: "Authenticated Encryption: Relations among Notions and Analysis of the Generic Composition Paradigm"
@@ -216,12 +223,6 @@ informative:
     title: "HPKE Test Vectors"
     target: https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json
     date: 2021
-
-  keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
-
-  NISTCurves: DOI.10.6028/NIST.FIPS.186-4
-
-  GCM: DOI.10.6028/NIST.SP.800-38D
 
   AJKL23:
     title: "The Pre-Shared Key Modes of HPKE"
@@ -1061,11 +1062,11 @@ respectively.
 | Value  | KEM                        | Nsecret  | Nenc | Npk | Nsk | Auth | Reference                    |
 |:-------|:---------------------------|:---------|:-----|:----|:----|:-----|:-----------------------------|
 | 0x0000 | Reserved                   | N/A      | N/A  | N/A | N/A | yes  | RFC 9180                     |
-| 0x0010 | DHKEM(P-256, HKDF-SHA256)  | 32       | 65   | 65  | 32  | yes  | {{NISTCurves}}, {{?RFC5869}} |
-| 0x0011 | DHKEM(P-384, HKDF-SHA384)  | 48       | 97   | 97  | 48  | yes  | {{NISTCurves}}, {{?RFC5869}} |
-| 0x0012 | DHKEM(P-521, HKDF-SHA512)  | 64       | 133  | 133 | 66  | yes  | {{NISTCurves}}, {{?RFC5869}} |
-| 0x0020 | DHKEM(X25519, HKDF-SHA256) | 32       | 32   | 32  | 32  | yes  | {{?RFC7748}}, {{?RFC5869}}   |
-| 0x0021 | DHKEM(X448, HKDF-SHA512)   | 64       | 56   | 56  | 56  | yes  | {{?RFC7748}}, {{?RFC5869}}   |
+| 0x0010 | DHKEM(P-256, HKDF-SHA256)  | 32       | 65   | 65  | 32  | yes  | {{NISTCurves}}, {{!RFC5869}} |
+| 0x0011 | DHKEM(P-384, HKDF-SHA384)  | 48       | 97   | 97  | 48  | yes  | {{NISTCurves}}, {{!RFC5869}} |
+| 0x0012 | DHKEM(P-521, HKDF-SHA512)  | 64       | 133  | 133 | 66  | yes  | {{NISTCurves}}, {{!RFC5869}} |
+| 0x0020 | DHKEM(X25519, HKDF-SHA256) | 32       | 32   | 32  | 32  | yes  | {{!RFC7748}}, {{!RFC5869}}   |
+| 0x0021 | DHKEM(X448, HKDF-SHA512)   | 64       | 56   | 56  | 56  | yes  | {{!RFC7748}}, {{!RFC5869}}   |
 {: #kemid-values title="KEM IDs"}
 
 The `Auth` column indicates if the KEM algorithm provides the
@@ -1224,9 +1225,9 @@ algorithm whose output length is `Npk`.
 | Value  | KDF         | Nh  | Two-Stage | Reference    |
 |:-------|:------------|-----|-----------|:-------------|
 | 0x0000 | Reserved    | N/A | N/A       | RFC 9180     |
-| 0x0001 | HKDF-SHA256 | 32  | Y         | {{?RFC5869}} |
-| 0x0002 | HKDF-SHA384 | 48  | Y         | {{?RFC5869}} |
-| 0x0003 | HKDF-SHA512 | 64  | Y         | {{?RFC5869}} |
+| 0x0001 | HKDF-SHA256 | 32  | Y         | {{!RFC5869}} |
+| 0x0002 | HKDF-SHA384 | 48  | Y         | {{!RFC5869}} |
+| 0x0003 | HKDF-SHA512 | 64  | Y         | {{!RFC5869}} |
 {: #kdfid-values title="KDF IDs"}
 
 This document defines no one-stage KDFs; every KDF listed in
@@ -1311,7 +1312,7 @@ across all labels in this document.
 | 0x0000 | Reserved         | N/A | N/A | N/A | RFC 9180     |
 | 0x0001 | AES-128-GCM      | 16  | 12  | 16  | {{GCM}}      |
 | 0x0002 | AES-256-GCM      | 32  | 12  | 16  | {{GCM}}      |
-| 0x0003 | ChaCha20Poly1305 | 32  | 12  | 16  | {{?RFC8439}} |
+| 0x0003 | ChaCha20Poly1305 | 32  | 12  | 16  | {{!RFC8439}} |
 | 0xFFFF | Export-only      | 0   | 0   | N/A | RFC 9180     |
 {: #aeadid-values title="AEAD IDs"}
 
@@ -1475,7 +1476,7 @@ the given mode satisfies the property.
 |:--------|:------------:|:-----------:|:------------:|
 | Base    | Y            | Y           | N/A          |
 | PSK     | Y            | Y           | Y            |
-{: #mode-properties title="Security Properties of HPKE Modes"}
+{: #t-analysis title="Summary of Analysis Results"}
 
 If non-DH-based KEMs are to be used with HPKE, further analysis will be
 necessary to prove their security. The results from {{CS01}} provide
@@ -3644,4 +3645,3 @@ L: 32
 exported_value:
 000521bf952f7f7c56cf7dbf40ec1f6943a3233abe36a72d20aa4f87e0d90a95
 ~~~
-
