@@ -491,7 +491,7 @@ An AEAD encryption algorithm {{!RFC5116}} provides the functions:
 AEAD functions have the following parameters (all measured in bytes):
 
 `Nk`:
-: The length a key for this algorithm.
+: The length of a key for this algorithm.
 
 `Nn`:
 : The length of a nonce for this algorithm.
@@ -535,7 +535,7 @@ The value of `suite_id` depends on where the KDF is used; it is assumed
 implicit from the implementation and not passed as a parameter. If used
 inside a KEM algorithm, `suite_id` MUST start with "KEM" and identify
 this KEM algorithm; if used in the remainder of HPKE, it MUST start with
-"HPKE" and identify the entire ciphersuite in use. See sections {{dhkem}}
+"HPKE" and identify the entire ciphersuite in use. See {{dhkem}}
 and {{encryption-context}} for details.
 
 ## DH-Based KEM (DHKEM) {#dhkem}
@@ -1220,7 +1220,7 @@ def DeriveKeyPair_TwoStage(ikm):
 The `suite_id` used implicitly in `LabeledExtract()`, `LabeledExpand()`, and `LabeledDerive()`
 for `DeriveKeyPair(ikm)` is derived from the KEM identifier of the
 DHKEM in use (see {{kem-ids}}), that is, based on the type of key
-pair been generated for that DHKEM type.
+pair generated for that DHKEM type.
 
 For all of the above instances of DHKEM, the `GenerateKeyPair` can be
 implemented as `DeriveKeyPair(random(Nsk))`.
