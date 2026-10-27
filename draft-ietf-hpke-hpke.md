@@ -1471,11 +1471,11 @@ The table below summarizes the main results from {{HPKEAnalysis}}. N/A
 means that a property does not apply for the given mode, whereas `Y` means
 the given mode satisfies the property.
 
-| Variant | Message Sec. | Export Sec. | Sender Auth. |
+| Mode    | Message Sec. | Export Sec. | Sender Auth. |
 |:--------|:------------:|:-----------:|:------------:|
 | Base    | Y            | Y           | N/A          |
 | PSK     | Y            | Y           | Y            |
-{: #variant-properties title="Security Properties of HPKE Variants"}
+{: #mode-properties title="Security Properties of HPKE Modes"}
 
 If non-DH-based KEMs are to be used with HPKE, further analysis will be
 necessary to prove their security. The results from {{CS01}} provide
