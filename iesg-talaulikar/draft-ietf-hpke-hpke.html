@@ -3216,11 +3216,11 @@ secrets using the secret export interface.<a href="#section-9.1.1-4" class="pilc
 <p id="section-9.1.1-5">The table below summarizes the main results from <span>[<a href="#HPKEAnalysis" class="cite xref">HPKEAnalysis</a>]</span>. N/A
 means that a property does not apply for the given mode, whereas <code>Y</code> means
 the given mode satisfies the property.<a href="#section-9.1.1-5" class="pilcrow">¶</a></p>
-<span id="name-security-properties-of-hpke"></span><div id="mode-properties">
+<span id="name-summary-of-analysis-results"></span><div id="t-analysis">
 <table class="center" id="table-6">
             <caption>
 <a href="#table-6" class="selfRef">Table 6</a>:
-<a href="#name-security-properties-of-hpke" class="selfRef">Security Properties of HPKE Modes</a>
+<a href="#name-summary-of-analysis-results" class="selfRef">Summary of Analysis Results</a>
             </caption>
 <thead>
               <tr>
@@ -3846,6 +3846,18 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
 <a href="#section-12.1" class="section-number selfRef">12.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
+<dt id="GCM">[GCM]</dt>
+        <dd>
+<span class="refAuthor">Dworkin, M.</span>, <span class="refTitle">"Recommendation for block cipher modes of operation :: GaloisCounter Mode (GCM) and GMAC"</span>, <span class="refContent">National Institute of Standards and Technology</span>, <span class="seriesInfo">DOI 10.6028/nist.sp.800-38d</span>, <time datetime="2007" class="refDate">2007</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.sp.800-38d">https://doi.org/10.6028/nist.sp.800-38d</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="keyagreement">[keyagreement]</dt>
+        <dd>
+<span class="refAuthor">Barker, E.</span>, <span class="refAuthor">Chen, L.</span>, <span class="refAuthor">Roginsky, A.</span>, <span class="refAuthor">Vassilev, A.</span>, and <span class="refAuthor">R. Davis</span>, <span class="refTitle">"Recommendation for pair-wise key-establishment schemes using discrete logarithm cryptography"</span>, <span class="refContent">National Institute of Standards and Technology</span>, <span class="seriesInfo">DOI 10.6028/nist.sp.800-56ar3</span>, <time datetime="2018-04" class="refDate">April 2018</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.sp.800-56ar3">https://doi.org/10.6028/nist.sp.800-56ar3</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="NISTCurves">[NISTCurves]</dt>
+        <dd>
+<span class="refTitle">"Digital signature standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-4</span>, <time datetime="2013" class="refDate">2013</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-4">https://doi.org/10.6028/nist.fips.186-4</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
@@ -3853,6 +3865,14 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
 <dt id="RFC5116">[RFC5116]</dt>
         <dd>
 <span class="refAuthor">McGrew, D.</span>, <span class="refTitle">"An Interface and Algorithms for Authenticated Encryption"</span>, <span class="seriesInfo">RFC 5116</span>, <span class="seriesInfo">DOI 10.17487/RFC5116</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5116">https://www.rfc-editor.org/rfc/rfc5116</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5869">[RFC5869]</dt>
+        <dd>
+<span class="refAuthor">Krawczyk, H.</span> and <span class="refAuthor">P. Eronen</span>, <span class="refTitle">"HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"</span>, <span class="seriesInfo">RFC 5869</span>, <span class="seriesInfo">DOI 10.17487/RFC5869</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5869">https://www.rfc-editor.org/rfc/rfc5869</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7748">[RFC7748]</dt>
+        <dd>
+<span class="refAuthor">Langley, A.</span>, <span class="refAuthor">Hamburg, M.</span>, and <span class="refAuthor">S. Turner</span>, <span class="refTitle">"Elliptic Curves for Security"</span>, <span class="seriesInfo">RFC 7748</span>, <span class="seriesInfo">DOI 10.17487/RFC7748</span>, <time datetime="2016-01" class="refDate">January 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7748">https://www.rfc-editor.org/rfc/rfc7748</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8017">[RFC8017]</dt>
         <dd>
@@ -3866,9 +3886,17 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
         <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC8439">[RFC8439]</dt>
+        <dd>
+<span class="refAuthor">Nir, Y.</span> and <span class="refAuthor">A. Langley</span>, <span class="refTitle">"ChaCha20 and Poly1305 for IETF Protocols"</span>, <span class="seriesInfo">RFC 8439</span>, <span class="seriesInfo">DOI 10.17487/RFC8439</span>, <time datetime="2018-06" class="refDate">June 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8439">https://www.rfc-editor.org/rfc/rfc8439</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC9458">[RFC9458]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious HTTP"</span>, <span class="seriesInfo">RFC 9458</span>, <span class="seriesInfo">DOI 10.17487/RFC9458</span>, <time datetime="2024-01" class="refDate">January 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9458">https://www.rfc-editor.org/rfc/rfc9458</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SECG">[SECG]</dt>
+      <dd>
+<span class="refTitle">"Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"</span>, <time datetime="2009" class="refDate">2009</time>, <span>&lt;<a href="https://secg.org/sec1-v2.pdf">https://secg.org/sec1-v2.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -3907,10 +3935,6 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
         <dd>
 <span class="refAuthor">Okamoto, T.</span> and <span class="refAuthor">D. Pointcheval</span>, <span class="refTitle">"The Gap-Problems - a New Class of Problems for the Security of Cryptographic Schemes"</span>, <span class="seriesInfo">ISBN 978-3-540-44586-9</span>, <time datetime="2001" class="refDate">2001</time>, <span>&lt;<a href="https://link.springer.com/content/pdf/10.1007/3-540-44586-2_8.pdf">https://link.springer.com/content/pdf/10.1007/3-540-44586-2_8.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="GCM">[GCM]</dt>
-        <dd>
-<span class="refAuthor">Dworkin, M.</span>, <span class="refTitle">"Recommendation for block cipher modes of operation :: GaloisCounter Mode (GCM) and GMAC"</span>, <span class="refContent">National Institute of Standards and Technology</span>, <span class="seriesInfo">DOI 10.6028/nist.sp.800-38d</span>, <time datetime="2007" class="refDate">2007</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.sp.800-38d">https://doi.org/10.6028/nist.sp.800-38d</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="HHK06">[HHK06]</dt>
         <dd>
 <span class="refAuthor">Herranz, J.</span>, <span class="refAuthor">Hofheinz, D.</span>, and <span class="refAuthor">E. Kiltz</span>, <span class="refTitle">"Some (in)sufficient conditions for secure hybrid encryption"</span>, <time datetime="2006" class="refDate">2006</time>, <span>&lt;<a href="https://eprint.iacr.org/2006/265">https://eprint.iacr.org/2006/265</a>&gt;</span>. </dd>
@@ -3925,15 +3949,11 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
 <dd class="break"></dd>
 <dt id="IEEE1363">[IEEE1363]</dt>
         <dd>
-<span class="refAuthor">Institute of Electrical and Electronics Engineers</span>, <span class="refTitle">"IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques""</span>, <time datetime="2004" class="refDate">2004</time>. </dd>
+<span class="refAuthor">Institute of Electrical and Electronics Engineers</span>, <span class="refTitle">"IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"</span>, <time datetime="2004" class="refDate">2004</time>. </dd>
 <dd class="break"></dd>
 <dt id="ISO">[ISO]</dt>
         <dd>
 <span class="refAuthor">International Organization for Standardization / International Electrotechnical Commission</span>, <span class="refTitle">"ISO/IEC 18033-2, Information Technology - Security Techniques - Encryption Algorithms - Part 2 -- Asymmetric Ciphers"</span>, <time datetime="2006" class="refDate">2006</time>. </dd>
-<dd class="break"></dd>
-<dt id="keyagreement">[keyagreement]</dt>
-        <dd>
-<span class="refAuthor">Barker, E.</span>, <span class="refAuthor">Chen, L.</span>, <span class="refAuthor">Roginsky, A.</span>, <span class="refAuthor">Vassilev, A.</span>, and <span class="refAuthor">R. Davis</span>, <span class="refTitle">"Recommendation for pair-wise key-establishment schemes using discrete logarithm cryptography"</span>, <span class="refContent">National Institute of Standards and Technology</span>, <span class="seriesInfo">DOI 10.6028/nist.sp.800-56ar3</span>, <time datetime="2018-04" class="refDate">April 2018</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.sp.800-56ar3">https://doi.org/10.6028/nist.sp.800-56ar3</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="LGR20">[LGR20]</dt>
         <dd>
@@ -3943,10 +3963,6 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
         <dd>
 <span class="refAuthor">Gayoso Martinez, V.</span>, <span class="refAuthor">Hernandez Alvarez, F.</span>, <span class="refAuthor">Hernandez Encinas, L.</span>, and <span class="refAuthor">C. Sanchez Avila</span>, <span class="refTitle">"A Comparison of the Standardized Versions of ECIES"</span>, <time datetime="2010" class="refDate">2010</time>, <span>&lt;<a href="https://ieeexplore.ieee.org/abstract/document/5604194/">https://ieeexplore.ieee.org/abstract/document/5604194/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="NISTCurves">[NISTCurves]</dt>
-        <dd>
-<span class="refTitle">"Digital signature standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-4</span>, <time datetime="2013" class="refDate">2013</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-4">https://doi.org/10.6028/nist.fips.186-4</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC20">[RFC20]</dt>
         <dd>
 <span class="refAuthor">Cerf, V.</span>, <span class="refTitle">"ASCII format for network interchange"</span>, <span class="seriesInfo">STD 80</span>, <span class="seriesInfo">RFC 20</span>, <span class="seriesInfo">DOI 10.17487/RFC20</span>, <time datetime="1969-10" class="refDate">October 1969</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc20">https://www.rfc-editor.org/rfc/rfc20</a>&gt;</span>. </dd>
@@ -3955,21 +3971,9 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
         <dd>
 <span class="refAuthor">Linn, J.</span>, <span class="refTitle">"Privacy Enhancement for Internet Electronic Mail: Part I: Message Encryption and Authentication Procedures"</span>, <span class="seriesInfo">RFC 1421</span>, <span class="seriesInfo">DOI 10.17487/RFC1421</span>, <time datetime="1993-02" class="refDate">February 1993</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc1421">https://www.rfc-editor.org/rfc/rfc1421</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC5869">[RFC5869]</dt>
-        <dd>
-<span class="refAuthor">Krawczyk, H.</span> and <span class="refAuthor">P. Eronen</span>, <span class="refTitle">"HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"</span>, <span class="seriesInfo">RFC 5869</span>, <span class="seriesInfo">DOI 10.17487/RFC5869</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5869">https://www.rfc-editor.org/rfc/rfc5869</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC7748">[RFC7748]</dt>
-        <dd>
-<span class="refAuthor">Langley, A.</span>, <span class="refAuthor">Hamburg, M.</span>, and <span class="refAuthor">S. Turner</span>, <span class="refTitle">"Elliptic Curves for Security"</span>, <span class="seriesInfo">RFC 7748</span>, <span class="seriesInfo">DOI 10.17487/RFC7748</span>, <time datetime="2016-01" class="refDate">January 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7748">https://www.rfc-editor.org/rfc/rfc7748</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC7914">[RFC7914]</dt>
         <dd>
 <span class="refAuthor">Percival, C.</span> and <span class="refAuthor">S. Josefsson</span>, <span class="refTitle">"The scrypt Password-Based Key Derivation Function"</span>, <span class="seriesInfo">RFC 7914</span>, <span class="seriesInfo">DOI 10.17487/RFC7914</span>, <time datetime="2016-08" class="refDate">August 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7914">https://www.rfc-editor.org/rfc/rfc7914</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC8439">[RFC8439]</dt>
-        <dd>
-<span class="refAuthor">Nir, Y.</span> and <span class="refAuthor">A. Langley</span>, <span class="refTitle">"ChaCha20 and Poly1305 for IETF Protocols"</span>, <span class="seriesInfo">RFC 8439</span>, <span class="seriesInfo">DOI 10.17487/RFC8439</span>, <time datetime="2018-06" class="refDate">June 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8439">https://www.rfc-editor.org/rfc/rfc8439</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8467">[RFC8467]</dt>
         <dd>
@@ -3998,10 +4002,6 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
 <dt id="RFC9849">[RFC9849]</dt>
         <dd>
 <span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Oku, K.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"TLS Encrypted Client Hello"</span>, <span class="seriesInfo">RFC 9849</span>, <span class="seriesInfo">DOI 10.17487/RFC9849</span>, <time datetime="2026-03" class="refDate">March 2026</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9849">https://www.rfc-editor.org/rfc/rfc9849</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="SECG">[SECG]</dt>
-        <dd>
-<span class="refTitle">"Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"</span>, <time datetime="2009" class="refDate">2009</time>, <span>&lt;<a href="https://secg.org/sec1-v2.pdf">https://secg.org/sec1-v2.pdf</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="TestVectors">[TestVectors]</dt>
       <dd>
