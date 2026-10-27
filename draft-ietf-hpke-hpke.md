@@ -1491,7 +1491,7 @@ The table below summarizes the main results from {{HPKEAnalysis}}. N/A
 means that a property does not apply for the given mode, whereas `Y` means
 the given mode satisfies the property.
 
-| Variant | Message Sec. | Export Sec. | Sender Auth. |
+| Mode    | Message Sec. | Export Sec. | Sender Auth. |
 |:--------|:------------:|:-----------:|:------------:|
 | Base    | Y            | Y           | N/A          |
 | PSK     | Y            | Y           | Y            |
@@ -1721,7 +1721,9 @@ attacker), such replay can allow the attacker to cause the recipient to re-use
 the exported values.
 
 Consider the following scenario, in which B is using the recipient-to-sender
-encryption described as an example in {{Section 9.8 of RFC9180}}:
+encryption described as an example in {{Section 9.8 of RFC9180}}, which derives
+an AEAD key and nonce deterministically from an exported secret, with no fresh
+per-response input:
 
 ~~~
 B->A: pk
