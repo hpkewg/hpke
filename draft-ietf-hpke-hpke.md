@@ -334,6 +334,15 @@ An empty string ("") indicates a zero-length byte sequence.
 These byte sequences values do not include any zero byte marker at the end,
 such as can be used in some methods of representing strings.
 
+Algorithms in this document are specified using Python-like pseudocode.  In
+this pseudocode, `raise` indicates that the function fails with the named
+error, which is propagated to the caller and causes the calling function to
+fail as well (see {{api-errors}}).  Names in angle brackets, such as `<ROLE>`
+or `<MODE>`, are template parameters that are replaced with a concrete value,
+as described where they are used.  Within the methods of an encryption context
+(e.g., `Context.Export`), `self` refers to the context on which the method is
+invoked.
+
 # Cryptographic Dependencies {#base-crypto}
 
 HPKE variants rely on the following primitives:
@@ -452,9 +461,16 @@ Certain functions have a different structure depending on whether a one-stage or
 two-stage KDF is being used.  For clarity, such functions will be described
 twice in this document, once with the suffix `_OneStage` and once with the
 suffix `_TwoStage`, representing the versions of the function to be used with a
-one-stage or two-stage KDF, respectively.  For example, the `Foo` function would
-be invoked by calling `Foo_OneStage` when using a one-stage KDF, and by calling
-`Foo_TwoStage` when using a two-stage KDF.
+one-stage or two-stage KDF, respectively.  A reference to or call of the
+function without a suffix denotes the variant that matches the KDF in use.  For
+example, a call to `Foo` invokes `Foo_OneStage` when using a one-stage KDF, and
+`Foo_TwoStage` when using a two-stage KDF.  This convention applies to the
+following functions:
+
+* `ExtractAndExpand` ({{dhkem}})
+* `CombineSecrets` ({{encryption-context}})
+* `Context.Export` ({{hpke-export}})
+* `DeriveCandidate` and `DeriveKeyPair` ({{derive-key-pair}})
 
 ## AEAD Encryption Algorithm {#crypto-aead}
 
