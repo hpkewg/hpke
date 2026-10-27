@@ -29,6 +29,18 @@ author:
     name: Christopher A. Wood
     email: caw@heapingbits.net
 
+normative:
+  keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
+
+  NISTCurves: DOI.10.6028/NIST.FIPS.186-4
+
+  GCM: DOI.10.6028/NIST.SP.800-38D
+
+  SECG:
+    title: "Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"
+    target: https://secg.org/sec1-v2.pdf
+    date: 2009
+
 informative:
   CS01:
     title: "Design and Analysis of Practical Public-Key Encryption Schemes Secure against Adaptive Chosen Ciphertext Attack"
@@ -80,7 +92,7 @@ informative:
         org: American National Standards Institute
 
   IEEE1363:
-    title: IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"
+    title: "IEEE 1363a, Standard Specifications for Public Key Cryptography - Amendment 1 -- Additional Techniques"
     date: 2004
     author:
       -
@@ -94,11 +106,6 @@ informative:
       -
         ins:
         org: International Organization for Standardization / International Electrotechnical Commission
-
-  SECG:
-    title: "Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"
-    target: https://secg.org/sec1-v2.pdf
-    date: 2009
 
   BN00:
     title: "Authenticated Encryption: Relations among Notions and Analysis of the Generic Composition Paradigm"
@@ -216,12 +223,6 @@ informative:
     title: "HPKE Test Vectors"
     target: https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json
     date: 2021
-
-  keyagreement: DOI.10.6028/NIST.SP.800-56Ar3
-
-  NISTCurves: DOI.10.6028/NIST.FIPS.186-4
-
-  GCM: DOI.10.6028/NIST.SP.800-38D
 
   AJKL23:
     title: "The Pre-Shared Key Modes of HPKE"
@@ -983,7 +984,7 @@ the export-only AEAD ID `0xFFFF` when computing the key schedule. Such
 applications can avoid computing the `key` and `base_nonce` values in the
 key schedule, as they are not used by the Export interface described above.
 
-Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of ?RFC8446}}),
+Unlike the similar TLS 1.3 exporter interface (see {{Section 7.5 of ?RFC9846}}),
 the HPKE export interface does not provide replay protection. While the resulting
 secret will only be known to the sender and recipient, a replayed encapsulated
 secret `enc` will produce an identical context, and thus the same exported
@@ -1496,6 +1497,7 @@ the given mode satisfies the property.
 |:--------|:------------:|:-----------:|:------------:|
 | Base    | Y            | Y           | N/A          |
 | PSK     | Y            | Y           | Y            |
+{: #t-analysis title="Summary of Analysis Results"}
 
 If non-DH-based KEMs are to be used with HPKE, further analysis will be
 necessary to prove their security. The results from {{CS01}} provide
@@ -1769,15 +1771,13 @@ ciphertext.
 If the randomness used for KEM encapsulation is bad -- i.e., of low entropy or
 compromised because of a broken or subverted random number generator -- the
 confidentiality guarantees of HPKE degrade significantly. In Base mode,
-confidentiality guarantees can be lost completely; in the other modes, at least forward secrecy with
+confidentiality guarantees can be lost completely; in PSK mode, at least forward secrecy with
 respect to sender compromise can be lost completely.
 
 Such a situation could also lead to the reuse of the same KEM shared secret
 and thus to the reuse of same key-nonce pairs for the AEAD.
 The AEADs specified in this document are not secure
-in case of nonce reuse. This attack vector is particularly relevant in
-the authenticated mode because knowledge of the ephemeral randomness is not
-enough to derive `shared_secret` in these modes.
+in case of nonce reuse.
 
 One way for applications to mitigate the impacts of bad ephemeral randomness is
 to combine ephemeral randomness with a local long-term secret that has been
@@ -3722,4 +3722,3 @@ L: 32
 exported_value:
 000521bf952f7f7c56cf7dbf40ec1f6943a3233abe36a72d20aa4f87e0d90a95
 ~~~
-
