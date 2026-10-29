@@ -10,7 +10,7 @@
 <meta content="Benjamin Lipp" name="author">
 <meta content="Christopher A. Wood" name="author">
 <meta content="
-       This document describes a scheme for hybrid public key encryption (HPKE).  This
+       This document specifies a scheme for hybrid public key encryption (HPKE).  This
 scheme provides a variant of public key encryption of arbitrary-sized plaintexts
 for a recipient public key. It also includes a variant that authenticates
 possession of a pre-shared key. HPKE works for any combination of an
@@ -1057,7 +1057,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 30 April 2027</td>
+<td class="center">Expires 2 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1073,12 +1073,12 @@ svg {
 <a href="https://www.rfc-editor.org/rfc/rfc9180" class="eref">9180</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-10-27" class="published">27 October 2026</time>
+<time datetime="2026-10-29" class="published">29 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-04-30">30 April 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-02">2 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1101,7 +1101,7 @@ svg {
 <h1 id="title">Hybrid Public Key Encryption</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document describes a scheme for hybrid public key encryption (HPKE).  This
+<p id="section-abstract-1">This document specifies a scheme for hybrid public key encryption (HPKE).  This
 scheme provides a variant of public key encryption of arbitrary-sized plaintexts
 for a recipient public key. It also includes a variant that authenticates
 possession of a pre-shared key. HPKE works for any combination of an
@@ -1139,7 +1139,7 @@ function (HKDF), and SHA-2.<a href="#section-abstract-1" class="pilcrow">¶</a><
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 30 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 2 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1545,7 +1545,10 @@ specified with sufficient clarity that they can be interoperably
 implemented. The HPKE construction defined herein is secure against (adaptive)
 chosen ciphertext attacks (IND-CCA2-secure) under classical assumptions about
 the underlying primitives <span>[<a href="#HPKEAnalysis" class="cite xref">HPKEAnalysis</a>]</span> <span>[<a href="#AJKL23" class="cite xref">AJKL23</a>]</span> <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span>, and post-quantum
-secure when used with a post-quantum secure KEM <span>[<a href="#AJKL23" class="cite xref">AJKL23</a>]</span> <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span>. A summary of
+secure when used with a post-quantum secure KEM <span>[<a href="#AJKL23" class="cite xref">AJKL23</a>]</span> <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span>. These
+analyses cover HPKE instantiated with a two-stage KDF.  The security of HPKE
+with a one-stage KDF relies on the KDF meeting the requirements in
+<a href="#kdf-choice" class="auto internal xref">Section 9.3</a>, and has not yet been analyzed in the same detail. A summary of
 these analyses is in <a href="#sec-properties" class="auto internal xref">Section 9.1</a>.<a href="#section-1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1571,7 +1574,7 @@ operations, roles, and behaviors of HPKE:<a href="#section-3-1" class="pilcrow">
 <ul class="normal">
 <li class="normal" id="section-3-2.1">
           <p id="section-3-2.1.1"><code>(skX, pkX)</code>: A key encapsulation mechanism (KEM) key pair used in role X,
-where X is one of S, R, or E as sender, recipient, and ephemeral, respectively;
+where X is one of R or E as recipient and ephemeral, respectively;
 <code>skX</code> is the private key and <code>pkX</code> is the public key.<a href="#section-3-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-2.2">
@@ -1619,6 +1622,14 @@ The value of bytes is the ASCII encoding <span>[<a href="#RFC20" class="cite xre
 An empty string ("") indicates a zero-length byte sequence.
 These byte sequences values do not include any zero byte marker at the end,
 such as can be used in some methods of representing strings.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">Algorithms in this document are specified using Python-like pseudocode.  In
+this pseudocode, <code>raise</code> indicates that the function fails with the named
+error, which is propagated to the caller and causes the calling function to
+fail as well (see <a href="#api-errors" class="auto internal xref">Section 8.2</a>).  Names in angle brackets, such as <code>&lt;ROLE&gt;</code>
+or <code>&lt;MODE&gt;</code>, are template parameters that are replaced with a concrete value,
+as described where they are used.  Within the methods of an encryption context
+(e.g., <code>Context.Export</code>), <code>self</code> refers to the context on which the method is
+invoked.<a href="#section-3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="base-crypto">
@@ -1797,9 +1808,25 @@ For a one-stage KDF, <code>Nh</code> is specified as part of the definition of t
 two-stage KDF is being used.  For clarity, such functions will be described
 twice in this document, once with the suffix <code>_OneStage</code> and once with the
 suffix <code>_TwoStage</code>, representing the versions of the function to be used with a
-one-stage or two-stage KDF, respectively.  For example, the <code>Foo</code> function would
-be invoked by calling <code>Foo_OneStage</code> when using a one-stage KDF, and by calling
-<code>Foo_TwoStage</code> when using a two-stage KDF.<a href="#section-4.2-7" class="pilcrow">¶</a></p>
+one-stage or two-stage KDF, respectively.  A reference to or call of the
+function without a suffix denotes the variant that matches the KDF in use.  For
+example, a call to <code>Foo</code> invokes <code>Foo_OneStage</code> when using a one-stage KDF, and
+<code>Foo_TwoStage</code> when using a two-stage KDF.  This convention applies to the
+following functions:<a href="#section-4.2-7" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2-8.1">
+            <p id="section-4.2-8.1.1"><code>ExtractAndExpand</code> (<a href="#dhkem" class="auto internal xref">Section 4.5</a>)<a href="#section-4.2-8.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-8.2">
+            <p id="section-4.2-8.2.1"><code>CombineSecrets</code> (<a href="#encryption-context" class="auto internal xref">Section 5.1</a>)<a href="#section-4.2-8.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-8.3">
+            <p id="section-4.2-8.3.1"><code>Context.Export</code> (<a href="#hpke-export" class="auto internal xref">Section 5.3</a>)<a href="#section-4.2-8.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-8.4">
+            <p id="section-4.2-8.4.1"><code>DeriveCandidate</code> and <code>DeriveKeyPair</code> (<a href="#derive-key-pair" class="auto internal xref">Section 7.1.3</a>)<a href="#section-4.2-8.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
 </section>
 </div>
 <div id="crypto-aead">
@@ -1833,7 +1860,7 @@ returning plaintext message <code>pt</code>. This function can raise an
           <dt id="section-4.3-4.1">
 <code>Nk</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-4.3-4.2">
-            <p id="section-4.3-4.2.1">The length a key for this algorithm.<a href="#section-4.3-4.2.1" class="pilcrow">¶</a></p>
+            <p id="section-4.3-4.2.1">The length of a key for this algorithm.<a href="#section-4.3-4.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.3-4.3">
@@ -1890,7 +1917,7 @@ def LabeledExpand(prk, label, info, L):
 implicit from the implementation and not passed as a parameter. If used
 inside a KEM algorithm, <code>suite_id</code> MUST start with "KEM" and identify
 this KEM algorithm; if used in the remainder of HPKE, it MUST start with
-"HPKE" and identify the entire ciphersuite in use. See sections <a href="#dhkem" class="auto internal xref">Section 4.5</a>
+"HPKE" and identify the entire ciphersuite in use. See <a href="#dhkem" class="auto internal xref">Section 4.5</a>
 and <a href="#encryption-context" class="auto internal xref">Section 5.1</a> for details.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1942,8 +1969,8 @@ DH public keys in this KEM algorithm.<a href="#section-4.5-4.8.1" class="pilcrow
 </dl>
 <p id="section-4.5-5">Then we can construct a KEM that implements the interface defined in <a href="#crypto-kem" class="auto internal xref">Section 4.1</a>
 called <code>DHKEM(Group, KDF)</code> in the following way, where <code>Group</code> denotes the
-Diffie-Hellman group and <code>KDF</code> denotes the KDF. The function parameters <code>pkR</code> and <code>pkS</code>
-are deserialized public keys, and <code>enc</code> is a serialized public key. Since
+Diffie-Hellman group and <code>KDF</code> denotes the KDF. The function parameter <code>pkR</code>
+is a deserialized public key, and <code>enc</code> is a serialized public key. Since
 encapsulated shared secrets are Diffie-Hellman public keys in this KEM algorithm,
 we use <code>SerializePublicKey()</code> and <code>DeserializePublicKey()</code> to encode and decode
 them, respectively. <code>GenerateKeyPair()</code> produces a key pair
@@ -2058,8 +2085,12 @@ following one-byte values will be used to distinguish between modes:<a href="#se
         </tbody>
       </table>
 </div>
-<p id="section-5-4">(The values 0x02 and 0x03 were used in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> to reflect additional
-variants which have been removed from this specification.)<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-4">The values 0x02 and 0x03 are reserved for the <code>mode_auth</code> and <code>mode_auth_psk</code>
+modes defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>, which are not specified in this document, and
+are not to be used with any other meaning.  This document does not deprecate
+those modes: existing deployments can continue to use them as specified in
+<span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>, and future specifications may specify them in terms of the
+interfaces defined in this document.<a href="#section-5-4" class="pilcrow">¶</a></p>
 <p id="section-5-5">Both variants follow the same basic two-step pattern:<a href="#section-5-5" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-5-6">
 <li id="section-5-6.1">
@@ -2401,12 +2432,16 @@ in multiple encryptions with the same sequence number, and thus the same nonce.<
 <p id="section-5.3-1">HPKE provides an interface for exporting secrets from the encryption context
 using a variable-length pseudorandom function (PRF). This interface takes as input a context
 string <code>exporter_context</code> and a desired length <code>L</code> in bytes, and produces
-a secret derived from the internal exporter secret using the corresponding
-KDF Expand function. For the KDFs defined in this specification, <code>L</code> has
-a maximum value of <code>255*Nh</code>. Future specifications that define new KDFs
-MUST specify a bound for <code>L</code>.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+a secret derived from the internal exporter secret using <code>LabeledExpand()</code> (for
+a two-stage KDF) or <code>LabeledDerive()</code> (for a one-stage KDF). For the KDFs
+defined in this specification, <code>L</code> has a maximum value of <code>255*Nh</code>. Future specifications that define new KDFs
+MUST specify a bound for <code>L</code>.
+For one-stage KDFs, <code>LabeledDerive()</code> encodes <code>L</code> in two bytes, so <code>L</code> cannot
+exceed 65,535 regardless of any bound given by the KDF's own specification. A
+specification for a one-stage KDF MUST NOT specify a bound for <code>L</code> larger than
+65,535.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
 <p id="section-5.3-2">The <code>exporter_context</code> parameter has a maximum length that depends on the KDF
-itself, on the definition of <code>LabeledExpand()</code>, and on the constant labels
+itself, on the definition of <code>LabeledExpand()</code> or <code>LabeledDerive()</code>, and on the constant labels
 used together with them. See <a href="#kdf-input-length" class="auto internal xref">Section 7.2.1</a> for precise limits on this
 length.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.3-3">
@@ -2432,12 +2467,13 @@ secret will only be known to the sender and recipient, a replayed encapsulated
 secret <code>enc</code> will produce an identical context, and thus the same exported
 secrets. In particular, applications MUST NOT use exported secrets unless it is
 safe for the same exported values to be used multiple times.  For example,
-applications MUST NOT use an exported secret to derive a (key, nonce) pair for
-AEAD encryption (as suggested in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-9.8" class="relref">Section 9.8</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>), since reuse of a
-(key, nonce) pair harms security in most AEAD algorithms.  In such cases,
-applications SHOULD incorporate a fresh recipient-provided nonce when deriving
-values from an export context, as discussed in <span><a href="https://rfc-editor.org/rfc/rfc9458#section-4.4" class="relref">Section 4.4</a> of [<a href="#RFC9458" class="cite xref">RFC9458</a>]</span> and
-<a href="#bidirectional" class="auto internal xref">Section 9.8</a>.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
+applications MUST NOT derive a (key, nonce) pair for AEAD encryption from an
+exported secret unless the derivation also incorporates a value that is fresh
+for each derivation, such as a recipient-provided nonce (see
+<span><a href="https://rfc-editor.org/rfc/rfc9458#section-4.4" class="relref">Section 4.4</a> of [<a href="#RFC9458" class="cite xref">RFC9458</a>]</span> and <a href="#bidirectional" class="auto internal xref">Section 9.8</a>), since reuse of a (key,
+nonce) pair harms security in most AEAD algorithms.  In particular, the example
+in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-9.8" class="relref">Section 9.8</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>, which derives an AEAD key and nonce from an
+exported secret with no fresh input, does not meet this requirement.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2555,8 +2591,8 @@ respectively.<a href="#section-7-1" class="pilcrow">¶</a></p>
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
-              <td class="text-left" rowspan="1" colspan="1">yes</td>
-              <td class="text-left" rowspan="1" colspan="1">RFC 9180</td>
+              <td class="text-left" rowspan="1" colspan="1">N/A</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC XXXX</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">0x0010</td>
@@ -2621,10 +2657,13 @@ respectively.<a href="#section-7-1" class="pilcrow">¶</a></p>
           </tbody>
         </table>
 </div>
-<p id="section-7.1-2">The <code>Auth</code> column indicates if the KEM algorithm provides the
-<code>AuthEncap()</code>/<code>AuthDecap()</code> interface defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>.  Those methods
-have been removed from the KEM interface in this document, so a KEM implementing
-the interface described here should always have "no" in the <code>Auth</code> column.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.1-2">The <code>Auth</code> column indicates whether the KEM algorithm provides the
+<code>AuthEncap()</code>/<code>AuthDecap()</code> interface defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>.  This document
+does not use that interface, since it does not specify the modes that rely on
+it.  The column is retained for compatibility with <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> and with future
+specifications that reintroduce authenticated modes.  The DHKEMs listed above
+provide that interface as specified in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>, and so have
+"yes" in this column.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
 <div id="serializepublickey-and-deserializepublickey">
 <section id="section-7.1.1">
           <h4 id="name-serializepublickey-and-dese">
@@ -2663,7 +2702,7 @@ representation.<a href="#section-7.1.2-3" class="pilcrow">¶</a></p>
 <p id="section-7.1.2-4">To catch invalid keys early on, implementors of DHKEMs SHOULD check that
 deserialized private keys are not equivalent to 0 (mod <code>order</code>), where <code>order</code>
 is the order of the DH group. Note that this property is trivially true for X25519
-and X448 groups, since clamped values can never be 0 (mod <code>order</code>).<a href="#section-7.1.2-4" class="pilcrow">¶</a></p>
+and X448 groups, since clamped values (see <span><a href="https://rfc-editor.org/rfc/rfc7748#section-5" class="relref">Section 5</a> of [<a href="#RFC7748" class="cite xref">RFC7748</a>]</span>) can never be 0 (mod <code>order</code>).<a href="#section-7.1.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="derive-key-pair">
@@ -2705,7 +2744,7 @@ def DeriveKeyPair(ikm):
   return (sk, pk(sk))
 </pre><a href="#section-7.1.3-4" class="pilcrow">¶</a>
 </div>
-<p id="section-7.1.3-5"><code>order</code> is the order of the curve being used (see Section D.1.2 of <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span>), and
+<p id="section-7.1.3-5"><code>order</code> is the order of the curve being used (see Section 3.2.1 of <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span>), and
 is listed below for completeness.<a href="#section-7.1.3-5" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-7.1.3-6">
 <pre>
@@ -2743,7 +2782,7 @@ def DeriveKeyPair_TwoStage(ikm):
 <p id="section-7.1.3-10">The <code>suite_id</code> used implicitly in <code>LabeledExtract()</code>, <code>LabeledExpand()</code>, and <code>LabeledDerive()</code>
 for <code>DeriveKeyPair(ikm)</code> is derived from the KEM identifier of the
 DHKEM in use (see <a href="#kem-ids" class="auto internal xref">Section 7.1</a>), that is, based on the type of key
-pair been generated for that DHKEM type.<a href="#section-7.1.3-10" class="pilcrow">¶</a></p>
+pair generated for that DHKEM type.<a href="#section-7.1.3-10" class="pilcrow">¶</a></p>
 <p id="section-7.1.3-11">For all of the above instances of DHKEM, the <code>GenerateKeyPair</code> can be
 implemented as <code>DeriveKeyPair(random(Nsk))</code>.<a href="#section-7.1.3-11" class="pilcrow">¶</a></p>
 </section>
@@ -2807,7 +2846,7 @@ algorithm whose output length is <code>Npk</code>.<a href="#section-7.1.5-2" cla
               <td class="text-left" rowspan="1" colspan="1">Reserved</td>
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
-              <td class="text-left" rowspan="1" colspan="1">RFC 9180</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC XXXX</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">0x0001</td>
@@ -2847,7 +2886,7 @@ defined in <span>[<a href="#I-D.ietf-hpke-pq" class="cite xref">I-D.ietf-hpke-pq
           <h4 id="name-input-length-restrictions">
 <a href="#section-7.2.1" class="section-number selfRef">7.2.1. </a><a href="#name-input-length-restrictions" class="section-name selfRef">Input Length Restrictions</a>
           </h4>
-<p id="section-7.2.1-1">For one-stage KDFs, there is length limit of 65,535 bytes for the <code>psk</code>,
+<p id="section-7.2.1-1">For one-stage KDFs, there is a length limit of 65,535 bytes for the <code>psk</code>,
 <code>psk_id</code>, <code>info</code> fields. This limitation arises because these fields are all
 prefixed with a two-byte length when being used as KDF inputs. There is no
 inherent length limitation on <code>exporter_context</code>.  If a one-stage KDF has an
@@ -2919,28 +2958,28 @@ parameters.<a href="#section-7.2.1-4" class="pilcrow">¶</a></p>
 useful for implementations to impose a smaller maximum on the values they will
 accept (for example, to avoid dynamic allocations). Implementations MUST
 support <code>info</code> values of at least 64 bytes. Implementations SHOULD support
-<code>info</code> values of at least 16384 bytes to accommodate protocols such as<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-6">Encrypted Client Hello <span>[<a href="#RFC9849" class="cite xref">RFC9849</a>]</span>. Applications seeking
+<code>info</code> values of at least 16384 bytes to accommodate protocols such as
+Encrypted Client Hello <span>[<a href="#RFC9849" class="cite xref">RFC9849</a>]</span>. Applications seeking
 maximum interoperability with resource-constrained HPKE implementations
 SHOULD NOT provide <code>info</code> values exceeding 64 bytes without confirmation that an
-implementation supports larger <code>info</code> values.<a href="#section-7.2.1-6" class="pilcrow">¶</a></p>
-<p id="section-7.2.1-7">The values for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>ikm</code>, which are inputs to
-<code>LabeledExtract()</code>, were computed with the following expression:<a href="#section-7.2.1-7" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.2.1-8">
+implementation supports larger <code>info</code> values.<a href="#section-7.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-6">The values for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>ikm</code>, which are inputs to
+<code>LabeledExtract()</code>, were computed with the following expression:<a href="#section-7.2.1-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.2.1-7">
 <pre>
 max_size_hash_input - Nb - size_version_label -
     size_suite_id - size_input_label
-</pre><a href="#section-7.2.1-8" class="pilcrow">¶</a>
+</pre><a href="#section-7.2.1-7" class="pilcrow">¶</a>
 </div>
-<p id="section-7.2.1-9">The value for <code>exporter_context</code>, which is an input to <code>LabeledExpand()</code>,
-was computed with the following expression:<a href="#section-7.2.1-9" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.2.1-10">
+<p id="section-7.2.1-8">The value for <code>exporter_context</code>, which is an input to <code>LabeledExpand()</code>,
+was computed with the following expression:<a href="#section-7.2.1-8" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-7.2.1-9">
 <pre>
 max_size_hash_input - Nb - Nh - size_version_label -
     size_suite_id - size_input_label - 2 - 1
-</pre><a href="#section-7.2.1-10" class="pilcrow">¶</a>
+</pre><a href="#section-7.2.1-9" class="pilcrow">¶</a>
 </div>
-<p id="section-7.2.1-11">In these equations, <code>max_size_hash_input</code> is the maximum input length
+<p id="section-7.2.1-10">In these equations, <code>max_size_hash_input</code> is the maximum input length
 of the underlying hash function in bytes, <code>Nb</code> is the block size of the
 underlying hash function in bytes, <code>size_version_label</code> is the size
 of "HPKE-v1" in bytes and equals 7, <code>size_suite_id</code> is the size of the
@@ -2948,7 +2987,7 @@ of "HPKE-v1" in bytes and equals 7, <code>size_suite_id</code> is the size of th
 remainder of HPKE (relevant for <code>psk</code>, <code>psk_id</code>, <code>info</code>, and <code>exporter_context</code>),
 and <code>size_input_label</code> is the size in bytes of the label used as parameter to
 <code>LabeledExtract()</code> or <code>LabeledExpand()</code>, the maximum of which is 13
-across all labels in this document.<a href="#section-7.2.1-11" class="pilcrow">¶</a></p>
+across all labels in this document.<a href="#section-7.2.1-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2981,7 +3020,7 @@ across all labels in this document.<a href="#section-7.2.1-11" class="pilcrow">�
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
-              <td class="text-left" rowspan="1" colspan="1">RFC 9180</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC XXXX</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">0x0001</td>
@@ -3019,7 +3058,7 @@ across all labels in this document.<a href="#section-7.2.1-11" class="pilcrow">�
               <td class="text-left" rowspan="1" colspan="1">0</td>
               <td class="text-left" rowspan="1" colspan="1">0</td>
               <td class="text-left" rowspan="1" colspan="1">N/A</td>
-              <td class="text-left" rowspan="1" colspan="1">RFC 9180</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC XXXX</td>
             </tr>
           </tbody>
         </table>
@@ -3114,7 +3153,7 @@ to raise <code>ValidationError</code> unmodified.<a href="#section-8.2-5" class=
 <p id="section-8.2-6">Applications using HPKE APIs should not assume that the errors here are complete,
 nor should they assume certain classes of errors will always manifest the same way
 for all ciphersuites. For example, the DHKEM specified in this document will emit
-a <code>DeserializationError</code> or <code>ValidationError</code> if a KEM public key is invalid. However,
+a <code>DeserializeError</code> or <code>ValidationError</code> if a KEM public key is invalid. However,
 a new KEM might not have an efficient algorithm for determining whether or not a
 public key is valid. In this case, an invalid public key might instead yield an
 <code>OpenError</code> when trying to decrypt a ciphertext.<a href="#section-8.2-6" class="pilcrow">¶</a></p>
@@ -3150,9 +3189,7 @@ secret from a uniformly random bitstring of equal length, i.e.,
             <p id="section-9.1-2.3.1">Sender authentication: Proof of sender origin for the PSK mode<a href="#section-9.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-9.1-3">These security goals are expected to hold for any honest sender and
-honest recipient keys, as well as if the honest sender and honest
-recipient keys are the same.<a href="#section-9.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.1-3">These security goals are expected to hold for any honest recipient key pair.<a href="#section-9.1-3" class="pilcrow">¶</a></p>
 <p id="section-9.1-4">A pre-shared key provides authentication; additionally, it strengthens the
 secrecy properties in certain adversary models, including against a
 quantum-capable adversary, see <a href="#post-quantum-security" class="auto internal xref">Section 9.1.2</a>.<a href="#section-9.1-4" class="pilcrow">¶</a></p>
@@ -3213,9 +3250,19 @@ expected properties hold under the different key compromise cases
 mentioned above. The analysis considers a sender that sends one message
 using the encryption context, and additionally exports two independent
 secrets using the secret export interface.<a href="#section-9.1.1-4" class="pilcrow">¶</a></p>
-<p id="section-9.1.1-5">The table below summarizes the main results from <span>[<a href="#HPKEAnalysis" class="cite xref">HPKEAnalysis</a>]</span>. N/A
+<p id="section-9.1.1-5">The analysis in <span>[<a href="#HPKEAnalysis" class="cite xref">HPKEAnalysis</a>]</span> considers only two-stage KDFs.  With a
+one-stage KDF, each key schedule computation that a two-stage KDF performs with
+<code>Extract()</code> and <code>Expand()</code> is instead performed by a single call to
+<code>LabeledDerive()</code> over the encoded inputs (see <a href="#encryption-context" class="auto internal xref">Section 5.1</a>), and
+the DHKEM and export computations are likewise single <code>LabeledDerive()</code> calls.
+The analysis is expected to carry over to a one-stage KDF whose <code>Derive()</code>
+function can be modeled as a random oracle, since such a function provides
+the properties that the conditions above require of <code>Extract()</code> and
+<code>Expand()</code>.  However, this has not been formally verified; see the discussion
+of future work below.<a href="#section-9.1.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.1.1-6">The table below summarizes the main results from <span>[<a href="#HPKEAnalysis" class="cite xref">HPKEAnalysis</a>]</span>. N/A
 means that a property does not apply for the given mode, whereas <code>Y</code> means
-the given mode satisfies the property.<a href="#section-9.1.1-5" class="pilcrow">¶</a></p>
+the given mode satisfies the property.<a href="#section-9.1.1-6" class="pilcrow">¶</a></p>
 <span id="name-summary-of-analysis-results"></span><div id="t-analysis">
 <table class="center" id="table-6">
             <caption>
@@ -3224,7 +3271,7 @@ the given mode satisfies the property.<a href="#section-9.1.1-5" class="pilcrow"
             </caption>
 <thead>
               <tr>
-                <th class="text-left" rowspan="1" colspan="1">Variant</th>
+                <th class="text-left" rowspan="1" colspan="1">Mode</th>
                 <th class="text-center" rowspan="1" colspan="1">Message Sec.</th>
                 <th class="text-center" rowspan="1" colspan="1">Export Sec.</th>
                 <th class="text-center" rowspan="1" colspan="1">Sender Auth.</th>
@@ -3246,16 +3293,16 @@ the given mode satisfies the property.<a href="#section-9.1.1-5" class="pilcrow"
             </tbody>
           </table>
 </div>
-<p id="section-9.1.1-7">If non-DH-based KEMs are to be used with HPKE, further analysis will be
+<p id="section-9.1.1-8">If non-DH-based KEMs are to be used with HPKE, further analysis will be
 necessary to prove their security. The results from <span>[<a href="#CS01" class="cite xref">CS01</a>]</span> provide
 some indication that any IND-CCA2-secure KEM will suffice here, but are
-not conclusive given the differences in the schemes.<a href="#section-9.1.1-7" class="pilcrow">¶</a></p>
-<p id="section-9.1.1-8">A detailed computational analysis of the PSK mode has been done in
+not conclusive given the differences in the schemes.<a href="#section-9.1.1-8" class="pilcrow">¶</a></p>
+<p id="section-9.1.1-9">A detailed computational analysis of the PSK mode has been done in
 <span>[<a href="#AJKL23" class="cite xref">AJKL23</a>]</span>. In future work, the analyses from <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span> and <span>[<a href="#AJKL23" class="cite xref">AJKL23</a>]</span>
 can be extended to cover a detailed computational analysis of HPKE's
 base mode, the usage of a one-stage KDF, the multi-shot and secret export
 interfaces, as well as the examples for bidirectional encryption
-<a href="#bidirectional" class="auto internal xref">Section 9.8</a> and metadata protection <a href="#metadata" class="auto internal xref">Section 9.9</a>.<a href="#section-9.1.1-8" class="pilcrow">¶</a></p>
+(<a href="#bidirectional" class="auto internal xref">Section 9.8</a>) and metadata protection (<a href="#metadata" class="auto internal xref">Section 9.9</a>).<a href="#section-9.1.1-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="post-quantum-security">
@@ -3303,7 +3350,7 @@ uniformly distributed over byte strings of length <code>Nsecret</code>.<a href="
 <p id="section-9.2.1-1">An <code>ikm</code> input to <code>DeriveKeyPair()</code> (<a href="#derive-key-pair" class="auto internal xref">Section 7.1.3</a>) MUST NOT be
 reused elsewhere, in particular not with <code>DeriveKeyPair()</code> of a
 different KEM.<a href="#section-9.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.2.1-2">Since a KEM key pair belonging to a sender or recipient works with all modes, it can
+<p id="section-9.2.1-2">Since a KEM key pair belonging to a recipient works with all modes, it can
 be used with multiple modes in parallel. HPKE is constructed to be
 secure in such settings due to domain separation using the <code>suite_id</code>
 variable. However, there is no formal proof of security at the time of
@@ -3323,8 +3370,19 @@ level provided by the KEM and, if applicable, by the PSK. The KDF
 SHOULD at least have the security level of the KEM and SHOULD
 at least have the security level provided by the PSK.<a href="#section-9.3-1" class="pilcrow">¶</a></p>
 <p id="section-9.3-2">For the security proofs from <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span> and <span>[<a href="#AJKL23" class="cite xref">AJKL23</a>]</span> to apply, the
-KDF MUST allow to prove PRF security for the key schedule both with
+KDF MUST allow proving PRF security for the key schedule both with
 <code>shared_secret</code> or <code>psk</code> as PRF key.<a href="#section-9.3-2" class="pilcrow">¶</a></p>
+<p id="section-9.3-3">For a one-stage KDF, the corresponding requirements apply to <code>Derive(ikm, L)</code>
+as invoked by <code>LabeledDerive()</code>.  The output of the key schedule MUST be
+pseudorandom whenever either <code>shared_secret</code> or <code>psk</code> is unknown to the
+adversary, even if the adversary knows or chooses the other inputs.
+Similarly, the output of <code>Context.Export()</code> MUST be pseudorandom when
+<code>exporter_secret</code> is unknown to the adversary, and the DHKEM shared secret
+MUST be pseudorandom when the Diffie-Hellman output is unknown to the
+adversary.  A KDF whose <code>Derive()</code> function can be modeled as a random oracle,
+such as an extendable-output function (XOF) like SHAKE, satisfies these
+requirements.  The proofs in <span>[<a href="#ABHKLR20" class="cite xref">ABHKLR20</a>]</span> and <span>[<a href="#AJKL23" class="cite xref">AJKL23</a>]</span> have not been
+extended to one-stage KDFs (see <a href="#sec-properties" class="auto internal xref">Section 9.1</a>).<a href="#section-9.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="aead-security">
@@ -3345,11 +3403,11 @@ properties relied upon by the analyses summarized in <a href="#sec-properties" c
         <h3 id="name-pre-shared-key-recommendati">
 <a href="#section-9.5" class="section-number selfRef">9.5. </a><a href="#name-pre-shared-key-recommendati" class="section-name selfRef">Pre-Shared Key Recommendations</a>
         </h3>
-<p id="section-9.5-1">In the PSK modes, the PSK MUST have at least 32 bytes of
+<p id="section-9.5-1">In PSK mode, the PSK MUST have at least 32 bytes of
 entropy and SHOULD be of length <code>Nh</code> bytes or longer. Using a PSK longer than
 32 bytes but shorter than <code>Nh</code> bytes is permitted.<a href="#section-9.5-1" class="pilcrow">¶</a></p>
-<p id="section-9.5-2">HPKE is specified to use HKDF as its key derivation function. HKDF is not
-designed to slow down dictionary attacks (see <span>[<a href="#RFC5869" class="cite xref">RFC5869</a>]</span>). Thus, HPKE's
+<p id="section-9.5-2">The KDFs used with HPKE are not designed to slow down dictionary attacks;
+this is true of HKDF (see <span>[<a href="#RFC5869" class="cite xref">RFC5869</a>]</span>) as well as of one-stage KDFs. Thus, HPKE's
 PSK mechanism is not suitable for use with a low-entropy password as the
 PSK: In scenarios in which the adversary knows the KEM shared secret
 <code>shared_secret</code> and has access to an oracle that distinguishes between
@@ -3404,17 +3462,20 @@ inclusion of the <code>suite_id</code> in <code>LabeledExtract()</code>, <code>L
 <code>LabeledDerive()</code>.<a href="#section-9.6-2" class="pilcrow">¶</a></p>
 <p id="section-9.6-3">Future KEM instantiations MUST ensure, should <code>Extract()</code>,
 <code>Expand()</code>, and/or <code>Derive()</code> be used internally, that they can be modeled as functions
-independent from the invocations of these functions in the
+independent of the invocations of these functions in the
 remainder of HPKE. One way to ensure this is by using <code>LabeledExtract()</code> /
 <code>LabeledExpand()</code> / <code>LabeledDerive()</code> functions with a <code>suite_id</code> as defined in <a href="#base-crypto" class="auto internal xref">Section 4</a>,
 which will ensure input domain separation, as outlined above.
 Particular attention needs to
 be paid if the KEM directly invokes functions that are used internally
-in HPKE's <code>Extract()</code> or <code>Expand()</code>, such as <code>Hash()</code> and <code>HMAC()</code> in the case of HKDF.
+in HPKE's <code>Extract()</code>, <code>Expand()</code>, or <code>Derive()</code>, such as <code>Hash()</code> and <code>HMAC()</code> in the case of HKDF.
 It MUST be ensured that inputs to these invocations cannot collide with
-inputs to the internal invocations of these functions inside <code>Extract()</code> or
-<code>Expand()</code>. In HPKE's <code>KeySchedule()</code> this is avoided by using <code>Extract()</code> instead of
-<code>Hash()</code> on the arbitrary-length inputs <code>info</code> and <code>psk_id</code>.<a href="#section-9.6-3" class="pilcrow">¶</a></p>
+inputs to the internal invocations of these functions inside <code>Extract()</code>,
+<code>Expand()</code>, or <code>Derive()</code>. With a two-stage KDF, HPKE's <code>KeySchedule()</code> avoids this by using <code>Extract()</code> instead of
+<code>Hash()</code> on the arbitrary-length inputs <code>info</code> and <code>psk_id</code>.  With a one-stage
+KDF, <code>KeySchedule()</code> passes these inputs, length-prefixed, only to
+<code>LabeledDerive()</code>, so they are processed only by the KDF's <code>Derive()</code> function
+together with the HPKE-specific label and <code>suite_id</code>.<a href="#section-9.6-3" class="pilcrow">¶</a></p>
 <p id="section-9.6-4">The string literal "HPKE-v1" used in <code>LabeledExtract()</code> / <code>LabeledExpand()</code> / <code>LabeledDerive()</code>
 ensures that any secrets derived in HPKE are bound to the scheme's name
 and version, even when possibly derived from the same Diffie-Hellman or
@@ -3426,7 +3487,7 @@ KEM shared secret as in another scheme or version.<a href="#section-9.6-4" class
         <h3 id="name-application-embedding-and-n">
 <a href="#section-9.7" class="section-number selfRef">9.7. </a><a href="#name-application-embedding-and-n" class="section-name selfRef">Application Embedding and Non-Goals</a>
         </h3>
-<p id="section-9.7-1">HPKE is designed to be a fairly low-level mechanism.  As a result, it assumes
+<p id="section-9.7-1">HPKE is designed to be a low-level mechanism.  As a result, it assumes
 that certain properties are provided by the application in which HPKE is
 embedded and leaves certain security properties to be provided by other
 mechanisms. Otherwise said, certain properties are out-of-scope for HPKE.<a href="#section-9.7-1" class="pilcrow">¶</a></p>
@@ -3482,25 +3543,27 @@ values are still known only to the sender and recipient (not the replay
 attacker), such replay can allow the attacker to cause the recipient to re-use
 the exported values.<a href="#section-9.7.3-3" class="pilcrow">¶</a></p>
 <p id="section-9.7.3-4">Consider the following scenario, in which B is using the recipient-to-sender
-encryption described as an example in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-9.8" class="relref">Section 9.8</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>:<a href="#section-9.7.3-4" class="pilcrow">¶</a></p>
+encryption described as an example in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-9.8" class="relref">Section 9.8</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>, which derives
+an AEAD key and nonce deterministically from an exported secret, with no fresh
+per-response input:<a href="#section-9.7.3-4" class="pilcrow">¶</a></p>
 <span id="name-attacker-triggered-nonce-re"></span><div id="replay-attack">
 <figure id="figure-1">
             <div class="alignLeft art-text artwork" id="section-9.7.3-5.1">
 <pre>
 B-&gt;A: pk
 
-A:    enc1, ctx = SetupBaseS(pk)
+A:    enc1, ctx = SetupBaseS(pk, info)
       ct1 = ctx.seal(aad, pt)
 A-&gt;B: enc1, ct1
 
-B:    ctx = SetupBaseR(sk, enc1)
+B:    ctx = SetupBaseR(enc1, sk, info)
       key, nonce = ctx.export(...)
       ct2 = AEAD.seal(key, nonce, aad2, pt2)
 B-&gt;A: ct2
 
 X-&gt;B: enc1, ct1 [replay of previously sent values]
 
-B:    ctx = SetupBaseR(sk, enc)
+B:    ctx = SetupBaseR(enc1, sk, info)
       key, nonce = ctx.export(...)
       ct3 = AEAD.seal(key, nonce, aad3, pt3)
 B-&gt;X: ct3
@@ -3583,7 +3646,18 @@ the sender, it can derive a key and nonce from the corresponding HPKE context
 as follows:<a href="#section-9.8-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-9.8-3">
 <pre>
-def EncryptResponse(context, enc, response_aad, response_pt):
+# For use with a one-stage KDF
+def EncryptResponse_OneStage(context, enc, response_aad, response_pt):
+  secret = context.Export("[application] response", Nh)
+  response_nonce = random(Nh)
+  okm = Derive(concat(secret, enc, response_nonce), Nk + Nn)
+  aead_key = okm[:Nk]
+  aead_nonce = okm[Nk:]
+  ct = Seal(aead_key, aead_nonce, response_aad, response_pt)
+  return (response_nonce, ct)
+
+# For use with a two-stage KDF
+def EncryptResponse_TwoStage(context, enc, response_aad, response_pt):
   secret = context.Export("[application] response", Nh)
   response_nonce = random(Nh)
   salt = concat(enc, response_nonce)
@@ -3594,16 +3668,18 @@ def EncryptResponse(context, enc, response_aad, response_pt):
   return (response_nonce, ct)
 </pre><a href="#section-9.8-3" class="pilcrow">¶</a>
 </div>
-<p id="section-9.8-4">This example mechanism differs from the example mechanism in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> by
+<p id="section-9.8-4">In the one-stage variant, <code>secret</code>, <code>enc</code>, and <code>response_nonce</code> each have a
+fixed length for a given ciphersuite, so their concatenation is unambiguous.<a href="#section-9.8-4" class="pilcrow">¶</a></p>
+<p id="section-9.8-5">This example mechanism differs from the example mechanism in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> by
 incorporating a per-transaction random value <code>response_nonce</code>.  Because HPKE
 does not provide replay protection, the mechanism in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> enabled an
 attacker to trigger reuse of a (key, nonce) pair by replaying an HPKE message
 under certain application circumstances.  Incorporating per-transaction
 entropy ensures that the key and nonce used in AEAD encryption will be distinct
-for every invocation of the mechanism.<a href="#section-9.8-4" class="pilcrow">¶</a></p>
-<p id="section-9.8-5">In this context, HPKE's limitations with regard to sender authentication become
+for every invocation of the mechanism.<a href="#section-9.8-5" class="pilcrow">¶</a></p>
+<p id="section-9.8-6">In this context, HPKE's limitations with regard to sender authentication become
 limits on recipient authentication. In particular, in the Base mode, there is no
-authentication of the remote party at all.<a href="#section-9.8-5" class="pilcrow">¶</a></p>
+authentication of the remote party at all.<a href="#section-9.8-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="metadata">
@@ -3613,9 +3689,9 @@ authentication of the remote party at all.<a href="#section-9.8-5" class="pilcro
         </h3>
 <p id="section-9.9-1">The PSK mode of HPKE requires that the recipient
 know what key material to use for the sender.  This can be signaled in
-applications by sending the PSK ID (<code>psk_id</code> above) and/or the sender's public
-key (<code>pkS</code>).  However, these values themselves might be considered sensitive,
-since, in a given application context, they might identify the sender.<a href="#section-9.9-1" class="pilcrow">¶</a></p>
+applications by sending the PSK ID (<code>psk_id</code> above).  However, this value
+itself might be considered sensitive, since, in a given application context, it
+might identify the sender.<a href="#section-9.9-1" class="pilcrow">¶</a></p>
 <p id="section-9.9-2">An application that wishes to protect these metadata values without requiring
 further provisioning of keys can use an additional instance of HPKE, using the
 unauthenticated Base mode.  Where the application might have sent <code>(psk_id,
@@ -3673,10 +3749,31 @@ the last Nt bytes of the ciphertext output.<a href="#section-10-2" class="pilcro
 <p id="section-11-3">All these registries are in the "Hybrid Public Key Encryption (HPKE)" registry
 group, and administered under a Specification Required policy <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>.<a href="#section-11-3" class="pilcrow">¶</a></p>
 <p id="section-11-4">This document replaces RFC 9180 as the specification for these registries and
-provides instructions to the designated experts for these registries.
-IANA should update all references to <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> in the IANA registries with references to this document.
-Registrations made under RFC 9180 remain otherwise unchanged;
-implementations that rely on those codepoints do not need to change.<a href="#section-11-4" class="pilcrow">¶</a></p>
+provides instructions to the designated experts for these registries.  IANA is
+requested to make the following changes, which apply only to the three
+registries listed above:<a href="#section-11-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11-5.1">
+          <p id="section-11-5.1.1">For each of the three registries, replace <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> with this document as
+the reference for the registry itself.<a href="#section-11-5.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-11-5.2">
+          <p id="section-11-5.2.1">For each registry entry, the Reference field identifies the document that
+defines the entry.  The entries whose Reference is <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> are the
+reserved entries with value 0x0000 in all three registries and the
+Export-only entry 0xFFFF in the "HPKE AEAD Identifiers" registry.  These
+entries are now defined by this document, so their Reference is updated to
+this document.  Entries that reference other specifications are unchanged.<a href="#section-11-5.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-11-5.3">
+          <p id="section-11-5.3.1">Make the additional per-registry changes described in <a href="#kem-template" class="auto internal xref">Section 11.2</a>,
+<a href="#kdf-template" class="auto internal xref">Section 11.3</a>, and <a href="#aead-template" class="auto internal xref">Section 11.4</a>.<a href="#section-11-5.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-11-6">Registrations made under RFC 9180 remain otherwise unchanged;
+implementations that rely on those codepoints do not need to change.<a href="#section-11-6" class="pilcrow">¶</a></p>
+<p id="section-11-7">RFC Editor: Please replace all instances of "RFC XXXX" in this document with
+the RFC number assigned to this document, and remove this note.<a href="#section-11-7" class="pilcrow">¶</a></p>
 <div id="designated-expert-instructions">
 <section id="section-11.1">
         <h3 id="name-designated-expert-instructi">
@@ -3745,21 +3842,33 @@ so the maximum possible value is 0xFFFF = 65535.<a href="#section-11.2-1" class=
             <p id="section-11.2-3.6.1">Nsk: The length in bytes of an encoded private key for the algorithm<a href="#section-11.2-3.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.7">
-            <p id="section-11.2-3.7.1">Auth: A boolean indicating if this algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code> interface defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>
-This field is retained for compatibility with RFC 9180.  It is unused by this
-document. For new registrations, the value should be <code>no</code> unless the KEM
-explicitly incorporates support for the RFC 9180 interface.<a href="#section-11.2-3.7.1" class="pilcrow">¶</a></p>
+            <p id="section-11.2-3.7.1">Auth: A boolean indicating if this algorithm provides the <code>AuthEncap()</code>/<code>AuthDecap()</code> interface defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>.
+This field is retained for compatibility with RFC 9180 and with future
+specifications that reintroduce authenticated modes; it is not used by this
+document.  For new registrations, the value is <code>yes</code> only if the
+specification for the KEM defines <code>AuthEncap()</code> and <code>AuthDecap()</code> for that
+KEM, and <code>no</code> otherwise.<a href="#section-11.2-3.7.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-11.2-3.8">
             <p id="section-11.2-3.8.1">Reference: Where this algorithm is defined<a href="#section-11.2-3.8.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-11.2-4">This document adds no entries to this registry.  The existing contents of the
-registry are retained, and <a href="#kemid-values" class="auto internal xref">Table 2</a> provides updates to the
-corresponding existing entries.<a href="#section-11.2-4" class="pilcrow">¶</a></p>
+<p id="section-11.2-4">This document adds no entries to this registry.  <a href="#kemid-values" class="auto internal xref">Table 2</a> lists the
+entries defined by <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>.  Their values are unchanged, except that for
+the reserved entry 0x0000, the <code>Auth</code> value is changed from "yes" to "N/A" and
+the Reference is updated to this document.<a href="#section-11.2-4" class="pilcrow">¶</a></p>
+<p id="section-11.2-5">IANA is also requested to add the following note to the registry:<a href="#section-11.2-5" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-11.2-6.1">
+            <p id="section-11.2-6.1.1">The Auth column indicates whether the KEM provides the
+AuthEncap()/AuthDecap() interface defined in RFC 9180.  This interface is not
+used by RFC XXXX.  New registrations use "yes" only if the specification for
+the KEM defines AuthEncap() and AuthDecap() for that KEM, and "no" otherwise.<a href="#section-11.2-6.1.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
 </section>
 </div>
-<div id="kdf-identifiers">
+<div id="kdf-template">
 <section id="section-11.3">
         <h3 id="name-kdf-identifiers">
 <a href="#section-11.3" class="section-number selfRef">11.3. </a><a href="#name-kdf-identifiers" class="section-name selfRef">KDF Identifiers</a>
@@ -3789,14 +3898,30 @@ entries.<a href="#section-11.3-3.4.1" class="pilcrow">¶</a></p>
             <p id="section-11.3-3.5.1">Reference: Where this algorithm is defined<a href="#section-11.3-3.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-11.3-4">This document adds no entries to this registry.  The existing contents of the
-registry are retained, and <a href="#kdfid-values" class="auto internal xref">Table 3</a> provides updates to the
-corresponding existing entries.  Existing entries that have no <code>Two-Stage</code>
-value are assigned the value <code>Y</code>, except for the reserved entry <code>0x0000</code>, which
-is assigned <code>N/A</code>.<a href="#section-11.3-4" class="pilcrow">¶</a></p>
+<p id="section-11.3-4">This document adds no entries to this registry.  It adds a <code>Two-Stage</code>
+column to the registry.  <a href="#kdfid-values" class="auto internal xref">Table 3</a> lists the entries defined by
+<span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>, with the <code>Two-Stage</code> value assigned to each of them.  Their other
+values are unchanged, except that the Reference of the reserved entry 0x0000
+is updated to this document.<a href="#section-11.3-4" class="pilcrow">¶</a></p>
+<p id="section-11.3-5">The following existing entries, registered by <span>[<a href="#I-D.ietf-hpke-pq" class="cite xref">I-D.ietf-hpke-pq</a>]</span>, are
+one-stage KDFs and are assigned the <code>Two-Stage</code> value <code>N</code>:<a href="#section-11.3-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11.3-6.1">
+            <p id="section-11.3-6.1.1">0x0010 (SHAKE128)<a href="#section-11.3-6.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.3-6.2">
+            <p id="section-11.3-6.2.1">0x0011 (SHAKE256)<a href="#section-11.3-6.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.3-6.3">
+            <p id="section-11.3-6.3.1">0x0012 (TurboSHAKE128)<a href="#section-11.3-6.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.3-6.4">
+            <p id="section-11.3-6.4.1">0x0013 (TurboSHAKE256)<a href="#section-11.3-6.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
 </section>
 </div>
-<div id="aead-identifiers">
+<div id="aead-template">
 <section id="section-11.4">
         <h3 id="name-aead-identifiers">
 <a href="#section-11.4" class="section-number selfRef">11.4. </a><a href="#name-aead-identifiers" class="section-name selfRef">AEAD Identifiers</a>
@@ -3826,9 +3951,20 @@ These identifiers are two-byte values, so the maximum possible value is
             <p id="section-11.4-3.6.1">Reference: Where this algorithm is defined<a href="#section-11.4-3.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-11.4-4">This document adds no entries to this registry.  The existing contents of the
-registry are retained, and <a href="#aeadid-values" class="auto internal xref">Table 5</a> provides updates to the
-corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a></p>
+<p id="section-11.4-4">This document adds no entries to this registry.  <a href="#aeadid-values" class="auto internal xref">Table 5</a> lists the
+entries defined by <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>.  Their values are unchanged, except for the
+following:<a href="#section-11.4-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11.4-5.1">
+            <p id="section-11.4-5.1.1">For the Export-only entry 0xFFFF, the <code>Nk</code> and <code>Nn</code> values are changed from
+"N/A" to 0.  This makes the length <code>Nk + Nn + Nh</code> of the key schedule output
+well defined when a one-stage KDF is used (<a href="#encryption-context" class="auto internal xref">Section 5.1</a>).<a href="#section-11.4-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.4-5.2">
+            <p id="section-11.4-5.2.1">The Reference of the reserved entry 0x0000 and of the Export-only entry
+0xFFFF is updated to this document.<a href="#section-11.4-5.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
 </section>
 </div>
 </section>
@@ -3854,7 +3990,7 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
 <dd class="break"></dd>
 <dt id="NISTCurves">[NISTCurves]</dt>
         <dd>
-<span class="refTitle">"Digital signature standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-4</span>, <time datetime="2013" class="refDate">2013</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-4">https://doi.org/10.6028/nist.fips.186-4</a>&gt;</span>. </dd>
+<span class="refAuthor">Chen, L.</span>, <span class="refAuthor">Moody, D.</span>, <span class="refAuthor">Regenscheid, A.</span>, <span class="refAuthor">Robinson, A.</span>, and <span class="refAuthor">K. Randall</span>, <span class="refTitle">"Recommendations for Discrete Logarithm-based Cryptography:: Elliptic Curve Domain Parameters"</span>, <span class="refContent">National Institute of Standards and Technology</span>, <span class="seriesInfo">DOI 10.6028/nist.sp.800-186</span>, <time datetime="2023-02" class="refDate">February 2023</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.sp.800-186">https://doi.org/10.6028/nist.sp.800-186</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
@@ -3888,10 +4024,6 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
         <dd>
 <span class="refAuthor">Nir, Y.</span> and <span class="refAuthor">A. Langley</span>, <span class="refTitle">"ChaCha20 and Poly1305 for IETF Protocols"</span>, <span class="seriesInfo">RFC 8439</span>, <span class="seriesInfo">DOI 10.17487/RFC8439</span>, <time datetime="2018-06" class="refDate">June 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8439">https://www.rfc-editor.org/rfc/rfc8439</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC9458">[RFC9458]</dt>
-        <dd>
-<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious HTTP"</span>, <span class="seriesInfo">RFC 9458</span>, <span class="seriesInfo">DOI 10.17487/RFC9458</span>, <time datetime="2024-01" class="refDate">January 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9458">https://www.rfc-editor.org/rfc/rfc9458</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="SECG">[SECG]</dt>
       <dd>
 <span class="refTitle">"Elliptic Curve Cryptography, Standards for Efficient Cryptography Group, ver. 2"</span>, <time datetime="2009" class="refDate">2009</time>, <span>&lt;<a href="https://secg.org/sec1-v2.pdf">https://secg.org/sec1-v2.pdf</a>&gt;</span>. </dd>
@@ -3923,7 +4055,7 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
 <dd class="break"></dd>
 <dt id="BNT19">[BNT19]</dt>
         <dd>
-<span class="refAuthor">Bellare, M.</span>, <span class="refAuthor">Ng, R.</span>, and <span class="refAuthor">B. Tackmann</span>, <span class="refTitle">"Nonces Are Noticed: AEAD Revisited"</span>, <time datetime="2019" class="refDate">2019</time>, <span>&lt;<a href="http://dx.doi.org/10.1007/978-3-030-26948-7_9">http://dx.doi.org/10.1007/978-3-030-26948-7_9</a>&gt;</span>. </dd>
+<span class="refAuthor">Bellare, M.</span>, <span class="refAuthor">Ng, R.</span>, and <span class="refAuthor">B. Tackmann</span>, <span class="refTitle">"Nonces Are Noticed: AEAD Revisited"</span>, <time datetime="2019" class="refDate">2019</time>, <span>&lt;<a href="https://doi.org/10.1007/978-3-030-26948-7_9">https://doi.org/10.1007/978-3-030-26948-7_9</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="CS01">[CS01]</dt>
         <dd>
@@ -3993,6 +4125,10 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
         <dd>
 <span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Robert, R.</span>, <span class="refAuthor">Millican, J.</span>, <span class="refAuthor">Omara, E.</span>, and <span class="refAuthor">K. Cohn-Gordon</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Protocol"</span>, <span class="seriesInfo">RFC 9420</span>, <span class="seriesInfo">DOI 10.17487/RFC9420</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9420">https://www.rfc-editor.org/rfc/rfc9420</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC9458">[RFC9458]</dt>
+        <dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious HTTP"</span>, <span class="seriesInfo">RFC 9458</span>, <span class="seriesInfo">DOI 10.17487/RFC9458</span>, <time datetime="2024-01" class="refDate">January 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9458">https://www.rfc-editor.org/rfc/rfc9458</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC9846">[RFC9846]</dt>
         <dd>
 <span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 9846</span>, <span class="seriesInfo">DOI 10.17487/RFC9846</span>, <time datetime="2026-07" class="refDate">July 2026</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9846">https://www.rfc-editor.org/rfc/rfc9846</a>&gt;</span>. </dd>
@@ -4003,7 +4139,7 @@ corresponding existing entries.<a href="#section-11.4-4" class="pilcrow">¶</a><
 <dd class="break"></dd>
 <dt id="TestVectors">[TestVectors]</dt>
       <dd>
-<span class="refTitle">"HPKE Test Vectors"</span>, <time datetime="2021" class="refDate">2021</time>, <span>&lt;<a href="https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json">https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json</a>&gt;</span>. </dd>
+<span class="refTitle">"HPKE Test Vectors"</span>, <time datetime="2026" class="refDate">2026</time>, <span>&lt;<a href="https://github.com/hpkewg/hpke/blob/main/test-vectors/test-vectors.json">https://github.com/hpkewg/hpke/blob/main/test-vectors/test-vectors.json</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -4036,6 +4172,20 @@ specify identical behavior for any functionality that they both specify.<a href=
         <li class="normal" id="appendix-A-3.5">
           <p id="appendix-A-3.5.1">Extended the discussion of replay to cover considerations related to exported
 secrets.<a href="#appendix-A-3.5.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-A-3.6">
+          <p id="appendix-A-3.6.1">Added a requirement that applications not derive AEAD (key, nonce) pairs from
+exported secrets without fresh per-derivation input (<a href="#hpke-export" class="auto internal xref">Section 5.3</a>), and
+updated the bidirectional encryption example (<a href="#bidirectional" class="auto internal xref">Section 9.8</a>) to
+incorporate a fresh recipient-provided nonce.  Applications built on the
+example in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-9.8" class="relref">Section 9.8</a> of [<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> do not meet this requirement.<a href="#appendix-A-3.6.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-A-3.7">
+          <p id="appendix-A-3.7.1">Changed the guidance on <code>info</code> lengths (<a href="#kdf-input-length" class="auto internal xref">Section 7.2.1</a>).  RFC 9180
+RECOMMENDED a limit of 64 bytes for all application-provided inputs; this document requires implementations to
+support <code>info</code> values of at least 64 bytes and recommends support for at
+least 16384 bytes.  Implementations that followed the RFC 9180 recommendation
+may not meet the new recommendation.<a href="#appendix-A-3.7.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -4107,7 +4257,7 @@ value.<a href="#appendix-C-2.4.1" class="pilcrow">¶</a></p>
 <p id="appendix-C.1-1">The test vectors can support testing of encapsulation as well as decapsulation
 if the KEM being tested provides a derandomized encapsulation function:<a href="#appendix-C.1-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="appendix-C.1-2">
-          <dt id="appendix-C.1-2.1"><code>EncapDerand(enc, randomness)</code></dt>
+          <dt id="appendix-C.1-2.1"><code>EncapDerand(pkR, randomness)</code></dt>
           <dd style="margin-left: 1.5em" id="appendix-C.1-2.2">
             <p id="appendix-C.1-2.2.1">Deterministic algorithm to generate an ephemeral, fixed-length
 shared secret and a fixed-length encapsulation of that secret (also known as
@@ -4134,7 +4284,7 @@ def EncapDerand(pkR, randomness):
 </pre><a href="#appendix-C.1-4" class="pilcrow">¶</a>
 </div>
 <p id="appendix-C.1-5">The input <code>ikmE</code> in the context creation inputs is the <code>randomness</code> input to
-<code>EncapsDerand()</code>.<a href="#appendix-C.1-5" class="pilcrow">¶</a></p>
+<code>EncapDerand()</code>.<a href="#appendix-C.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="dhkemx25519-hkdf-sha256-hkdf-sha256-aes-128-gcm">
